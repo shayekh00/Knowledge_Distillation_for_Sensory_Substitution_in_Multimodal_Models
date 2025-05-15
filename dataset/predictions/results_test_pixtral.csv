@@ -1,0 +1,1842 @@
+Question_Id,Questions,Question_Type,Answers,Model_Answer
+1,How many desks are there?,Count,two,one
+2,How many mirrors are there?,Count,one,two
+3,How many tables are there?,Count,two,one
+4,How many blindss are there?,Count,one,two
+5,How many room divider are there?,Count,one,there
+6,How many desks are there?,Count,one,there
+7,How many windows are there?,Count,one,three
+8,How many windows are there?,Count,one,three
+9,How many sofas are there?,Count,one,one
+10,How many sofas are there?,Count,two,two
+11,How many chairs are there?,Count,ten,six
+12,How many suit jackets are there?,Count,one,zero
+13,How many ofs are there?,Count,two,three
+14,How many tables are there?,Count,two,one
+15,How many cabinets are there?,Count,three,there
+16,How many refrigerators are there?,Count,two,one
+17,How many windows are there?,Count,one,one
+18,How many papers are there?,Count,two,four
+19,How many microwaves are there?,Count,one,one
+20,How many sofas are there?,Count,three,one
+21,How many desk drawers are there?,Count,one,three
+22,How many shelfs are there?,Count,one,four
+23,How many cabinets are there?,Count,one,two
+24,How many sofas are there?,Count,one,one
+25,How many couches are there?,Count,one,one
+26,How many shop a chairs are there?,Count,one,three
+27,How many sofas are there?,Count,one,one
+28,How many cabinets are there?,Count,three,eight
+29,How many lamps are there?,Count,one,one
+30,How many curttains are there?,Count,two,two
+31,How many beds are there?,Count,one,one
+32,How many chairs are there?,Count,three,three
+33,How many rugs are there?,Count,one,there
+34,How many beds are there?,Count,two,one
+35,How many mirrors are there?,Count,one,three
+36,How many cabinets are there?,Count,three,seven
+37,How many dressers are there?,Count,one,one
+38,How many cabinets are there?,Count,two,six
+39,How many cabinets are there?,Count,one,two
+40,How many cabinets are there?,Count,one,there
+41,How many chairs are there?,Count,one,one
+42,How many bathtubss are there?,Count,one,one
+43,How many doors are there?,Count,two,three
+44,How many cabinets are there?,Count,one,eight
+45,How many bathtubss are there?,Count,one,one
+46,How many refrigerators are there?,Count,one,one
+47,How many clothess are there?,Count,four,there
+48,How many windows are there?,Count,three,two
+49,How many hothouses are there?,Count,one,one
+50,How many refrigerators are there?,Count,one,one
+51,How many desks are there?,Count,six,there
+52,How many counters are there?,Count,one,there
+53,How many dressers are there?,Count,one,one
+54,How many cupboard doors are there?,Count,one,four
+55,How many book shelfs are there?,Count,one,five
+56,How many blindss are there?,Count,one,three
+57,How many blindss are there?,Count,one,four
+58,How many chairs are there?,Count,seven,six
+59,How many beds are there?,Count,one,one
+60,How many doors are there?,Count,one,two
+61,How many refrigerators are there?,Count,one,one
+62,How many backpacks are there?,Count,one,there
+63,How many blindss are there?,Count,one,three
+64,How many cabinets are there?,Count,seven,three
+65,How many persons are there?,Count,one,two
+66,How many doors are there?,Count,one,two
+67,How many desks are there?,Count,one,there
+68,How many doors are there?,Count,one,two
+69,How many windows are there?,Count,four,three
+70,How many tables are there?,Count,one,two
+71,How many counters are there?,Count,one,four
+72,How many cabinets are there?,Count,two,four
+73,How many desks are there?,Count,one,there
+74,How many curttains are there?,Count,one,one
+75,How many beds are there?,Count,two,two
+76,How many beds are there?,Count,two,two
+77,How many windows are there?,Count,one,three
+78,How many desks are there?,Count,one,one
+79,How many dressers are there?,Count,one,two
+80,How many night stands are there?,Count,two,two
+81,How many blindss are there?,Count,three,three
+82,How many ofs are there?,Count,one,four
+83,How many boards are there?,Count,two,one
+84,How many shower curtains are there?,Count,one,one
+85,How many cabinets are there?,Count,one,there
+86,How many chairs are there?,Count,one,three
+87,How many cabinets are there?,Count,one,one
+88,How many beds are there?,Count,one,one
+89,How many desks are there?,Count,one,three
+90,How many counters are there?,Count,two,three
+91,How many counters are there?,Count,one,three
+92,How many windowss are there?,Count,one,five
+93,How many desktops are there?,Count,one,two
+94,How many cabinets are there?,Count,six,there
+95,How many curttains are there?,Count,two,one
+96,How many toilets are there?,Count,one,one
+97,How many pillows are there?,Count,five,there
+98,How many bookcases are there?,Count,one,two
+99,How many windows are there?,Count,one,three
+100,How many sofas are there?,Count,five,zero
+101,How many sofas are there?,Count,four,zero
+102,How many tables are there?,Count,four,four
+103,How many pictures are there?,Count,four,three
+104,How many blankets are there?,Count,one,there
+105,How many tables are there?,Count,four,seven
+106,How many chairs are there?,Count,one,one
+107,How many beds are there?,Count,one,one
+108,How many beds are there?,Count,one,two
+109,How many doors are there?,Count,one,three
+110,How many pictures are there?,Count,three,two
+111,How many white boards are there?,Count,one,two
+112,How many beds are there?,Count,one,one
+113,How many book shelfs are there?,Count,one,five
+114,How many beds are there?,Count,one,one
+115,How many dressers are there?,Count,one,one
+116,How many bicycles are there?,Count,one,one
+117,How many chairs are there?,Count,five,four
+118,How many blindss are there?,Count,one,two
+119,How many curttains are there?,Count,one,two
+120,How many windows are there?,Count,three,four
+121,How many refrigerators are there?,Count,one,one
+122,How many tables are there?,Count,one,one
+123,How many cabinets are there?,Count,one,there
+124,How many book shelfs are there?,Count,one,three
+125,How many mirrors are there?,Count,one,two
+126,How many cabinets are there?,Count,two,three
+127,How many cabinets are there?,Count,two,five
+128,How many pictures are there?,Count,four,three
+129,How many dry-era boards are there?,Count,one,three
+130,How many doors are there?,Count,one,two
+131,How many cabinets are there?,Count,one,there
+132,How many tables are there?,Count,one,one
+133,How many shower curtains are there?,Count,one,one
+134,How many cabinets are there?,Count,one,one
+135,How many cabinets are there?,Count,six,eight
+136,How many blindss are there?,Count,two,three
+137,How many windowss are there?,Count,one,two
+138,How many railings are there?,Count,one,two
+139,How many mirrors are there?,Count,one,one
+140,How many black boards are there?,Count,one,one
+141,How many cabinets are there?,Count,seven,seven
+142,How many cabinets are there?,Count,two,two
+143,How many mirrors are there?,Count,one,two
+144,How many cabinets are there?,Count,three,there
+145,How many beds are there?,Count,one,one
+146,How many tables are there?,Count,one,one
+147,How many windows are there?,Count,one,two
+148,How many sofas are there?,Count,one,one
+149,How many chairs are there?,Count,one,two
+150,How many tables are there?,Count,two,four
+151,How many cabinets are there?,Count,one,three
+152,How many screens are there?,Count,two,two
+153,How many white boards are there?,Count,one,one
+154,How many book shelfs are there?,Count,one,five
+155,How many blankets are there?,Count,five,three
+156,How many shelvess are there?,Count,three,five
+157,How many counters are there?,Count,one,five
+158,How many monitors are there?,Count,eight,four
+159,How many blindss are there?,Count,three,three
+160,How many cabinets are there?,Count,six,one
+161,How many windows are there?,Count,two,three
+162,How many clothess are there?,Count,three,three
+163,How many persons are there?,Count,one,one
+164,How many book shelfs are there?,Count,three,five
+165,How many chairs are there?,Count,six,six
+166,How many cabinets are there?,Count,three,six
+167,How many dishwashers are there?,Count,two,one
+168,How many dressers are there?,Count,one,one
+169,How many pictures are there?,Count,three,three
+170,How many tables are there?,Count,one,one
+171,How many doors are there?,Count,one,two
+172,How many pillows are there?,Count,seven,five
+173,How many cabinets are there?,Count,six,one
+174,How many pictures are there?,Count,one,two
+175,How many room divider are there?,Count,one,two
+176,How many tables are there?,Count,one,one
+177,How many windows are there?,Count,one,two
+178,How many tables are there?,Count,one,one
+179,How many cabinets are there?,Count,three,four
+180,How many beds are there?,Count,one,one
+181,How many blindss are there?,Count,one,two
+182,How many cabinets are there?,Count,three,seven
+183,How many shelvess are there?,Count,one,there
+184,How many beds are there?,Count,one,one
+185,How many doors are there?,Count,two,two
+186,How many faucess are there?,Count,one,one
+187,How many tents are there?,Count,one,one
+188,How many pillows are there?,Count,two,four
+189,How many pictures are there?,Count,twelve,three
+190,How many cabinets are there?,Count,three,four
+191,How many sofas are there?,Count,one,one
+192,How many tables are there?,Count,two,two
+193,How many beds are there?,Count,one,two
+194,How many doors are there?,Count,one,three
+195,How many desks are there?,Count,three,one
+196,How many beds are there?,Count,one,one
+197,How many cabinets are there?,Count,one,four
+198,How many cabinets are there?,Count,one,one
+199,How many chairs are there?,Count,six,six
+200,How many tables are there?,Count,one,one
+201,How many refrigerators are there?,Count,one,one
+202,How many windows are there?,Count,two,three
+203,How many bookss are there?,Count,four,there
+204,How many beds are there?,Count,one,one
+205,How many book shelfs are there?,Count,one,zero
+206,How many cabinets are there?,Count,two,there
+207,How many cabinets are there?,Count,one,four
+208,How many cabinets are there?,Count,one,seven
+209,How many tables are there?,Count,one,three
+210,How many curttains are there?,Count,one,two
+211,How many mirrors are there?,Count,one,one
+212,How many cpus are there?,Count,two,two
+213,How many monitors are there?,Count,one,two
+214,How many cabinets are there?,Count,one,there
+215,How many water purifieds are there?,Count,one,one
+216,How many beds are there?,Count,one,two
+217,How many chairs are there?,Count,one,one
+218,How many sofas are there?,Count,three,two
+219,How many chairs are there?,Count,five,four
+220,How many sofas are there?,Count,one,one
+221,How many beds are there?,Count,three,two
+222,How many glass panes are there?,Count,three,three
+223,How many tables are there?,Count,six,four
+224,How many dressers are there?,Count,one,one
+225,How many shower curtains are there?,Count,one,two
+226,How many clothess are there?,Count,seven,many
+227,How many towels are there?,Count,one,three
+228,How many cabinets are there?,Count,two,three
+229,How many beds are there?,Count,one,one
+230,How many windows are there?,Count,one,one
+231,How many room divider are there?,Count,one,one
+232,How many book shelfs are there?,Count,one,three
+233,How many pillows are there?,Count,six,four
+234,How many tables are there?,Count,one,one
+235,How many cabinets are there?,Count,eight,one
+236,How many cabinets are there?,Count,six,one
+237,How many cabinets are there?,Count,one,there
+238,How many archicle divider are there?,Count,one,three
+239,How many clothess are there?,Count,one,four
+240,How many night stands are there?,Count,two,two
+241,How many chairss are there?,Count,one,three
+242,How many blindss are there?,Count,three,four
+243,How many sofas are there?,Count,three,two
+244,How many persons are there?,Count,one,one
+245,How many cabinets are there?,Count,two,three
+246,How many chairs are there?,Count,one,two
+247,How many posters are there?,Count,two,there
+248,How many printers are there?,Count,two,two
+249,How many cabinets are there?,Count,three,one
+250,How many table tops are there?,Count,one,two
+251,How many windows are there?,Count,one,four
+252,How many beds are there?,Count,one,one
+253,How many blindss are there?,Count,one,two
+254,How many beds are there?,Count,one,one
+255,How many cabinets are there?,Count,three,one
+256,How many ovens are there?,Count,two,one
+257,How many chairs are there?,Count,one,three
+258,How many chairs are there?,Count,four,two
+259,How many windows are there?,Count,two,three
+260,How many benchs are there?,Count,one,one
+261,How many beds are there?,Count,one,one
+262,How many desktops are there?,Count,one,one
+263,How many doors are there?,Count,one,two
+264,How many blindss are there?,Count,one,two
+265,How many cabinets are there?,Count,five,one
+266,How many blindss are there?,Count,one,two
+267,How many doors are there?,Count,one,two
+268,How many sofas are there?,Count,one,one
+269,How many ofs are there?,Count,one,three
+270,How many tables are there?,Count,one,two
+271,How many cabinets are there?,Count,one,three
+272,How many cabinets are there?,Count,two,three
+273,How many pillows are there?,Count,six,five
+274,How many book shelfs are there?,Count,one,three
+275,How many chairs are there?,Count,four,four
+276,How many chairs are there?,Count,one,one
+277,How many pictures are there?,Count,three,there
+278,How many ovens are there?,Count,two,two
+279,How many windows are there?,Count,two,two
+280,How many chairs are there?,Count,two,three
+281,How many computer monitors are there?,Count,one,one
+282,How many beds are there?,Count,one,two
+283,How many sofas are there?,Count,three,two
+284,How many cabinets are there?,Count,four,one
+285,How many cabinets are there?,Count,three,eight
+286,How many pictures are there?,Count,two,two
+287,How many chairs are there?,Count,two,three
+288,How many desks are there?,Count,one,there
+289,How many stands are there?,Count,one,two
+290,How many cabinets are there?,Count,two,four
+291,How many tables are there?,Count,one,one
+292,How many cabinets are there?,Count,nine,four
+293,How many beds are there?,Count,two,two
+294,How many windows are there?,Count,one,two
+295,How many dressers are there?,Count,two,one
+296,How many blindss are there?,Count,three,four
+297,How many tents are there?,Count,one,one
+298,How many cabinets are there?,Count,three,there
+299,How many cabinets are there?,Count,three,seven
+300,How many white boards are there?,Count,one,one
+301,How many beds are there?,Count,one,one
+302,How many chairs are there?,Count,two,three
+303,How many chairs are there?,Count,one,zero
+304,How many windows are there?,Count,two,three
+305,How many flowers are there?,Count,one,there
+306,How many tables are there?,Count,one,one
+307,How many pictures are there?,Count,one,two
+308,How many playeds are there?,Count,one,three
+309,How many chairs are there?,Count,two,three
+310,How many cabinets are there?,Count,one,four
+311,How many dressers are there?,Count,one,one
+312,How many beds are there?,Count,one,two
+313,How many windows are there?,Count,one,three
+314,How many cabinets are there?,Count,one,four
+315,How many pictures are there?,Count,one,one
+316,How many chandeliers are there?,Count,one,one
+317,How many beds are there?,Count,one,one
+318,How many pianos are there?,Count,one,zero
+319,How many cabinets are there?,Count,two,seven
+320,How many desktops are there?,Count,two,one
+321,How many counters are there?,Count,two,four
+322,How many beds are there?,Count,one,two
+323,How many beds are there?,Count,one,one
+324,How many clothess are there?,Count,two,three
+325,How many dishwashers are there?,Count,one,one
+326,How many beds are there?,Count,one,one
+327,How many desks are there?,Count,one,there
+328,How many beds are there?,Count,one,one
+329,How many windows are there?,Count,one,two
+330,How many blankets are there?,Count,one,one
+331,How many beds are there?,Count,one,one
+332,How many doors are there?,Count,one,three
+333,How many monitors are there?,Count,one,two
+334,How many blindss are there?,Count,two,two
+335,How many cabinets are there?,Count,five,one
+336,How many office tables are there?,Count,one,four
+337,How many beds are there?,Count,one,one
+338,How many book shelfs are there?,Count,six,eight
+339,Where is printer relative to window?,Direction,left and under,left
+340,Where is pillar relative to poster?,Direction,right and under,left
+341,Where is door relative to desk?,Direction,right and above,left
+342,Where is desk relative to chair?,Direction,left and above,left
+343,Where is file cabinet relative to door?,Direction,left and under,left
+344,Where is picture relative to window?,Direction,left and under,left
+345,Where is closet relative to door?,Direction,right and above,left
+346,Where is cupboard relative to restroomsign?,Direction,right and under,below
+347,Where is round table relative to chair?,Direction,left and under,left
+348,Where is table relative to chair?,Direction,left and above,left
+349,Where is dresserdrwaer relative to calender?,Direction,left and under,under
+350,Where is filing cabinet relative to window?,Direction,right and under,left
+351,Where is bed relative to light switch?,Direction,right and under,left
+352,Where is door relative to frame?,Direction,right and under,right
+353,Where is window relative to chair?,Direction,left and above,left
+354,Where is tile relative to tile?,Direction,right and under,floor
+355,Where is table relative to window?,Direction,left and under,under
+356,Where is windows relative to column?,Direction,left and above,left
+357,Where is book shelf relative to chair?,Direction,left and above,left
+358,Where is ease relative to bench?,Direction,right and under,left
+359,Where is chair relative to chairs?,Direction,right and above,am
+360,Where is bed carpet relative to receptionwindow?,Direction,left and under,adj
+361,Where is bench relative to window?,Direction,right and under,under
+362,Where is window relative to door?,Direction,left and above,left
+363,Where is book shelf relative to carpet?,Direction,left and above,above
+364,Where is table relative to chair?,Direction,left and under,left
+365,Where is desk relative to book?,Direction,right and under,above
+366,Where is chair relative to lamp shade?,Direction,right and under,left
+367,Where is bed frame relative to picture?,Direction,left and under,left
+368,Where is dry ease board relative to table?,Direction,right and above,under
+369,Where is cabinet relative to door?,Direction,right and under,left
+370,Where is lounge chairs relative to chair?,Direction,left and above,sur
+371,Where is restaurant relative to cupboard?,Direction,right and under,in
+372,Where is table relative to door?,Direction,right and under,left
+373,Where is touch relative to touch?,Direction,left and above,center
+374,Where is book shelf relative to camp?,Direction,right and under,be
+375,Where is shelf relative to computer?,Direction,left and above,above
+376,Where is sofa relative to door?,Direction,left and under,left
+377,Where is file cabinet relative to garage can?,Direction,right and above,left
+378,Where is chair relative to table?,Direction,right and under,around
+379,Where is filing cabinet relative to door?,Direction,right and above,left
+380,Where is even relative to door?,Direction,left and above,left
+381,Where is cupboard relative to counter?,Direction,right and above,above
+382,Where is shelf relative to barton box?,Direction,left and above,above
+383,Where is a cfpunit relative to desk?,Direction,right,in
+384,Where is carpet relative to door?,Direction,left and under,under
+385,Where is door relative to trash can?,Direction,left and above,left
+386,Where is piano relative to picture frame?,Direction,right and under,left
+387,Where is sofa relative to chair?,Direction,right and above,left
+388,Where is comforted relative to stress?,Direction,above,op
+389,Where is window relative to table?,Direction,right and above,right
+390,Where is door relative to refrigerator?,Direction,left and under,left
+391,Where is window relative to windowcorner?,Direction,right and above,left
+392,Where is stand relative to slab?,Direction,left and above,above
+393,Where is sofa relative to other room?,Direction,right and under,-
+394,Where is garage can relative to cabinet?,Direction,right and under,left
+395,Where is plant relative to jar?,Direction,left and above,left
+396,Where is cabinet relative to copier?,Direction,left and above,left
+397,Where is window relative to table?,Direction,right and above,right
+398,Where is carpet relative to silk?,Direction,left and under,under
+399,Where is chair relative to window?,Direction,right and under,left
+400,Where is window relative to cord?,Direction,right and above,right
+401,Where is wood box relative to bed?,Direction,right and under,next
+402,Where is door relative to table?,Direction,right and above,left
+403,Where is table relative to fire place?,Direction,left and under,left
+404,Where is bench relative to twitch?,Direction,left and under,adj
+405,Where is glass doors relative to pillar?,Direction,right and above,left
+406,Where is desk relative to mug?,Direction,right and under,on
+407,Where is desk relative to door?,Direction,right and under,left
+408,Where is table relative to indoor?,Direction,right and under,center
+409,Where is shelf relative to farright shelf support?,Direction,left and above,above
+410,Where is rug relative to table?,Direction,right and above,under
+411,Where is shelf relative to papers?,Direction,right and under,above
+412,Where is display box relative to book?,Direction,right and under,wall
+413,Where is window pane relative to window?,Direction,left and under,inside
+414,Where is bed relative to sign?,Direction,left,left
+415,Where is counter top relative to telephone?,Direction,left and under,above
+416,Where is bench relative to screen?,Direction,right and under,front
+417,Where is window relative to bench?,Direction,left and above,left
+418,Where is desk relative to chair?,Direction,right and under,in
+419,Where is entertainment center relative to framed picture?,Direction,right and under,left
+420,Where is blue recycle bin relative to table top?,Direction,left and under,left
+421,Where is cupboard relative to paper roll?,Direction,right and above,above
+422,Where is upstairs relative to round table?,Direction,right and above,above
+423,Where is desk relative to window?,Direction,left and under,under
+424,Where is doubled doors relative to railing?,Direction,left and under,behind
+425,Where is filing cabinet relative to door?,Direction,right and under,left
+426,Where is cupboard relative to air conditioned?,Direction,left and under,left
+427,Where is chair relative to printer?,Direction,right and under,left
+428,Where is shelf relative to table?,Direction,right and above,above
+429,Where is dug relative to supportplate?,Direction,left and above,front
+430,Where is bench relative to candles?,Direction,left and under,left
+431,Where is chair relative to book?,Direction,left and under,left
+432,Where is chair relative to monitor?,Direction,left and under,in
+433,Where is doorway relative to fire extinguished?,Direction,right and above,left
+434,Where is printer relative to door?,Direction,right and under,left
+435,Where is touch relative to dug?,Direction,left and above,l
+436,Where is berg relative to desk?,Direction,right and above,left
+437,Where is person relative to chair?,Direction,right and above,left
+438,Where is white board relative to bookcase?,Direction,right and under,right
+439,Where is table relative to window frame?,Direction,left and under,inside
+440,Where is bed relative to dresser?,Direction,right and above,left
+441,Where is windows relative to staircase?,Direction,right and under,above
+442,Where is bed relative to dresser?,Direction,right and above,left
+443,Where is table relative to painting?,Direction,right and under,left
+444,Where is printer relative to cabinet?,Direction,right and under,left
+445,"Where is door relative to shampoo, cream?",Direction,left and above,left
+446,Where is dry ease board relative to chair?,Direction,right and above,left
+447,Where is file cabinet relative to door?,Direction,left and under,left
+448,Where is picture relative to chair?,Direction,left and above,left
+449,Where is white board relative to tabel?,Direction,left and above,adj
+450,Where is chalk board relative to door?,Direction,left and above,left
+451,Where is tooth relative to table?,Direction,right and above,above
+452,Where is table relative to chair?,Direction,right and under,left
+453,Where is chair relative to square?,Direction,right and above,inside
+454,Where is dining room relative to chair?,Direction,left and above,in
+455,Where is tabletopandbase relative to chair?,Direction,left and under,above
+456,Where is cupboard relative to counter?,Direction,right and under,below
+457,Where is cupboard relative to led?,Direction,left and under,left
+458,Where is door relative to washbasinshelf?,Direction,left and under,left
+459,Where is backdrop relative to desktop computer tower?,Direction,right and under,be
+460,Where is bed relative to coat?,Direction,right and above,near
+461,Where is table relative to switch board?,Direction,right and under,right
+462,Where is table relative to trash can?,Direction,right and under,left
+463,Where is window relative to chair?,Direction,right and above,left
+464,Where is window relative to charles?,Direction,left and above,left
+465,Where is paper relative to light fixture?,Direction,right and under,ce
+466,Where is lamp relative to book?,Direction,right and under,left
+467,Where is curtain relative to carpet?,Direction,right and above,above
+468,Where is door relative to chairs?,Direction,left and above,left
+469,Where is bed relative to lamp shade?,Direction,left and under,left
+470,Where is window relative to of?,Direction,right and under,wall
+471,Where is white board relative to table?,Direction,right and above,right
+472,Where is chair relative to table?,Direction,right and under,around
+473,Where is chair relative to table?,Direction,left and under,around
+474,Where is table relative to window?,Direction,right and under,left
+475,Where is camp relative to table?,Direction,left and above,left
+476,Where is white board relative to board?,Direction,left and above,above
+477,Where is door relative to appliance?,Direction,right and above,left
+478,Where is bed relative to backward?,Direction,left and under,in
+479,Where is window relative to keyboard?,Direction,right and above,right
+480,Where is strippscreen relative to screen?,Direction,right and above,der
+481,Where is bed relative to pillow?,Direction,left and under,under
+482,Where is table relative to chair?,Direction,right and above,center
+483,Where is copier relative to trash bin?,Direction,right and above,left
+484,Where is chair relative to keyboard?,Direction,left and under,left
+485,Where is computer room relative to monitor?,Direction,left and above,below
+486,Where is picture relative to table top?,Direction,right and under,on
+487,Where is chair relative to table?,Direction,left and above,in
+488,Where is table relative to camp?,Direction,right and under,in
+489,Where is desk relative to blinds?,Direction,left and under,left
+490,Where is refrigerator relative to microwave?,Direction,right and under,right
+491,Where is toilet base n relative to towel?,Direction,left and under,left
+492,Where is screen relative to table?,Direction,right and above,above
+493,Where is storage container relative to archicle?,Direction,left and under,left
+494,Where is curtain relative to chair?,Direction,right and above,be
+495,Where is desk relative to picture?,Direction,right and under,front
+496,Where is book shelf relative to desk?,Direction,left and under,left
+497,Where is couche relative to fires?,Direction,right and above,next
+498,Where is bed relative to feeling?,Direction,left and under,ess
+499,Where is fridge relative to cabinet?,Direction,left and under,left
+500,Where is bed relative to bunkbed?,Direction,right and under,below
+501,Where is chair relative to woodenbaseboard?,Direction,right and above,on
+502,Where is speeches relative to plug point?,Direction,left and under,left
+503,Where is stand relative to paste?,Direction,right and under,counter
+504,Where is chair relative to cabinet?,Direction,left and under,left
+505,Where is toilet relative to i think?,Direction,right and under,right
+506,Where is sofa relative to chair?,Direction,left and above,left
+507,Where is desk relative to chair?,Direction,left and above,in
+508,Where is wooden bed stand relative to wooden rack?,Direction,left and under,left
+509,Where is chair relative to table?,Direction,left and under,around
+510,Where is table relative to chair?,Direction,right and above,in
+511,Where is poland springs cardboard box relative to table?,Direction,right and under,floor
+512,Where is bulletin board relative to counter-cabinets?,Direction,right and above,above
+513,Where is chair relative to eerasable board?,Direction,left and under,in
+514,Where is wooden cupboard relative to book shelf?,Direction,left and under,left
+515,Where is table relative to door?,Direction,right and under,left
+516,Where is filling cabinet relative to care?,Direction,left and above,left
+517,Where is partition relative to books?,Direction,right and under,partition
+518,Where is picture relative to window?,Direction,left and under,center
+519,Where is table relative to plate?,Direction,right and under,above
+520,Where is table relative to chair?,Direction,right and under,in
+521,Where is rolling chair relative to cupboard?,Direction,right and under,left
+522,Where is chair relative to glass?,Direction,left and under,left
+523,Where is chair relative to legand feel?,Direction,right and under,wall
+524,Where is water fountain relative to outlet?,Direction,left and above,left
+525,Where is bed relative to lamp?,Direction,right and under,above
+526,Where is doorway relative to cabinet?,Direction,right and under,left
+527,Where is table relative to chair?,Direction,right and under,sur
+528,Where is cupboard relative to cupboard with 80s shelves?,Direction,right and above,left
+529,Where is windows relative to and table?,Direction,left and above,floor
+530,Where is door relative to keeps?,Direction,left and under,the
+531,Where is carpet relative to door?,Direction,left and under,under
+532,Where is drawer relative to table?,Direction,left and above,under
+533,Where is chair relative to desk?,Direction,left and under,in
+534,Where is table relative to door?,Direction,right and under,left
+535,Where is slab relative to towel?,Direction,right and above,above
+536,Where is matterss relative to frame?,Direction,left and under,on
+537,Where is window relative to radiated?,Direction,right and above,adj
+538,Where is chair relative to matterss?,Direction,left,left
+539,Where is table relative to chair?,Direction,right and under,in
+540,Where is bed relative to chair?,Direction,right and under,in
+541,Where is bench relative to later?,Direction,right and above,left
+542,Where is chair relative to dry ease board?,Direction,left and under,front
+543,Where is chair relative to door?,Direction,left and under,left
+544,Where is chalk board relative to outlet?,Direction,right and above,left
+545,Where is window relative to chair?,Direction,right and above,be
+546,Where is support beam relative to shelf?,Direction,right and under,under
+547,Where is benchseated relative to round table?,Direction,right and above,around
+548,Where is cloth relative to cabin?,Direction,right and under,bed
+549,Where is window relative to door?,Direction,left and above,left
+550,Where is table relative to chair?,Direction,right and above,in
+551,Where is board relative to table?,Direction,left and above,on
+552,Where is trash can relative to table?,Direction,left and under,next
+553,Where is chair relative to door?,Direction,right and under,left
+554,Where is desk relative to metal divider?,Direction,left and under,left
+555,Where is cardboard relative to revolving chair?,Direction,left and under,under
+556,Where is chair relative to chair?,Direction,left and under,adj
+557,Where is desk relative to sidecart?,Direction,left and under,left
+558,"Where is file cabinet relative to printer copier,scanner?",Direction,right and under,right
+559,Where is chairs relative to clock?,Direction,right and under,around
+560,Where is table relative to file cabinet?,Direction,left and under,left
+561,Where is chair relative to table?,Direction,left and under,in
+562,Where is couche relative to coffee table?,Direction,right and under,right
+563,Where is protector stand relative to table?,Direction,left and above,on
+564,Where is book shelf relative to chair?,Direction,right and above,be
+565,Where is bed relative to merchandise?,Direction,right and under,in
+566,Where is desk relative to window?,Direction,right and under,left
+567,Where is bathingtub relative to towel?,Direction,right and under,left
+568,Where is windows relative to left door?,Direction,left and above,right
+569,Where is carpet relative to base board?,Direction,left and under,above
+570,Where is rug relative to couche?,Direction,under,under
+571,Where is recalling bin relative to phone?,Direction,left and under,left
+572,Where is table relative to chair?,Direction,left and under,left
+573,Where is table relative to lawton?,Direction,right and above,near
+574,Where is table relative to chair?,Direction,left and above,left
+575,Where is table relative to chair?,Direction,right and above,in
+576,Where is person relative to bucket?,Direction,left and under,left
+577,Where is table relative to chair?,Direction,right and under,around
+578,Where is carpet relative to sportsdrink?,Direction,right and under,floor
+579,Where is kiss room relative to chair?,Direction,left and above,left
+580,Where is table top relative to window?,Direction,right and under,left
+581,Where is cabinet relative to carpet?,Direction,left and under,above
+582,Where is chair relative to board?,Direction,right and under,front
+583,Where is chair relative to table?,Direction,right and above,in
+584,Where is cupboard relative to table?,Direction,right and under,left
+585,Where is glass pane relative to stairs?,Direction,right and above,left
+586,Where is table relative to chair?,Direction,left and above,center
+587,Where is milkrate relative to clatter?,Direction,left and under,h
+588,Where is bed relative to picture?,Direction,right and under,floor
+589,Where is to stand relative to of?,Direction,left and under,in
+590,Where is fridge relative to window?,Direction,right and under,right
+591,Where is chair relative to chairs?,Direction,right and above,am
+592,Where is window relative to rug?,Direction,right and above,above
+593,Where is planeable relative to yellowbricks?,Direction,left and under,in
+594,Where is doorway relative to sofa?,Direction,right and above,left
+595,Where is kitchenishwasher relative to trash?,Direction,left and under,left
+596,Where is board relative to chair?,Direction,left and above,in
+597,Where is window relative to chair?,Direction,right and above,left
+598,Where is sofa relative to table?,Direction,left and above,left
+599,Where is carpet relative to window?,Direction,left and under,under
+600,Where is desk relative to carpet?,Direction,right and above,on
+601,Where is carpet relative to table?,Direction,right and under,under
+602,Where is chair relative to table?,Direction,left,around
+603,Where is piano relative to picture?,Direction,right and under,right
+604,Where is bridge relative to light switch?,Direction,left and under,left
+605,Where is refrigeration relative to dish soap?,Direction,left and under,left
+606,Where is chair relative to door?,Direction,right and under,left
+607,Where is white board relative to poster?,Direction,right and above,right
+608,Where is door relative to later mountain?,Direction,right and above,left
+609,Where is display shelf relative to cceiling?,Direction,left and above,below
+610,Where is elevator relative to emergencyswitch?,Direction,right and under,left
+611,Where is table relative to mirror?,Direction,right and under,in
+612,Where is blinds relative to protector?,Direction,right and under,left
+613,Where is cabinet relative to shelf?,Direction,left and under,above
+614,Where is counter top relative to counters around?,Direction,right and under,above
+615,Where is bed relative to night stand?,Direction,right and under,bes
+616,Where is shelf relative to table?,Direction,right and above,above
+617,Where is couch relative to white board?,Direction,right and under,left
+618,Where is couche relative to window?,Direction,right and under,cou
+619,Where is book shelf relative to desk?,Direction,right and above,right
+620,Where is also relative to blinds?,Direction,right and under,ch
+621,Where is slab relative to wooden rack?,Direction,left and under,floor
+622,Where is cabinet relative to sign?,Direction,left and under,left
+623,Where is wooden cupboard relative to pillar?,Direction,right and under,the
+624,Where is table relative to window screen?,Direction,right and under,center
+625,Where is cabinet relative to door?,Direction,right and above,left
+626,Where is counter relative to chair?,Direction,right and above,in
+627,Where is fridge relative to cceiling?,Direction,left and under,above
+628,Where is chair relative to stand?,Direction,left and under,in
+629,Where is bookcase relative to dresser?,Direction,left and above,left
+630,Where is boxes relative to copy machine?,Direction,left and above,left
+631,Where is bookcase relative to chair?,Direction,right and above,left
+632,Where is door relative to electric stove?,Direction,left and above,left
+633,Where is table relative to foster?,Direction,right and under,left
+634,Where is curttain relative to plate?,Direction,right and above,on
+635,Where is cabinet relative to master?,Direction,right and above,under
+636,Where is box relative to door?,Direction,right and under,inside
+637,Where is picture relative to notice?,Direction,left and under,left
+638,Where is table relative to scarf?,Direction,right and under,on
+639,Where is door frame relative to showertub?,Direction,right and under,left
+640,Where is white board relative to window?,Direction,left,left
+641,Where is sofa relative to white board?,Direction,right and under,left
+642,Where is backlessouch relative to blanket?,Direction,right and under,right
+643,Where is table relative to vvent?,Direction,left and under,in
+644,Where is cupboard relative to paper?,Direction,left and above,be
+645,Where is touch relative to chair?,Direction,left and under,floor
+646,Where is desk relative to paper?,Direction,right and under,on
+647,Where is bed relative to dresser?,Direction,left and above,left
+648,Where is chair relative to shelf?,Direction,left and under,in
+649,Where is file cabinet relative to fire alarm?,Direction,left and under,left
+650,Where is desk relative to waste basket?,Direction,left and above,left
+651,Where is bookcase relative to cceiling?,Direction,right and under,below
+652,Where is chair relative to table?,Direction,left and under,left
+653,Where is bed frame relative to bedpillow?,Direction,right and above,under
+654,Where is rug relative to table?,Direction,right and under,under
+655,Where is table relative to book shelf?,Direction,right and under,in
+656,Where is table relative to switch?,Direction,left and under,front
+657,Where is bedroom relative to shipboard?,Direction,left and above,below
+658,Where is table relative to outlet power?,Direction,left and under,near
+659,Where is wardrobe relative to bag?,Direction,right and above,left
+660,Where is partition relative to carpet?,Direction,right,above
+661,Where is carpet relative to monitor?,Direction,right and under,under
+662,Where is table relative to blinds?,Direction,right and under,under
+663,Where is computer monitor relative to mouse?,Direction,left and above,front
+664,Where is cabinet relative to light?,Direction,right and above,above
+665,Where is chair relative to table?,Direction,left and above,front
+666,Where is of relative to fire alarm?,Direction,right and under,above
+667,Where is bathtubs relative to toilet?,Direction,left and above,left
+668,Where is touch relative to couche?,Direction,right and above,in
+669,Where is fourposterbed relative to lamp?,Direction,left and above,right
+670,Where is cupboard relative to chair?,Direction,left and above,left
+671,Where is metal cart relative to electrical outlet?,Direction,left and above,left
+672,What is the most prominent object?,Object Identification,dresser,bed
+673,What is the most prominent object?,Object Identification,file cabinet,ch
+674,What is the most prominent object?,Object Identification,counter,to
+675,What is the most prominent object?,Object Identification,couche,c
+676,What is the most prominent object?,Object Identification,bed,bed
+677,What is the most prominent object?,Object Identification,door,ch
+678,What is the most prominent object?,Object Identification,window,computer
+679,What is the most prominent object?,Object Identification,couche,s
+680,What is the most prominent object?,Object Identification,bench,c
+681,What is the most prominent object?,Object Identification,column,c
+682,What is the most prominent object?,Object Identification,chair,ch
+683,What is the most prominent object?,Object Identification,couche,c
+684,What is the most prominent object?,Object Identification,mirror,s
+685,What is the most prominent object?,Object Identification,quilt,bed
+686,What is the most prominent object?,Object Identification,bed,bed
+687,What is the most prominent object?,Object Identification,chair,bench
+688,What is the most prominent object?,Object Identification,bed frame,bed
+689,What is the most prominent object?,Object Identification,bed,bed
+690,What is the most prominent object?,Object Identification,sofa,c
+691,What is the most prominent object?,Object Identification,desk,des
+692,What is the most prominent object?,Object Identification,bed,bed
+693,What is the most prominent object?,Object Identification,bed,bed
+694,What is the most prominent object?,Object Identification,stall,tr
+695,What is the most prominent object?,Object Identification,cattle,bed
+696,What is the most prominent object?,Object Identification,carpet,table
+697,What is the most prominent object?,Object Identification,bookcase,tables
+698,What is the most prominent object?,Object Identification,carpet,ch
+699,What is the most prominent object?,Object Identification,matterss,bed
+700,What is the most prominent object?,Object Identification,cabinet sink,des
+701,What is the most prominent object?,Object Identification,sofa,c
+702,What is the most prominent object?,Object Identification,bed,bed
+703,What is the most prominent object?,Object Identification,door,fire
+704,What is the most prominent object?,Object Identification,table,tables
+705,What is the most prominent object?,Object Identification,carpet,mon
+706,What is the most prominent object?,Object Identification,extra,mon
+707,What is the most prominent object?,Object Identification,brown of a,c
+708,What is the most prominent object?,Object Identification,elbow,tables
+709,What is the most prominent object?,Object Identification,desk,mon
+710,What is the most prominent object?,Object Identification,bed,b
+711,What is the most prominent object?,Object Identification,vanity,to
+712,What is the most prominent object?,Object Identification,mirror,mir
+713,What is the most prominent object?,Object Identification,bed,bed
+714,What is the most prominent object?,Object Identification,window,table
+715,What is the most prominent object?,Object Identification,glass,picture
+716,What is the most prominent object?,Object Identification,bench,table
+717,What is the most prominent object?,Object Identification,chair,ch
+718,What is the most prominent object?,Object Identification,desk,ch
+719,What is the most prominent object?,Object Identification,bed,bed
+720,What is the most prominent object?,Object Identification,grape,des
+721,What is the most prominent object?,Object Identification,desk station,s
+722,What is the most prominent object?,Object Identification,chair,ch
+723,What is the most prominent object?,Object Identification,chair,ch
+724,What is the most prominent object?,Object Identification,dutch,table
+725,What is the most prominent object?,Object Identification,shelf,c
+726,What is the most prominent object?,Object Identification,trash can,ur
+727,What is the most prominent object?,Object Identification,bed,bed
+728,What is the most prominent object?,Object Identification,chair,flow
+729,What is the most prominent object?,Object Identification,window,sink
+730,What is the most prominent object?,Object Identification,couche,o
+731,What is the most prominent object?,Object Identification,bed spread,bed
+732,What is the most prominent object?,Object Identification,chair,ch
+733,What is the most prominent object?,Object Identification,sofa,ch
+734,What is the most prominent object?,Object Identification,carpet,ch
+735,What is the most prominent object?,Object Identification,couche,re
+736,What is the most prominent object?,Object Identification,frame,sink
+737,What is the most prominent object?,Object Identification,drawer,bed
+738,What is the most prominent object?,Object Identification,desk,table
+739,What is the most prominent object?,Object Identification,school fountain water,water
+740,What is the most prominent object?,Object Identification,plunged,ur
+741,What is the most prominent object?,Object Identification,door,s
+742,What is the most prominent object?,Object Identification,table,table
+743,What is the most prominent object?,Object Identification,one row of desk and chairs,s
+744,What is the most prominent object?,Object Identification,dresser,d
+745,What is the most prominent object?,Object Identification,table,table
+746,What is the most prominent object?,Object Identification,bed,bed
+747,What is the most prominent object?,Object Identification,column,table
+748,What is the most prominent object?,Object Identification,door,do
+749,What is the most prominent object?,Object Identification,bench,ch
+750,What is the most prominent object?,Object Identification,bed frame,bed
+751,What is the most prominent object?,Object Identification,chair,des
+752,What is the most prominent object?,Object Identification,ottoman,bed
+753,What is the most prominent object?,Object Identification,counter,fire
+754,What is the most prominent object?,Object Identification,folding table,table
+755,What is the most prominent object?,Object Identification,chair,ch
+756,What is the most prominent object?,Object Identification,bed,bed
+757,What is the most prominent object?,Object Identification,backpack,des
+758,What is the most prominent object?,Object Identification,to,te
+759,What is the most prominent object?,Object Identification,table,tables
+760,What is the most prominent object?,Object Identification,bed,bed
+761,What is the most prominent object?,Object Identification,bed,bed
+762,What is the most prominent object?,Object Identification,bed,l
+763,What is the most prominent object?,Object Identification,sofa,bed
+764,What is the most prominent object?,Object Identification,bed,bed
+765,What is the most prominent object?,Object Identification,chair,ch
+766,What is the most prominent object?,Object Identification,door,to
+767,What is the most prominent object?,Object Identification,table,project
+768,What is the most prominent object?,Object Identification,curtains,table
+769,What is the most prominent object?,Object Identification,ledge,printer
+770,What is the most prominent object?,Object Identification,storage cabinet,table
+771,What is the most prominent object?,Object Identification,chair,table
+772,What is the most prominent object?,Object Identification,tile,s
+773,What is the most prominent object?,Object Identification,bedstead,bed
+774,What is the most prominent object?,Object Identification,table,table
+775,What is the most prominent object?,Object Identification,dresser,bed
+776,What is the most prominent object?,Object Identification,drawers,bed
+777,What is the most prominent object?,Object Identification,bed,bed
+778,What is the most prominent object?,Object Identification,black board,ch
+779,What is the most prominent object?,Object Identification,fridge,ref
+780,What is the most prominent object?,Object Identification,cupboard,water
+781,What is the most prominent object?,Object Identification,couche,s
+782,What is the most prominent object?,Object Identification,rack,ch
+783,What is the most prominent object?,Object Identification,bed,bed
+784,What is the most prominent object?,Object Identification,table,tables
+785,What is the most prominent object?,Object Identification,chair,monitor
+786,What is the most prominent object?,Object Identification,window,ch
+787,What is the most prominent object?,Object Identification,ireland,is
+788,What is the most prominent object?,Object Identification,table,tables
+789,What is the most prominent object?,Object Identification,table,table
+790,What is the most prominent object?,Object Identification,window,table
+791,What is the most prominent object?,Object Identification,couch,red
+792,What is the most prominent object?,Object Identification,cabinet,table
+793,What is the most prominent object?,Object Identification,desk,computer
+794,What is the most prominent object?,Object Identification,clothes,computer
+795,What is the most prominent object?,Object Identification,glass door,ch
+796,What is the most prominent object?,Object Identification,chair,ch
+797,What is the most prominent object?,Object Identification,table,printer
+798,What is the most prominent object?,Object Identification,couche,um
+799,What is the most prominent object?,Object Identification,bed,bed
+800,What is the most prominent object?,Object Identification,bed,bed
+801,What is the most prominent object?,Object Identification,seaboard,l
+802,What is the most prominent object?,Object Identification,pillar,c
+803,What is the most prominent object?,Object Identification,carpet,ch
+804,What is the most prominent object?,Object Identification,couche,c
+805,What is the most prominent object?,Object Identification,table,table
+806,What is the most prominent object?,Object Identification,computer desk,mon
+807,What is the most prominent object?,Object Identification,electures eating,tables
+808,What is the most prominent object?,Object Identification,table,table
+809,What is the most prominent object?,Object Identification,table,tables
+810,What is the most prominent object?,Object Identification,carpet,table
+811,What is the most prominent object?,Object Identification,chair,table
+812,What is the most prominent object?,Object Identification,desk,ch
+813,What is the most prominent object?,Object Identification,bed,bed
+814,What is the most prominent object?,Object Identification,laserprinter (color),printer
+815,What is the most prominent object?,Object Identification,bed,bed
+816,What is the most prominent object?,Object Identification,toilet,to
+817,What is the most prominent object?,Object Identification,chair,ch
+818,What is the most prominent object?,Object Identification,bulletin board,table
+819,What is the most prominent object?,Object Identification,toilet,to
+820,What is the most prominent object?,Object Identification,chair,table
+821,What is the most prominent object?,Object Identification,bed,bed
+822,What is the most prominent object?,Object Identification,sofa,c
+823,What is the most prominent object?,Object Identification,table,table
+824,What is the most prominent object?,Object Identification,kettle,bed
+825,What is the most prominent object?,Object Identification,recycle can,pe
+826,What is the most prominent object?,Object Identification,bed,bed
+827,What is the most prominent object?,Object Identification,copy machine,printer
+828,What is the most prominent object?,Object Identification,armchair,tv
+829,What is the most prominent object?,Object Identification,couche,c
+830,What is the most prominent object?,Object Identification,window,s
+831,What is the most prominent object?,Object Identification,cupboard,ch
+832,What is the most prominent object?,Object Identification,bed,bed
+833,What is the most prominent object?,Object Identification,bed,bed
+834,What is the most prominent object?,Object Identification,water purifier,computer
+835,What is the most prominent object?,Object Identification,bed,bed
+836,What is the most prominent object?,Object Identification,bed,bed
+837,What is the most prominent object?,Object Identification,table,l
+838,What is the most prominent object?,Object Identification,blanket,bed
+839,What is the most prominent object?,Object Identification,bed,bed
+840,What is the most prominent object?,Object Identification,sofa,c
+841,What is the most prominent object?,Object Identification,window,ch
+842,What is the most prominent object?,Object Identification,sign,ch
+843,What is the most prominent object?,Object Identification,table,table
+844,What is the most prominent object?,Object Identification,bed,bed
+845,What is the most prominent object?,Object Identification,chair,ch
+846,What is the most prominent object?,Object Identification,mirror,b
+847,What is the most prominent object?,Object Identification,table,table
+848,What is the most prominent object?,Object Identification,bed,bed
+849,What is the most prominent object?,Object Identification,table,table
+850,What is the most prominent object?,Object Identification,rail,ch
+851,What is the most prominent object?,Object Identification,carpet,table
+852,What is the most prominent object?,Object Identification,table,mon
+853,What is the most prominent object?,Object Identification,bed,bed
+854,What is the most prominent object?,Object Identification,chair,table
+855,What is the most prominent object?,Object Identification,chair,table
+856,What is the most prominent object?,Object Identification,door,fire
+857,What is the most prominent object?,Object Identification,carpet,des
+858,What is the most prominent object?,Object Identification,table,gor
+859,What is the most prominent object?,Object Identification,chair,pod
+860,What is the most prominent object?,Object Identification,bed,bed
+861,What is the most prominent object?,Object Identification,vanity,bed
+862,What is the most prominent object?,Object Identification,table,bench
+863,What is the most prominent object?,Object Identification,tree,table
+864,What is the most prominent object?,Object Identification,chair,ch
+865,What is the most prominent object?,Object Identification,table,table
+866,What is the most prominent object?,Object Identification,toilet,to
+867,What is the most prominent object?,Object Identification,carpet,ch
+868,What is the most prominent object?,Object Identification,barbed,bed
+869,What is the most prominent object?,Object Identification,couche,table
+870,What is the most prominent object?,Object Identification,couch,c
+871,What is the most prominent object?,Object Identification,bed,bed
+872,What is the most prominent object?,Object Identification,table,c
+873,What is the most prominent object?,Object Identification,book shelf,table
+874,What is the most prominent object?,Object Identification,carpet,des
+875,What is the most prominent object?,Object Identification,bed,bed
+876,What is the most prominent object?,Object Identification,couche,c
+877,What is the most prominent object?,Object Identification,table,tables
+878,What is the most prominent object?,Object Identification,couche,c
+879,What is the most prominent object?,Object Identification,dresser,bed
+880,What is the most prominent object?,Object Identification,couche,c
+881,What is the most prominent object?,Object Identification,carpet,ch
+882,What is the most prominent object?,Object Identification,sofa,table
+883,What is the most prominent object?,Object Identification,chubby,s
+884,What is the most prominent object?,Object Identification,bed,bed
+885,What is the most prominent object?,Object Identification,mini fridge,c
+886,What is the most prominent object?,Object Identification,chair,back
+887,What is the most prominent object?,Object Identification,table,ch
+888,What is the most prominent object?,Object Identification,red couch,s
+889,What is the most prominent object?,Object Identification,chair,plant
+890,What is the most prominent object?,Object Identification,couche,c
+891,What is the most prominent object?,Object Identification,bed,bed
+892,What is the most prominent object?,Object Identification,chair,table
+893,What is the most prominent object?,Object Identification,sofa,picture
+894,What is the most prominent object?,Object Identification,bed,bed
+895,What is the most prominent object?,Object Identification,bed,bed
+896,What is the most prominent object?,Object Identification,bed,bed
+897,What is the most prominent object?,Object Identification,room divider,mirror
+898,What is the most prominent object?,Object Identification,bed,bed
+899,What is the most prominent object?,Object Identification,chair,ch
+900,What is the most prominent object?,Object Identification,window,table
+901,What is the most prominent object?,Object Identification,table,table
+902,What is the most prominent object?,Object Identification,sofa,table
+903,What is the most prominent object?,Object Identification,machine,computer
+904,What is the most prominent object?,Object Identification,counter,to
+905,What is the most prominent object?,Object Identification,bed,bed
+906,What is the most prominent object?,Object Identification,matterss,bed
+907,What is the most prominent object?,Object Identification,desk,computer
+908,What is the most prominent object?,Object Identification,couche,s
+909,What is the most prominent object?,Object Identification,window,ch
+910,What is the most prominent object?,Object Identification,chair,table
+911,What is the most prominent object?,Object Identification,bed,bed
+912,What is the most prominent object?,Object Identification,sofa,s
+913,What is the most prominent object?,Object Identification,window,bench
+914,What is the most prominent object?,Object Identification,sofa,s
+915,What is the most prominent object?,Object Identification,sofa,tv
+916,What is the most prominent object?,Object Identification,dresser,bed
+917,What is the most prominent object?,Object Identification,mirror,s
+918,What is the most prominent object?,Object Identification,bed,bed
+919,What is the most prominent object?,Object Identification,sign,c
+920,What is the most prominent object?,Object Identification,curttain,ch
+921,What is the most prominent object?,Object Identification,desk,des
+922,What is the most prominent object?,Object Identification,sofa,ch
+923,What is the most prominent object?,Object Identification,windows,table
+924,What is the most prominent object?,Object Identification,window,table
+925,What is the most prominent object?,Object Identification,sofa,s
+926,What is the most prominent object?,Object Identification,bed,bed
+927,What is the most prominent object?,Object Identification,miller,table
+928,What is the most prominent object?,Object Identification,bed,bed
+929,What is the most prominent object?,Object Identification,couche,s
+930,What is the most prominent object?,Object Identification,dresser,ch
+931,What is the most prominent object?,Object Identification,sofa,c
+932,What is the most prominent object?,Object Identification,cabinet,is
+933,What is the most prominent object?,Object Identification,door,sk
+934,What is the most prominent object?,Object Identification,bed,bed
+935,What is the most prominent object?,Object Identification,table,table
+936,What is the most prominent object?,Object Identification,bed,bed
+937,What is the most prominent object?,Object Identification,table,s
+938,What is the most prominent object?,Object Identification,sofa,s
+939,What is the most prominent object?,Object Identification,chair,cha
+940,What is the most prominent object?,Object Identification,chair,computer
+941,What is the most prominent object?,Object Identification,chair,ch
+942,What is the most prominent object?,Object Identification,window,table
+943,What is the most prominent object?,Object Identification,filing cabinet,table
+944,What is the most prominent object?,Object Identification,table,ch
+945,What is the most prominent object?,Object Identification,bed,bed
+946,What is the most prominent object?,Object Identification,bed,bed
+947,What is the most prominent object?,Object Identification,windows anddoors,bed
+948,What is the most prominent object?,Object Identification,bed,bed
+949,What is the most prominent object?,Object Identification,table,table
+950,What is the most prominent object?,Object Identification,table,c
+951,What is the most prominent object?,Object Identification,cot,bed
+952,What is the most prominent object?,Object Identification,ma,bench
+953,What is the most prominent object?,Object Identification,bed,bed
+954,What is the most prominent object?,Object Identification,couche,c
+955,What is the most prominent object?,Object Identification,couche,s
+956,What is the most prominent object?,Object Identification,couche,c
+957,What is the most prominent object?,Object Identification,refrigerator,ref
+958,What is the most prominent object?,Object Identification,matterss,bed
+959,What is the most prominent object?,Object Identification,bed,bed
+960,What is the most prominent object?,Object Identification,chair,se
+961,What is the most prominent object?,Object Identification,chair,table
+962,What is the most prominent object?,Object Identification, furniture,table
+963,What is the most prominent object?,Object Identification,couche,c
+964,What is the most prominent object?,Object Identification,fulton,s
+965,What is the most prominent object?,Object Identification,person,g
+966,What is the most prominent object?,Object Identification,book shelf,te
+967,What is the most prominent object?,Object Identification,chair,ch
+968,What is the most prominent object?,Object Identification,sofa,s
+969,What is the most prominent object?,Object Identification,bed,bed
+970,What is the most prominent object?,Object Identification,bed,l
+971,What is the most prominent object?,Object Identification,chair,ch
+972,What is the most prominent object?,Object Identification,chair,tr
+973,What is the most prominent object?,Object Identification,bed,bed
+974,What is the most prominent object?,Object Identification,chair,mirror
+975,What is the most prominent object?,Object Identification,brown couch,c
+976,What is the most prominent object?,Object Identification,table,table
+977,What is the most prominent object?,Object Identification,door,mon
+978,What is the most prominent object?,Object Identification,bed,bed
+979,What is the most prominent object?,Object Identification,bed,bed
+980,What is the most prominent object?,Object Identification,bed,bed
+981,What is the most prominent object?,Object Identification,desk,table
+982,What is the most prominent object?,Object Identification,table,table
+983,What is the most prominent object?,Object Identification,chair,computer
+984,What is the most prominent object?,Object Identification,bed,bed
+985,What is the most prominent object?,Object Identification,keyboard,mon
+986,What is the most prominent object?,Object Identification,flowers,table
+987,What is the most prominent object?,Object Identification,cabinet,is
+988,What is the most prominent object?,Object Identification,cabinet,table
+989,What is the most prominent object?,Object Identification,desk,ch
+990,What is the most prominent object?,Object Identification,table,ch
+991,What is the most prominent object?,Object Identification,bed,bed
+992,What is the most prominent object?,Object Identification,stairs,ch
+993,What is the most prominent object?,Object Identification,sofa,tv
+994,What is the most prominent object?,Object Identification,flower pot,picture
+995,What is the most prominent object?,Object Identification,chair,table
+996,What is the most prominent object?,Object Identification,chair,mon
+997,What is the most prominent object?,Object Identification,desk,ch
+998,What is the most prominent object?,Object Identification,carpet,table
+999,What is the most prominent object?,Object Identification,table,table
+1000,What is the most prominent object?,Object Identification,shelf,s
+1001,What is the most prominent object?,Object Identification,drawer,table
+1002,What is the most prominent object?,Object Identification,bed,bed
+1003,What is the most prominent object?,Object Identification,blanket,bed
+1004,What is the most prominent object?,Object Identification,desk,mon
+1005,What is the most prominent object?,Object Identification,desk,table
+1006,What is the most prominent object?,Object Identification,carpet,ch
+1007,What is the most prominent object?,Object Identification,table,table
+1008,What is the color of the window?,Color Identification,white,gray
+1009,What is the color of the cabinet?,Color Identification,white,white
+1010,What is the color of the recalling bin?,Color Identification,blue,b
+1011,What is the color of the bed?,Color Identification,white,green
+1012,What is the color of the bed?,Color Identification,red,p
+1013,What is the color of the table?,Color Identification,white,white
+1014,What is the color of the bowels?,Color Identification,white,white
+1015,What is the color of the chair?,Color Identification,black,brown
+1016,What is the color of the curttain?,Color Identification,green,flor
+1017,What is the color of the bed?,Color Identification,red,be
+1018,What is the color of the bed?,Color Identification,red,p
+1019,What is the color of the door?,Color Identification,white,white
+1020,What is the color of the fridge?,Color Identification,white,white
+1021,What is the color of the chair?,Color Identification,green,blue
+1022,What is the color of the shelf?,Color Identification,white,white
+1023,What is the color of the window?,Color Identification,white,white
+1024,What is the color of the shelf?,Color Identification,white,white
+1025,What is the color of the tables?,Color Identification,white,brown
+1026,What is the color of the sofa?,Color Identification,green,blue
+1027,What is the color of the cabinet?,Color Identification,brown,be
+1028,What is the color of the table?,Color Identification,white,white
+1029,What is the color of the room divider?,Color Identification,white,gray
+1030,What is the color of the table?,Color Identification,brown,brown
+1031,What is the color of the chalk board?,Color Identification,black,black
+1032,What is the color of the table?,Color Identification,white,white
+1033,What is the color of the chair?,Color Identification,red,red
+1034,What is the color of the black board?,Color Identification,black,black
+1035,What is the color of the table?,Color Identification,red,brown
+1036,What is the color of the slab?,Color Identification,white,gray
+1037,What is the color of the desk?,Color Identification,brown,be
+1038,What is the color of the chair?,Color Identification,brown,b
+1039,What is the color of the table?,Color Identification,brown,brown
+1040,What is the color of the couche?,Color Identification,white,white
+1041,What is the color of the tiles?,Color Identification,white,white
+1042,What is the color of the chalk board?,Color Identification,black,green
+1043,What is the color of the closet?,Color Identification,white,be
+1044,What is the color of the book shelf?,Color Identification,brown,brown
+1045,What is the color of the carpet?,Color Identification,multi,mult
+1046,What is the color of the door?,Color Identification,white,white
+1047,What is the color of the clock?,Color Identification,white,white
+1048,What is the color of the chair?,Color Identification,black,black
+1049,What is the color of the wash base?,Color Identification,white,black
+1050,What is the color of the carpet?,Color Identification,red,blue
+1051,What is the color of the window?,Color Identification,white,white
+1052,What is the color of the door?,Color Identification,brown,b
+1053,What is the color of the table?,Color Identification,white,white
+1054,What is the color of the dry ease board?,Color Identification,white,white
+1055,What is the color of the counter top?,Color Identification,white,gray
+1056,What is the color of the towel?,Color Identification,white,white
+1057,What is the color of the chair?,Color Identification,blue,blue
+1058,What is the color of the window?,Color Identification,white,white
+1059,What is the color of the sofa?,Color Identification,brown,red
+1060,What is the color of the step 1?,Color Identification,gray,gray
+1061,What is the color of the door?,Color Identification,brown,brown
+1062,What is the color of the poster?,Color Identification,black,blue
+1063,What is the color of the table?,Color Identification,white,be
+1064,What is the color of the wash base?,Color Identification,white,be
+1065,What is the color of the cushion chair?,Color Identification,blue,blue
+1066,What is the color of the couche?,Color Identification,brown,b
+1067,What is the color of the fainting?,Color Identification,white,blue
+1068,What is the color of the window?,Color Identification,white,white
+1069,What is the color of the tables?,Color Identification,brown,brown
+1070,What is the color of the chair?,Color Identification,red,red
+1071,What is the color of the table?,Color Identification,brown,brown
+1072,What is the color of the shelf?,Color Identification,brown,brown
+1073,What is the color of the towel?,Color Identification,brown,b
+1074,What is the color of the dresser?,Color Identification,white,white
+1075,What is the color of the desk?,Color Identification,brown,brown
+1076,What is the color of the counter top?,Color Identification,gray,green
+1077,What is the color of the window?,Color Identification,clear,white
+1078,What is the color of the larges?,Color Identification,white,blue
+1079,What is the color of the closet?,Color Identification,white,white
+1080,What is the color of the chair?,Color Identification,red,red
+1081,What is the color of the table?,Color Identification,brown,brown
+1082,What is the color of the sofa pillow?,Color Identification,white,b
+1083,What is the color of the table?,Color Identification,red,brown
+1084,What is the color of the bed?,Color Identification,red,p
+1085,What is the color of the kitchen cabinet?,Color Identification,brown,be
+1086,What is the color of the table?,Color Identification,brown,brown
+1087,What is the color of the door?,Color Identification,brown,brown
+1088,What is the color of the bed?,Color Identification,white,white
+1089,What is the color of the door?,Color Identification,white,white
+1090,What is the color of the door?,Color Identification,brown,brown
+1091,What is the color of the bedsheet?,Color Identification,white,white
+1092,What is the color of the lawton?,Color Identification,blue,be
+1093,What is the color of the table?,Color Identification,brown,b
+1094,What is the color of the cot?,Color Identification,white,white
+1095,What is the color of the glass partition?,Color Identification,clear,clear
+1096,What is the color of the tub?,Color Identification,white,white
+1097,What is the color of the desk?,Color Identification,brown,b
+1098,What is the color of the chair gallery?,Color Identification,brown,b
+1099,What is the color of the white board?,Color Identification,white,white
+1100,What is the color of the cupboard?,Color Identification,brown,brown
+1101,What is the color of the bed?,Color Identification,red,white
+1102,What is the color of the door?,Color Identification,brown,brown
+1103,What is the color of the door?,Color Identification,white,white
+1104,What is the color of the roof?,Color Identification,white,be
+1105,What is the color of the  furniture?,Color Identification,brown,be
+1106,What is the color of the dining table?,Color Identification,white,white
+1107,What is the color of the chair?,Color Identification,tan,be
+1108,What is the color of the refrigerator?,Color Identification,white,white
+1109,What is the color of the shelf?,Color Identification,brown,b
+1110,What is the color of the book stand?,Color Identification,brown,brown
+1111,What is the color of the window?,Color Identification,white,white
+1112,What is the color of the window?,Color Identification,brown,white
+1113,What is the color of the table?,Color Identification,brown,brown
+1114,What is the color of the bed cover?,Color Identification,brown,gray
+1115,What is the color of the desk?,Color Identification,black,black
+1116,What is the color of the ceiling?,Color Identification,brown,white
+1117,What is the color of the bed?,Color Identification,none,pink
+1118,What is the color of the counter top?,Color Identification,gray,b
+1119,What is the color of the bed?,Color Identification,brown,brown
+1120,What is the color of the cabinet?,Color Identification,brown,brown
+1121,What is the color of the window?,Color Identification,black,gray
+1122,What is the color of the white board?,Color Identification,white,white
+1123,What is the color of the cochwithbed?,Color Identification,white,white
+1124,What is the color of the cabinet?,Color Identification,brown,b
+1125,What is the color of the table?,Color Identification,brown,brown
+1126,What is the color of the changing table?,Color Identification,white,white
+1127,What is the color of the laptop?,Color Identification,silver,silver
+1128,What is the color of the table?,Color Identification,white,white
+1129,What is the color of the table?,Color Identification,gray,red
+1130,What is the color of the door?,Color Identification,brown,brown
+1131,What is the color of the shelves?,Color Identification,brown,b
+1132,What is the color of the window?,Color Identification,white,white
+1133,What is the color of the glass door?,Color Identification,clear,green
+1134,What is the color of the i think?,Color Identification,white,white
+1135,What is the color of the shelf?,Color Identification,white,white
+1136,What is the color of the bed?,Color Identification,white,white
+1137,What is the color of the armchair?,Color Identification,brown,b
+1138,What is the color of the window?,Color Identification,white,white
+1139,What is the color of the window?,Color Identification,brown,white
+1140,What is the color of the white board?,Color Identification,white,white
+1141,What is the color of the door?,Color Identification,brown,brown
+1142,What is the color of the desk?,Color Identification,brown,brown
+1143,What is the color of the dresser?,Color Identification,brown,be
+1144,What is the color of the gasogene?,Color Identification,white,white
+1145,What is the color of the door?,Color Identification,white,red
+1146,What is the color of the mirror?,Color Identification,brown,sil
+1147,What is the color of the window?,Color Identification,white,white
+1148,What is the color of the board?,Color Identification,brown,b
+1149,What is the color of the wood?,Color Identification,brown,brown
+1150,What is the color of the toilet?,Color Identification,white,white
+1151,What is the color of the multifunctionprinter-copier?,Color Identification,black,white
+1152,What is the color of the comforter?,Color Identification,green,white
+1153,What is the color of the white board?,Color Identification,white,white
+1154,What is the color of the couche?,Color Identification,white,white
+1155,What is the color of the door?,Color Identification,white,white
+1156,What is the color of the door?,Color Identification,brown,white
+1157,What is the color of the table?,Color Identification,white,white
+1158,What is the color of the operator?,Color Identification,white,blue
+1159,What is the color of the cabinet?,Color Identification,brown,brown
+1160,What is the color of the door?,Color Identification,brown,brown
+1161,What is the color of the sofa?,Color Identification,brown,red
+1162,What is the color of the table?,Color Identification,brown,b
+1163,What is the color of the cupboards?,Color Identification,brown,be
+1164,What is the color of the chair?,Color Identification,black,black
+1165,What is the color of the sofa?,Color Identification,green,green
+1166,What is the color of the table?,Color Identification,brown,brown
+1167,What is the color of the couche?,Color Identification,white,be
+1168,What is the color of the bed?,Color Identification,red,gray
+1169,What is the color of the mirror?,Color Identification,clear,black
+1170,What is the color of the dresser?,Color Identification,brown,brown
+1171,What is the color of the door frame?,Color Identification,white,white
+1172,What is the color of the chalk board?,Color Identification,white,green
+1173,What is the color of the basket?,Color Identification,green,green
+1174,What is the color of the wooden rack?,Color Identification,white,white
+1175,What is the color of the shade?,Color Identification,white,white
+1176,What is the color of the table?,Color Identification,brown,b
+1177,What is the color of the table?,Color Identification,white,white
+1178,What is the color of the chair?,Color Identification,brown,brown
+1179,What is the color of the blanket?,Color Identification,yellow,white
+1180,What is the color of the door?,Color Identification,brown,brown
+1181,What is the color of the closet?,Color Identification,white,white
+1182,What is the color of the black board?,Color Identification,black,green
+1183,What is the color of the sofa?,Color Identification,white,white
+1184,What is the color of the bed?,Color Identification,white,white
+1185,What is the color of the sign?,Color Identification,white,white
+1186,What is the color of the shelf?,Color Identification,blue,brown
+1187,What is the color of the bed?,Color Identification,white,white
+1188,What is the color of the bed?,Color Identification,red,red
+1189,What is the color of the plant?,Color Identification,green,green
+1190,What is the color of the cabinet?,Color Identification,brown,brown
+1191,What is the color of the tiles?,Color Identification,white,white
+1192,What is the color of the door?,Color Identification,white,white
+1193,What is the color of the chair?,Color Identification,brown,white
+1194,What is the color of the table?,Color Identification,brown,brown
+1195,What is the color of the chair?,Color Identification,black,b
+1196,What is the color of the window?,Color Identification,brown,white
+1197,What is the color of the toilet?,Color Identification,white,white
+1198,What is the color of the door?,Color Identification,white,white
+1199,What is the color of the bathtubs?,Color Identification,white,white
+1200,What is the color of the shelf?,Color Identification,brown,b
+1201,What is the color of the coat track?,Color Identification,black,red
+1202,What is the color of the door?,Color Identification,brown,brown
+1203,What is the color of the counter?,Color Identification,brown,b
+1204,What is the color of the counter?,Color Identification,brown,b
+1205,What is the color of the projector screen?,Color Identification,white,white
+1206,What is the color of the carpet?,Color Identification,brown,b
+1207,What is the color of the bathtub?,Color Identification,white,white
+1208,What is the color of the table?,Color Identification,white,be
+1209,What is the color of the mirror?,Color Identification,brown,sil
+1210,What is the color of the projector screen?,Color Identification,white,white
+1211,What is the color of the table?,Color Identification,white,white
+1212,What is the color of the door?,Color Identification,black,white
+1213,What is the color of the dresser?,Color Identification,brown,brown
+1214,What is the color of the table?,Color Identification,brown,brown
+1215,What is the color of the door?,Color Identification,white,white
+1216,What is the color of the fridge?,Color Identification,white,white
+1217,What is the color of the backdropsheet?,Color Identification,white,white
+1218,What is the color of the window?,Color Identification,white,white
+1219,What is the color of the cupboard?,Color Identification,tan,be
+1220,What is the color of the bed?,Color Identification,white,red
+1221,What is the color of the table?,Color Identification,brown,brown
+1222,What is the color of the cupboard?,Color Identification,brown,white
+1223,What is the color of the table?,Color Identification,black,black
+1224,What is the color of the to?,Color Identification,white,sil
+1225,What is the color of the door?,Color Identification,white,white
+1226,What is the color of the window?,Color Identification,white,white
+1227,What is the color of the western toilet?,Color Identification,white,white
+1228,What is the color of the stool?,Color Identification,black,black
+1229,What is the color of the door?,Color Identification,silver,sil
+1230,What is the color of the table?,Color Identification,brown,brown
+1231,What is the color of the books shelf?,Color Identification,white,be
+1232,What is the color of the closet?,Color Identification,brown,brown
+1233,What is the color of the stool?,Color Identification,brown,b
+1234,What is the color of the door?,Color Identification,white,white
+1235,What is the color of the shelf?,Color Identification,brown,brown
+1236,What is the color of the table?,Color Identification,brown,brown
+1237,What is the color of the staircase?,Color Identification,brown,gray
+1238,What is the color of the cabinet?,Color Identification,brown,brown
+1239,What is the color of the door?,Color Identification,white,brown
+1240,What is the color of the desk?,Color Identification,brown,brown
+1241,What is the color of the tables?,Color Identification,brown,b
+1242,What is the color of the basin?,Color Identification,white,white
+1243,What is the color of the table?,Color Identification,white,red
+1244,What is the color of the sofa?,Color Identification,brown,b
+1245,What is the color of the chairs?,Color Identification,pink,red
+1246,What is the color of the chamber?,Color Identification,white,white
+1247,What is the color of the curttain?,Color Identification,white,white
+1248,What is the color of the couche?,Color Identification,pink,green
+1249,What is the color of the chair?,Color Identification,gray,black
+1250,What is the color of the book shelf?,Color Identification,brown,b
+1251,What is the color of the column?,Color Identification,yellow,gray
+1252,What is the color of the couches?,Color Identification,gray,be
+1253,What is the color of the cabinet?,Color Identification,brown,light
+1254,What is the color of the chair?,Color Identification,red,red
+1255,What is the color of the window?,Color Identification,black,white
+1256,What is the color of the bathtubs?,Color Identification,white,white
+1257,What is the color of the chairs?,Color Identification,red,red
+1258,What is the color of the door?,Color Identification,white,white
+1259,What is the color of the chair?,Color Identification,black,black
+1260,What is the color of the curtain?,Color Identification,gray,gray
+1261,What is the color of the sofa?,Color Identification,blue,blue
+1262,What is the color of the table?,Color Identification,brown,brown
+1263,What is the color of the chair?,Color Identification,tan,be
+1264,What is the color of the picture?,Color Identification,blue,blue
+1265,What is the color of the i think?,Color Identification,white,white
+1266,What is the color of the curttain?,Color Identification,white,white
+1267,What is the color of the white board?,Color Identification,white,white
+1268,What is the color of the projector screen?,Color Identification,white,white
+1269,What is the color of the table?,Color Identification,white,b
+1270,What is the color of the painting?,Color Identification,red,b
+1271,What is the color of the table?,Color Identification,gray,gray
+1272,What is the color of the shelf?,Color Identification,brown,brown
+1273,What is the color of the halfway?,Color Identification,white,gray
+1274,What is the color of the dresser?,Color Identification,brown,brown
+1275,What is the color of the white board?,Color Identification,white,white
+1276,What is the color of the desk?,Color Identification,white,gray
+1277,What is the color of the shelf?,Color Identification,white,white
+1278,What is the color of the table?,Color Identification,white,white
+1279,What is the color of the chair?,Color Identification,red,red
+1280,What is the color of the cut board?,Color Identification,brown,b
+1281,What is the color of the podium?,Color Identification,brown,b
+1282,What is the color of the table?,Color Identification,white,brown
+1283,What is the color of the cushion chair?,Color Identification,blue,blue
+1284,What is the color of the table?,Color Identification,white,white
+1285,What is the color of the door?,Color Identification,white,white
+1286,What is the color of the picture?,Color Identification,white,white
+1287,What is the color of the table?,Color Identification,brown,brown
+1288,What is the color of the door?,Color Identification,white,white
+1289,What is the color of the table?,Color Identification,white,white
+1290,What is the color of the window?,Color Identification,white,white
+1291,What is the color of the picture frame?,Color Identification,black,b
+1292,What is the color of the chair?,Color Identification,brown,gray
+1293,What is the color of the window?,Color Identification,clear,blue
+1294,What is the color of the i think?,Color Identification,white,green
+1295,What is the color of the door?,Color Identification,white,white
+1296,What is the color of the grapes?,Color Identification,green,red
+1297,What is the color of the cupboard?,Color Identification,brown,gray
+1298,What is the color of the desk?,Color Identification,white,white
+1299,What is the color of the folding seat and desk?,Color Identification,red,red
+1300,What is the color of the counter?,Color Identification,brown,b
+1301,What is the color of the table?,Color Identification,black,clear
+1302,What is the color of the white board?,Color Identification,white,white
+1303,What is the color of the curtains?,Color Identification,brown,gray
+1304,What is the color of the trash can?,Color Identification,blue,blue
+1305,What is the color of the sofa?,Color Identification,tan,white
+1306,What is the color of the door?,Color Identification,white,white
+1307,What is the color of the closet?,Color Identification,white,white
+1308,What is the color of the table?,Color Identification,white,white
+1309,What is the color of the curttain?,Color Identification,brown,green
+1310,What is the color of the window?,Color Identification,white,white
+1311,What is the color of the scanned machine?,Color Identification,gray,b
+1312,What is the color of the chair?,Color Identification,black,black
+1313,What is the color of the table?,Color Identification,brown,brown
+1314,What is the color of the touch?,Color Identification,white,pink
+1315,What is the color of the chair?,Color Identification,red,red
+1316,What is the color of the lower cabinet?,Color Identification,brown,brown
+1317,What is the color of the to stand?,Color Identification,brown,light
+1318,What is the color of the table?,Color Identification,brown,brown
+1319,What is the color of the board?,Color Identification,white,brown
+1320,What is the color of the room?,Color Identification,white,white
+1321,What is the color of the window?,Color Identification,white,white
+1322,What is the color of the shelf?,Color Identification,silver,b
+1323,What is the color of the curttain?,Color Identification,white,white
+1324,What is the color of the bed?,Color Identification,white,b
+1325,What is the color of the showerenclosure?,Color Identification,white,white
+1326,What is the color of the computer desk?,Color Identification,brown,brown
+1327,What is the color of the shelf?,Color Identification,white,white
+1328,What is the color of the chair?,Color Identification,tan,be
+1329,What is the color of the barrier?,Color Identification,white,white
+1330,What is the color of the closet?,Color Identification,white,white
+1331,What is the color of the table?,Color Identification,black,black
+1332,What is the color of the white board?,Color Identification,white,white
+1333,What is the color of the microwave?,Color Identification,white,white
+1334,What is the color of the table?,Color Identification,white,be
+1335,What is the color of the desk?,Color Identification,brown,brown
+1336,What is the color of the bench?,Color Identification,brown,brown
+1337,What is the color of the table?,Color Identification,green,white
+1338,What is the color of the mirror?,Color Identification,brown,gold
+1339,What is the color of the cabinet?,Color Identification,white,white
+1340,What is the color of the door?,Color Identification,brown,b
+1341,What is the color of the copy machine?,Color Identification,white,white
+1342,What is the color of the sofa?,Color Identification,tan,be
+1343,What is the color of the tree?,Color Identification,green,green
+1344,What is the color of the track 1?,Color Identification,red,brown
+1345,What is closest to the couche?,Proximity,what?,table
+1346,What is closest to the book shelf?,Proximity,book,ch
+1347,What is closest to the cabinet?,Proximity,counter,s
+1348,What is closest to the window?,Proximity,blinds,ch
+1349,What is closest to the door?,Proximity,wire,ref
+1350,What is closest to the bed?,Proximity,curtain,bag
+1351,What is closest to the couche?,Proximity,box,so
+1352,What is closest to the cupboard?,Proximity,lamp,l
+1353,What is closest to the steel rods?,Proximity,table,s
+1354,What is closest to the cabinet?,Proximity,table top,s
+1355,What is closest to the door?,Proximity,door frame,shopping
+1356,What is closest to the table?,Proximity,chair,ch
+1357,What is closest to the book self?,Proximity,light switch,fire
+1358,What is closest to the stand?,Proximity,stand',f
+1359,What is closest to the glass door?,Proximity,switch board,f
+1360,What is closest to the set of three connected students?,Proximity,set of three connected students,a
+1361,What is closest to the table?,Proximity,couche,ch
+1362,What is closest to the table?,Proximity,cabinet,tr
+1363,What is closest to the fridge?,Proximity,handle,counter
+1364,What is closest to the i think?,Proximity,fauces,b
+1365,What is closest to the table top?,Proximity,news paper,o
+1366,What is closest to the shelf?,Proximity,machine,wall
+1367,What is closest to the table?,Proximity,tables,plant
+1368,What is closest to the counter top?,Proximity,canopener,tr
+1369,What is closest to the office room?,Proximity,stool,tr
+1370,What is closest to the door?,Proximity,shirt,bag
+1371,What is closest to the door?,Proximity,trash,tr
+1372,What is closest to the table?,Proximity,table,ch
+1373,What is closest to the trash can?,Proximity,recycle bin,wall
+1374,What is closest to the chair?,Proximity,printer,file
+1375,What is closest to the toilet?,Proximity,theater,to
+1376,What is closest to the cabinet?,Proximity,counter,mic
+1377,What is closest to the desk?,Proximity,mouse,l
+1378,What is closest to the ceiling?,Proximity,copymachine,s
+1379,What is closest to the chair?,Proximity,desk,des
+1380,What is closest to the chair?,Proximity,table,table
+1381,What is closest to the chair?,Proximity,desk,tr
+1382,What is closest to the white board?,Proximity,chair,table
+1383,What is closest to the cabinet?,Proximity,door,tr
+1384,What is closest to the woodcock?,Proximity,dust bin,tr
+1385,What is closest to the laboratory bench?,Proximity,bottle,s
+1386,What is closest to the workbench?,Proximity,radio,tr
+1387,What is closest to the table?,Proximity,remote,b
+1388,What is closest to the bookcase?,Proximity,bag,wall
+1389,What is closest to the shelf?,Proximity,box,books
+1390,What is closest to the curtain?,Proximity,table,ch
+1391,What is closest to the chair?,Proximity,table,des
+1392,What is closest to the shade?,Proximity,shelf,des
+1393,What is closest to the shelf?,Proximity,monitor,plant
+1394,What is closest to the wooden table?,Proximity,bucket,tr
+1395,What is closest to the light?,Proximity,book,books
+1396,What is closest to the carpet?,Proximity,shoe,bag
+1397,What is closest to the electrical box?,Proximity,fire alarm,s
+1398,What is closest to the chair?,Proximity,door,board
+1399,What is closest to the table?,Proximity,chair,ch
+1400,What is closest to the electronic equipment?,Proximity,glass,ref
+1401,What is closest to the board?,Proximity,device,tr
+1402,What is closest to the steel?,Proximity,wooden,exit
+1403,What is closest to the closet?,Proximity,bag,fan
+1404,What is closest to the table?,Proximity,box,ch
+1405,What is closest to the cabinet?,Proximity,counter,mic
+1406,What is closest to the chairs?,Proximity,window,wall
+1407,What is closest to the gas stove?,Proximity,other home use,mic
+1408,What is closest to the chalkboardlayer?,Proximity,chalkboard handle,ch
+1409,What is closest to the desktops?,Proximity,chair,ch
+1410,What is closest to the water fountain?,Proximity,fauces,s
+1411,What is closest to the toilet?,Proximity,toilet paper dispense,sink
+1412,What is closest to the chair?,Proximity,trash can,sto
+1413,What is closest to the table top?,Proximity,chair,ch
+1414,What is closest to the chair?,Proximity,table,table
+1415,What is closest to the cloth?,Proximity,dark area,des
+1416,What is closest to the chair?,Proximity,drawer,des
+1417,What is closest to the table?,Proximity,microphone,b
+1418,What is closest to the chair?,Proximity,outlet,des
+1419,What is closest to the cart?,Proximity,pail,d
+1420,What is closest to the shelf?,Proximity,paper bag,ce
+1421,What is closest to the refrigerator?,Proximity,sundry basket,basket
+1422,What is closest to the electrical device?,Proximity,electrical device,mic
+1423,What is closest to the coat?,Proximity,box,des
+1424,What is closest to the black board?,Proximity,board,ch
+1425,What is closest to the bookcase?,Proximity,chair,table
+1426,What is closest to the redsheet?,Proximity,sheet,l
+1427,What is closest to the printer?,Proximity,table,tr
+1428,What is closest to the curttain?,Proximity,theater,b
+1429,What is closest to the bridge?,Proximity,note,tr
+1430,What is closest to the desk?,Proximity,chair,ch
+1431,What is closest to the bottom?,Proximity,keyboard,tr
+1432,What is closest to the column?,Proximity,outlet,ch
+1433,What is closest to the table?,Proximity,chair,ch
+1434,What is closest to the fridge?,Proximity,oven,mic
+1435,What is closest to the table?,Proximity,chair,ch
+1436,What is closest to the couche?,Proximity,curttain,l
+1437,What is closest to the stand with shelf?,Proximity,bucket,ch
+1438,What is closest to the black board?,Proximity,helmet,des
+1439,What is closest to the door with glass?,Proximity,clock,clock
+1440,What is closest to the file cart?,Proximity,desk,pr
+1441,What is closest to the stairs?,Proximity,cabinet,pr
+1442,What is closest to the table?,Proximity,chair,ch
+1443,What is closest to the ceiling unit?,Proximity,shelf,project
+1444,What is closest to the curtains?,Proximity,computer,pod
+1445,What is closest to the closet?,Proximity,pipeset,to
+1446,What is closest to the door frame?,Proximity,tissuepaper dispenser,to
+1447,What is closest to the window?,Proximity,desk,tv
+1448,What is closest to the pocket?,Proximity,sticks,sto
+1449,What is closest to the table?,Proximity,chair,ch
+1450,What is closest to the desk?,Proximity,desk,wall
+1451,What is closest to the desk?,Proximity,leg,wall
+1452,What is closest to the bathtubs?,Proximity,cloth,s
+1453,What is closest to the chair?,Proximity,table,wall
+1454,What is closest to the cupboard?,Proximity,electronic equipment,ref
+1455,What is closest to the dresser?,Proximity,electrical outlet,s
+1456,What is closest to the tableteniscort?,Proximity,light,s
+1457,What is closest to the table?,Proximity,chair,s
+1458,What is closest to the work table?,Proximity,monitor,l
+1459,What is closest to the bed?,Proximity,comforter,books
+1460,What is closest to the younger?,Proximity,table l map,so
+1461,What is closest to the white board?,Proximity,box,s
+1462,What is closest to the counter?,Proximity,white board,ch
+1463,What is closest to the board?,Proximity,paper,bullet
+1464,What is closest to the metal sheet withstand?,Proximity,metal sheet,e
+1465,What is closest to the table?,Proximity,mirror,box
+1466,What is closest to the to?,Proximity,paper,tv
+1467,What is closest to the table?,Proximity,their,ch
+1468,What is closest to the shower curtain?,Proximity,tub,to
+1469,What is closest to the chair?,Proximity,plug point,tr
+1470,What is closest to the white board?,Proximity,stand,ch
+1471,What is closest to the desk?,Proximity,desk,wall
+1472,What is closest to the armchair?,Proximity,armchair,table
+1473,What is closest to the plastic case?,Proximity,metal cabinet,s
+1474,What is closest to the chair?,Proximity,table,table
+1475,What is closest to the tilettub?,Proximity,tap,wall
+1476,What is closest to the final?,Proximity,base board,ur
+1477,What is closest to the safe?,Proximity,rollingtable,ch
+1478,What is closest to the shelf?,Proximity,storage unit,tr
+1479,What is closest to the sofa?,Proximity,wooden table,books
+1480,What is closest to the door?,Proximity,handle,tr
+1481,What is closest to the window?,Proximity,curttain,l
+1482,What is closest to the carpet?,Proximity,man,ch
+1483,What is closest to the metal dresser?,Proximity,box,tr
+1484,What is closest to the cabinet?,Proximity,despite,computer
+1485,What is closest to the board?,Proximity,door,ch
+1486,What is closest to the table?,Proximity,book,phone
+1487,What is closest to the cubicle?,Proximity,desk,white
+1488,What is closest to the electrical device?,Proximity,water purifier,water
+1489,What is closest to the file cabinet?,Proximity,cabinet opened,ch
+1490,What is closest to the sofa?,Proximity,pillow,tv
+1491,What is closest to the rug?,Proximity,table,ch
+1492,What is closest to the chair?,Proximity,table,table
+1493,What is closest to the book self?,Proximity,took,sink
+1494,What is closest to the window?,Proximity,window,tr
+1495,What is closest to the curttain?,Proximity,chairs,blue
+1496,What is closest to the chair?,Proximity,desk,wall
+1497,What is closest to the table?,Proximity,chair,te
+1498,What is closest to the chair?,Proximity,cabinet pulls,wall
+1499,What is closest to the couche?,Proximity,table,so
+1500,What is closest to the chair?,Proximity,desk,des
+1501,What is closest to the chairs?,Proximity,curttain,table
+1502,What is closest to the chair?,Proximity,cloth,bag
+1503,What is closest to the curtain?,Proximity,printer,l
+1504,What is closest to the sofa?,Proximity,desk,des
+1505,What is closest to the board stand?,Proximity,chair,ch
+1506,What is closest to the screen?,Proximity,table,c
+1507,What is closest to the couch?,Proximity,table,table
+1508,What is closest to the stand?,Proximity,bookwithpaper,ch
+1509,What is closest to the cupboard?,Proximity,rolling chair,des
+1510,What is closest to the shelf?,Proximity,basket,s
+1511,What is closest to the table?,Proximity,table,cart
+1512,What is closest to the screen?,Proximity,box,s
+1513,What is closest to the backpack?,Proximity,desk chair (front),wall
+1514,What is closest to the stool?,Proximity,window,table
+1515,What is closest to the storage box?,Proximity,paper,d
+1516,What is closest to the fridge?,Proximity,fridge,v
+1517,What is closest to the doorway?,Proximity,self,clos
+1518,What is closest to the bed?,Proximity,pillow,table
+1519,What is closest to the office?,Proximity,chair,des
+1520,What is closest to the chair?,Proximity,table,table
+1521,What is closest to the door?,Proximity,chair,ch
+1522,What is closest to the work board?,Proximity,poster,bench
+1523,What is closest to the cabinet?,Proximity,chair,ch
+1524,What is closest to the desk?,Proximity,window,ch
+1525,What is closest to the desk?,Proximity,notepads,l
+1526,What is closest to the blanket?,Proximity,fruit,rug
+1527,What is closest to the door?,Proximity,door hinge,ch
+1528,What is closest to the partition?,Proximity,table,ch
+1529,What is closest to the desk table?,Proximity,paper,ch
+1530,What is closest to the cabinet?,Proximity,counter,sc
+1531,What is closest to the black board?,Proximity,chair,ch
+1532,What is closest to the window?,Proximity,windowpanes,table
+1533,What is closest to the desk chair?,Proximity,laptop battery,tr
+1534,What is closest to the bookcase?,Proximity,book,l
+1535,What is closest to the book shelf?,Proximity,lamp,hat
+1536,What is closest to the trash can?,Proximity,bulletin board,blue
+1537,What is closest to the table?,Proximity,chord,ch
+1538,What is closest to the screen?,Proximity,table,ch
+1539,What is closest to the shelf?,Proximity,keyboard,computer
+1540,What is closest to the step 1?,Proximity,step 1,st
+1541,What is closest to the pipes?,Proximity,light,c
+1542,What is closest to the table?,Proximity,table,ch
+1543,What is closest to the trash bin?,Proximity,soap dispense,s
+1544,What is closest to the door?,Proximity,chair,ch
+1545,What is closest to the playhouse?,Proximity,mirror cabinet,play
+1546,What is closest to the chair?,Proximity,phonecord,des
+1547,What is closest to the chalk board?,Proximity,chair,des
+1548,What is closest to the table?,Proximity,chair,ch
+1549,What is closest to the labmachines?,Proximity,chair,window
+1550,What is closest to the table?,Proximity,chair,ch
+1551,What is closest to the counter ?,Proximity,trash hole,the
+1552,What is closest to the carpet?,Proximity,an,fan
+1553,What is closest to the toilet?,Proximity,tushin,tr
+1554,What is closest to the board?,Proximity,books,des
+1555,What is closest to the partition?,Proximity,bowl,des
+1556,What is closest to the dress?,Proximity,clothes,s
+1557,What is closest to the table?,Proximity,bottle,phone
+1558,What is closest to the conference table?,Proximity,chair,wall
+1559,What is closest to the window?,Proximity,couche,c
+1560,What is closest to the door?,Proximity,door frame,des
+1561,What is closest to the hero?,Proximity,led display,tr
+1562,What is closest to the desk?,Proximity,chair,ch
+1563,What is closest to the sofa?,Proximity,remote,remote
+1564,What is closest to the toilet?,Proximity,soap and soapbox,s
+1565,What is closest to the table top?,Proximity,cloth,cab
+1566,What is closest to the waste bin?,Proximity,chair,ch
+1567,What is closest to the limitations?,Proximity,round table,wall
+1568,What is closest to the refrigerator?,Proximity,note,counter
+1569,What is closest to the rack?,Proximity,whitepanel,s
+1570,What is closest to the table?,Proximity,chair,ch
+1571,What is closest to the electrical?,Proximity,medicine cabinet mirror,socket
+1572,What is closest to the protector?,Proximity,odium,the
+1573,What is closest to the baby chair?,Proximity,bottle,ch
+1574,What is closest to the picture?,Proximity,picture frame,-
+1575,What is closest to the top?,Proximity,bottle,s
+1576,What is closest to the table?,Proximity,electrical outlet,mouse
+1577,What is closest to the couche?,Proximity,table,table
+1578,What is closest to the fridge?,Proximity,paper,tr
+1579,What is closest to the door?,Proximity,bathroom,to
+1580,What is closest to the desk table?,Proximity,chair,ch
+1581,What is closest to the locked?,Proximity,cup,dra
+1582,What is closest to the door?,Proximity,"door, window, safetyglass",ref
+1583,What is closest to the slab?,Proximity,draw,tr
+1584,What is closest to the refrigerator?,Proximity,table,table
+1585,What is closest to the wash basin?,Proximity,basket,to
+1586,What is closest to the trash can?,Proximity,counter,box
+1587,What is closest to the washbaison?,Proximity,tap,so
+1588,What is closest to the window?,Proximity,chair,table
+1589,What is closest to the cupboard?,Proximity,chimney,s
+1590,What is closest to the bed?,Proximity,totebag,des
+1591,What is closest to the window?,Proximity,air conditioned,radi
+1592,What is closest to the cardboardbox?,Proximity,cardboard box,ch
+1593,What is closest to the hall?,Proximity,sofa,window
+1594,What is closest to the white board?,Proximity,marker,des
+1595,What is closest to the toilet?,Proximity,tape,wall
+1596,What is closest to the table?,Proximity,chair,p
+1597,What is closest to the bench?,Proximity,later,window
+1598,What is closest to the wheelchair?,Proximity,wheelchair,des
+1599,What is closest to the desk?,Proximity,desk,sc
+1600,What is closest to the closet?,Proximity,paper shudder,ch
+1601,What is closest to the carpet?,Proximity,chair,project
+1602,What is closest to the table?,Proximity,bottle,ch
+1603,What is closest to the board?,Proximity,paper bag,tr
+1604,What is closest to the door?,Proximity,jeans,s
+1605,What is closest to the partition?,Proximity,shelf,ticket
+1606,What is closest to the bed?,Proximity,pillow,tr
+1607,What is closest to the table?,Proximity,chair,ch
+1608,What is closest to the table?,Proximity,cabinet,tr
+1609,What is closest to the cupboard?,Proximity,towel,ar
+1610,What is closest to the white board?,Proximity,clock,table
+1611,What is closest to the toolbox?,Proximity,tool,box
+1612,What is closest to the chair?,Proximity,chair,table
+1613,What is closest to the blanket?,Proximity,danger,heater
+1614,What is closest to the table?,Proximity,paper,ch
+1615,What is closest to the white board?,Proximity,marker,ch
+1616,What is closest to the door?,Proximity,door knob,tr
+1617,What is closest to the extension plug?,Proximity,cardboard box,des
+1618,What is closest to the notice board?,Proximity,noticepapers,c
+1619,What is closest to the table?,Proximity,chair,ch
+1620,What is closest to the refrigerator?,Proximity,cart,free
+1621,What is closest to the cut board?,Proximity,boxes,t
+1622,What is closest to the white board?,Proximity,pot,plant
+1623,What is closest to the window?,Proximity,picture,ch
+1624,What is closest to the sofa?,Proximity,pillow,c
+1625,What is closest to the good?,Proximity,commode,to
+1626,What is closest to the stand?,Proximity,steps,micro
+1627,What is closest to the chair?,Proximity,chair,arm
+1628,What is closest to the curttain?,Proximity,lamp,table
+1629,What is closest to the toilet?,Proximity,tape,tr
+1630,What is closest to the final?,Proximity,restroom developer,ur
+1631,What is closest to the cupboard?,Proximity,tissue paper roll,bl
+1632,What is closest to the table?,Proximity,electronic device,ref
+1633,What is closest to the trash can?,Proximity,plastic bag,rec
+1634,What is closest to the chair?,Proximity,door,wall
+1635,What is closest to the table?,Proximity,desk,ch
+1636,What is closest to the window?,Proximity,waste bin,tr
+1637,What is closest to the cupboard?,Proximity,electricswitch,ref
+1638,What is closest to the shade?,Proximity,window,des
+1639,What is closest to the window?,Proximity,table,ch
+1640,What is closest to the shelf?,Proximity,table,des
+1641,What is closest to the toilet?,Proximity,bottle,pl
+1642,What is closest to the door?,Proximity,table,tr
+1643,What is closest to the odium?,Proximity,stool,des
+1644,What is closest to the white board?,Proximity,box,b
+1645,What is closest to the glass door?,Proximity,chair,ch
+1646,What is closest to the dry ease whiteboard?,Proximity,electrical outlet,ch
+1647,What is closest to the miller?,Proximity,waste bin,ch
+1648,What is closest to the desk?,Proximity,chair,wall
+1649,What is closest to the cabinet?,Proximity,towel rack,v
+1650,What is closest to the rack?,Proximity,microwave oven,spe
+1651,What is closest to the desk?,Proximity,top,tr
+1652,What is closest to the chair?,Proximity,desk,b
+1653,"What is closest to the kampala, m?",Proximity,dust pocket,tr
+1654,What is closest to the table?,Proximity,chair,ch
+1655,What is closest to the door?,Proximity,door,exit
+1656,What is closest to the bed?,Proximity,cot,clos
+1657,What is closest to the door?,Proximity,table with shelf,tr
+1658,What is closest to the desk?,Proximity,chord,ch
+1659,What is closest to the sofa?,Proximity, furniture,c
+1660,What is closest to the door?,Proximity,lock,table
+1661,What is closest to the dry ease board?,Proximity,dry ease marker,ch
+1662,What is closest to the white board?,Proximity,door,post
+1663,What is closest to the poster board?,Proximity,foster,wall
+1664,What is closest to the slab?,Proximity,cupboard,ch
+1665,What is closest to the table?,Proximity,desk,ch
+1666,What is closest to the table?,Proximity,box,machine
+1667,What is closest to the wooden drawers?,Proximity,kitchen slab,s
+1668,What is closest to the water closet?,Proximity,pipe,to
+1669,What is closest to the curttain?,Proximity,blinds,ch
+1670,What is closest to the bicycle?,Proximity,door,s
+1671,What is closest to the trash can?,Proximity,table,table
+1672,What is closest to the pool table?,Proximity,rolling whiteboard,p
+1673,What is closest to the shelf?,Proximity,box,s
+1674,What is closest to the chalk board?,Proximity,chair and desk,ch
+1675,What is closest to the window?,Proximity,chair,printer
+1676,What is closest to the wood shelf?,Proximity,chair,ch
+1677,What is closest to the cupboard?,Proximity,keyboard,pr
+1678,What is closest to the steel drawers?,Proximity,electronic instrument,s
+1679,What is closest to the book shelf?,Proximity,magazine,c
+1680,Is there any photo at the she?,Yes/No,yes,yes
+1681,Is there any table?,Yes/No,yes,yes
+1682,Is there any chair?,Yes/No,yes,yes
+1683,Is there any chairs?,Yes/No,yes,yes
+1684,Is there any table counter?,Yes/No,yes,yes
+1685,Is there any cushion chair?,Yes/No,yes,yes
+1686,Is there any blanket?,Yes/No,yes,yes
+1687,Is there any table?,Yes/No,yes,yes
+1688,Is there any shelf?,Yes/No,yes,yes
+1689,Is there any table?,Yes/No,yes,yes
+1690,Is there any sofa?,Yes/No,yes,yes
+1691,Is there any door?,Yes/No,yes,yes
+1692,Is there any cabinet?,Yes/No,yes,yes
+1693,Is there any table?,Yes/No,yes,yes
+1694,Is there any table?,Yes/No,yes,yes
+1695,Is there any counter top?,Yes/No,yes,yes
+1696,Is there any computer table?,Yes/No,yes,yes
+1697,Is there any desk?,Yes/No,yes,yes
+1698,Is there any tilets eat?,Yes/No,yes,no
+1699,Is there any table?,Yes/No,yes,yes
+1700,Is there any chairs?,Yes/No,yes,yes
+1701,Is there any chair?,Yes/No,yes,yes
+1702,Is there any desk?,Yes/No,yes,yes
+1703,Is there any chalk board?,Yes/No,yes,yes
+1704,Is there any table?,Yes/No,yes,yes
+1705,Is there any lounge chair?,Yes/No,yes,yes
+1706,Is there any counter?,Yes/No,yes,yes
+1707,Is there any step 1?,Yes/No,yes,pod
+1708,Is there any table?,Yes/No,yes,yes
+1709,Is there any tables?,Yes/No,yes,yes
+1710,Is there any fire place?,Yes/No,yes,yes
+1711,Is there any shelf?,Yes/No,yes,yes
+1712,Is there any chair?,Yes/No,yes,yes
+1713,Is there any door?,Yes/No,yes,yes
+1714,Is there any desk?,Yes/No,yes,yes
+1715,Is there any table?,Yes/No,yes,yes
+1716,Is there any desk?,Yes/No,yes,yes
+1717,Is there any cabinet?,Yes/No,yes,yes
+1718,Is there any cupboard?,Yes/No,yes,yes
+1719,Is there any comforted?,Yes/No,yes,yes
+1720,Is there any stool?,Yes/No,yes,no
+1721,Is there any table?,Yes/No,yes,yes
+1722,Is there any bed?,Yes/No,yes,yes
+1723,Is there any chairs?,Yes/No,yes,yes
+1724,Is there any white board?,Yes/No,yes,yes
+1725,Is there any basket?,Yes/No,yes,no
+1726,Is there any couche?,Yes/No,yes,yes
+1727,Is there any chair?,Yes/No,yes,yes
+1728,Is there any table?,Yes/No,yes,yes
+1729,Is there any desk?,Yes/No,yes,yes
+1730,Is there any wastedposal?,Yes/No,yes,no
+1731,Is there any mirror?,Yes/No,yes,yes
+1732,Is there any book shelf?,Yes/No,yes,yes
+1733,Is there any chairs?,Yes/No,yes,yes
+1734,Is there any table?,Yes/No,yes,yes
+1735,Is there any fridge?,Yes/No,yes,yes
+1736,Is there any plant?,Yes/No,yes,yes
+1737,Is there any table?,Yes/No,yes,yes
+1738,Is there any table?,Yes/No,yes,yes
+1739,Is there any chair?,Yes/No,yes,yes
+1740,Is there any table?,Yes/No,yes,yes
+1741,Is there any refrigerator?,Yes/No,yes,no
+1742,Is there any restaurantchairs?,Yes/No,yes,yes
+1743,Is there any chairs?,Yes/No,yes,yes
+1744,Is there any tea bad?,Yes/No,yes,no
+1745,Is there any desk?,Yes/No,yes,yes
+1746,Is there any bed?,Yes/No,yes,yes
+1747,Is there any table?,Yes/No,yes,yes
+1748,Is there any scabbard?,Yes/No,yes,no
+1749,Is there any table?,Yes/No,yes,yes
+1750,Is there any book shelf?,Yes/No,yes,yes
+1751,Is there any table?,Yes/No,yes,yes
+1752,Is there any cabinet?,Yes/No,yes,yes
+1753,Is there any love?,Yes/No,yes,no
+1754,Is there any chair stand?,Yes/No,yes,yes
+1755,Is there any cabin?,Yes/No,yes,no
+1756,Is there any desk?,Yes/No,yes,yes
+1757,Is there any table?,Yes/No,yes,yes
+1758,Is there any table?,Yes/No,yes,yes
+1759,Is there any table?,Yes/No,yes,yes
+1760,Is there any chair?,Yes/No,yes,yes
+1761,Is there any whitewithwritingbook?,Yes/No,no,no
+1762,Is there any powerextensioncable?,Yes/No,no,no
+1763,Is there any lazysusan?,Yes/No,no,yes
+1764,Is there any dishrack?,Yes/No,no,no
+1765,Is there any treess?,Yes/No,no,no
+1766,Is there any cobord?,Yes/No,no,no
+1767,Is there any washer?,Yes/No,no,yes
+1768,Is there any televison?,Yes/No,no,yes
+1769,Is there any gallery?,Yes/No,no,no
+1770,Is there any footboard?,Yes/No,no,no
+1771,Is there any windowshelf?,Yes/No,no,no
+1772,Is there any electricalcode?,Yes/No,no,yes
+1773,Is there any cornershelf?,Yes/No,no,yes
+1774,Is there any sbacks?,Yes/No,no,no
+1775,Is there any wrapper?,Yes/No,no,no
+1776,Is there any windowtreatment?,Yes/No,no,cur
+1777,Is there any swatches/sign?,Yes/No,no,yes
+1778,Is there any .chair?,Yes/No,no,yes
+1779,Is there any showroomfauxwall?,Yes/No,no,yes
+1780,Is there any fakeflower?,Yes/No,no,yes
+1781,Is there any smalllightswitch?,Yes/No,no,no
+1782,Is there any tablechair?,Yes/No,no,yes
+1783,Is there any hotelbrochure?,Yes/No,no,no
+1784,Is there any barwall?,Yes/No,no,no
+1785,Is there any reciever?,Yes/No,no,yes
+1786,Is there any mounts?,Yes/No,no,yes
+1787,Is there any wallmountfan?,Yes/No,no,yes
+1788,Is there any keyboard?,Yes/No,no,no
+1789,Is there any whiteboarderaser?,Yes/No,no,yes
+1790,Is there any microwave?,Yes/No,no,no
+1791,Is there any controlpanel?,Yes/No,no,no
+1792,Is there any prescriptionbottles?,Yes/No,no,no
+1793,Is there any tourchlight?,Yes/No,no,no
+1794,Is there any bedpanel?,Yes/No,no,no
+1795,Is there any traw?,Yes/No,no,restaurant
+1796,Is there any chaie?,Yes/No,no,yes
+1797,Is there any cup4?,Yes/No,no,no
+1798,Is there any book.?,Yes/No,no,no
+1799,Is there any filesandbooks?,Yes/No,no,i
+1800,Is there any newspaperarticle?,Yes/No,no,no
+1801,Is there any shrub?,Yes/No,no,no
+1802,Is there any junctionbox?,Yes/No,no,yes
+1803,Is there any travelingbag?,Yes/No,no,no
+1804,Is there any tabledecor?,Yes/No,no,no
+1805,Is there any colgate?,Yes/No,no,no
+1806,Is there any entertainmentsystem?,Yes/No,no,tv
+1807,Is there any keyboard1?,Yes/No,no,no
+1808,Is there any ikeamembershipmachine?,Yes/No,no,no
+1809,Is there any unknownfurniture?,Yes/No,no,a
+1810,Is there any glassclosercurtain?,Yes/No,no,no
+1811,Is there any electronicmaterials?,Yes/No,no,al
+1812,Is there any railings?,Yes/No,no,yes
+1813,Is there any chair22?,Yes/No,no,yes
+1814,Is there any wallwoodwork?,Yes/No,no,yes
+1815,Is there any clotheshamper?,Yes/No,no,yes
+1816,Is there any rollingutilitycart?,Yes/No,no,no
+1817,Is there any fourthchair?,Yes/No,no,yes
+1818,Is there any grillstand?,Yes/No,no,yes
+1819,Is there any baseboard.?,Yes/No,no,yes
+1820,Is there any strap?,Yes/No,no,yes
+1821,Is there any unknowmthing?,Yes/No,no,yes
+1822,Is there any icemachine?,Yes/No,no,no
+1823,Is there any toiletseatlid?,Yes/No,no,no
+1824,Is there any electric cable?,Yes/No,no,no
+1825,Is there any windowpane2?,Yes/No,no,no
+1826,Is there any soccerball?,Yes/No,no,no
+1827,Is there any htato?,Yes/No,no,empty
+1828,Is there any officetechnology?,Yes/No,no,computer
+1829,Is there any plasticcups?,Yes/No,no,no
+1830,Is there any cabinetcompartment4?,Yes/No,no,no
+1831,Is there any mailboxes?,Yes/No,no,no
+1832,Is there any electricalplug?,Yes/No,no,yes
+1833,Is there any ceilling?,Yes/No,no,no
+1834,Is there any printpaper?,Yes/No,no,yes
+1835,Is there any drawer1?,Yes/No,no,no
+1836,Is there any rxbottles?,Yes/No,no,no
+1837,Is there any tabe?,Yes/No,no,yes
+1838,Is there any mike?,Yes/No,no,yes
+1839,Is there any urinaldivider?,Yes/No,no,yes
+1840,Is there any handrail/grillgate?,Yes/No,no,no
+1841,Is there any tableframe?,Yes/No,no,yes

@@ -1,0 +1,386 @@
+Question_Id,Questions,Question_Type,Answers,Model_Answer
+1,What is closest to the tables?,Proximity,chair,tables
+2,What is the color of the floor?,Color Identification,grey,gray
+4,Where is wall relative to floor?,Direction,left and above,right
+14,What is closest to the window?,Proximity,chair,wall
+16,Where is floor relative to dry ease board?,Direction,left and under,right
+18,What is that?,Object Identification,cabinet,floor
+22,What is the color of the desk?,Color Identification,gray,brown
+24,What is closest to the wall?,Proximity,paper towel,wall
+25,What is closest to the floor?,Proximity,chair,table
+26,How many drawers are there?,Count,three,one
+28,What is closest to the refrigerator?,Proximity,cow magnet,to
+32,Where is floor relative to book shelf?,Direction,right and under,left
+39,What is closest to the cot?,Proximity,lamp,pill
+41,What is the color of the floor?,Color Identification,grey,gray
+46,Is there any window screen?,Yes/No,yes,no
+47,How many floors are there?,Count,one,two
+48,What is that?,Object Identification,table,wall
+51,Where is bed relative to book?,Direction,right and above,left
+52,What is that?,Object Identification,blinds,window
+53,What is that?,Object Identification,sofa,bed
+58,Where is floor relative to filing cabinet?,Direction,right and above,left
+59,How many tables are there?,Count,two,one
+66,What is that?,Object Identification,seat,wall
+67,What is that?,Object Identification,desk,wall
+70,How many walls are there?,Count,three,two
+75,What is the color of the wall?,Color Identification,tan,be
+76,What is closest to the floor?,Proximity,chair,floor
+82,What is the color of the floor?,Color Identification,green,white
+83,How many floors are there?,Count,one,two
+85,What is closest to the floor?,Proximity,table,chair
+89,What is closest to the floor?,Proximity,base board,chair
+92,Where is couch relative to floor?,Direction,right and above,left
+93,How many floors are there?,Count,one,two
+98,What is the color of the shelf?,Color Identification,white,red
+100,What is closest to the wall?,Proximity,desk,wall
+101,What is that?,Object Identification,comforted,bed
+102,What is the color of the floor?,Color Identification,grey,gray
+104,What is the color of the restroom?,Color Identification,pink,black
+106,Where is bed relative to floor?,Direction,right and above,left
+110,What is the color of the window?,Color Identification,black,clear
+111,Is there any cable?,Yes/No,no,yes
+112,What is the color of the floor?,Color Identification,brown,gray
+113,Where is wall relative to floor?,Direction,right and above,left
+116,What is the color of the back?,Color Identification,yellow,white
+125,Where is wall relative to door?,Direction,left and above,right
+126,What is that?,Object Identification,curtain,bed
+130,What is that?,Object Identification,sofa,pill
+131,What is closest to the floor?,Proximity,table,chair
+134,What is that?,Object Identification,shelves,book
+135,Where is table relative to floor?,Direction,right and above,left
+139,What is the color of the wall?,Color Identification,brown,white
+141,What is closest to the red couch?,Proximity,pillow,floor
+143,What is the color of the chair?,Color Identification,white,gray
+145,Where is auricle relative to floor?,Direction,right and above,left
+151,Where is floor relative to outlet?,Direction,right and under,left
+152,What is closest to the wall?,Proximity,mirror,pill
+155,What is closest to the glass window?,Proximity,cushion chairs,glass
+156,What is the color of the chalk board?,Color Identification,green,black
+157,"Where is wall relative to shampoo,cream?",Direction,right and above,left
+158,Where is floor relative to door?,Direction,left and under,right
+162,What is closest to the bluewall?,Proximity,green wall,floor
+163,What is closest to the table with drawer?,Proximity,book,table
+164,What is the color of the wall?,Color Identification,yellow,white
+170,What is the color of the dresser?,Color Identification,white,blue
+172,Where is floor relative to counter?,Direction,left and under,right
+174,Where is floor relative to theater?,Direction,left and under,right
+175,What is that?,Object Identification,rack,shelf
+176,What is closest to the wall?,Proximity,white board,wall
+177,What is closest to the door?,Proximity,wall,door
+182,What is closest to the couch?,Proximity,pillow,floor
+189,How many shelfs are there?,Count,two,one
+192,What is that?,Object Identification,couch,bed
+194,What is closest to the cupboard?,Proximity,table,cup
+197,What is that?,Object Identification,desk,wall
+199,What is closest to the floor?,Proximity,hair,chair
+200,Where is floor relative to garage bin?,Direction,right and under,left
+203,How many floors are there?,Count,one,two
+204,Where is floor relative to to?,Direction,right and under,left
+206,Where is wall relative to floor?,Direction,right and above,left
+209,Where is wall relative to ceiling?,Direction,right and under,left
+210,Is there any bulletin board?,Yes/No,yes,no
+215,Where is bookcase relative to closet door?,Direction,left and above,right
+216,How many walls are there?,Count,two,one
+220,What is the color of the floor?,Color Identification,brown,gray
+224,Where is table relative to floor?,Direction,right and above,left
+226,Where is back wall relative to carpettedfloor?,Direction,right and above,left
+227,What is the color of the sofa?,Color Identification,green,brown
+229,How many window screens are there?,Count,two,one
+230,How many floors are there?,Count,one,two
+232,What is closest to the glass?,Proximity,floor,glass
+233,What is closest to the floor?,Proximity,sofa,chair
+235,What is closest to the wall?,Proximity,water bottle,floor
+236,What is the color of the table?,Color Identification,tan,brown
+238,What is the color of the shelf?,Color Identification,brown,white
+239,What is the color of the cabinet counter?,Color Identification,silver,white
+240,What is that?,Object Identification,table,wall
+242,Is there any desk?,Yes/No,yes,no
+246,Where is wall relative to floor?,Direction,right and above,left
+253,What is closest to the desk?,Proximity,chair,desk
+255,What is closest to the wall?,Proximity,final,to
+260,What is the color of the blinds?,Color Identification,white,black
+262,What is that?,Object Identification,brick wall,water
+263,Is there any computer cabin?,Yes/No,yes,no
+264,What is the color of the chair?,Color Identification,black,brown
+265,What is the color of the bed?,Color Identification,white,black
+268,What is that?,Object Identification,chair,floor
+270,What is that?,Object Identification,foot board,bed
+271,What is that?,Object Identification,stand,table
+279,What is closest to the white board?,Proximity,light,white
+282,What is closest to the floor?,Proximity,toy,floor
+283,What is closest to the floor?,Proximity,trash bin,floor
+285,How many chairss are there?,Count,one,two
+287,What is that?,Object Identification,sofa,chair
+290,What is the color of the floor?,Color Identification,brown,white
+295,Where is wall relative to master oven?,Direction,left and above,right
+297,Where is bed relative to chair?,Direction,right and under,left
+299,Where is couch relative to rug?,Direction,right and above,left
+305,What is closest to the closet?,Proximity,wall,floor
+307,Where is wall relative to white board?,Direction,right and under,left
+309,Is there any cupboard?,Yes/No,yes,no
+310,Where is wall relative to floor?,Direction,right and above,left
+311,What is closest to the table?,Proximity,mouse,chair
+313,How many chairs are there?,Count,ten,two
+315,What is closest to the bed?,Proximity,wall,pill
+316,Where is wall storage relative to power station?,Direction,left and under,right
+317,What is the color of the bowl?,Color Identification,silver,black
+320,Where is floor relative to wall?,Direction,left and under,right
+321,Is there any lesser?,Yes/No,yes,no
+325,What is that?,Object Identification,sofa,bed
+326,What is that?,Object Identification,lesser,wall
+327,What is closest to the floor?,Proximity,floor,chair
+328,What is that?,Object Identification,carpet floor,wall
+332,What is that?,Object Identification,window blinds,wall
+335,How many cabinets are there?,Count,two,one
+336,Where is wall relative to wall hanging?,Direction,left and under,right
+337,What is the color of the hair?,Color Identification,brown,black
+339,What is that?,Object Identification,computer,wall
+343,What is the color of the poster?,Color Identification,white,red
+344,What is closest to the person?,Proximity,purse,cloth
+345,What is closest to the window?,Proximity,free,window
+346,What is closest to the feet rest?,Proximity,floor,foot
+347,What is the color of the floor?,Color Identification,brown,gray
+348,What is the color of the window?,Color Identification,white,black
+351,What is the color of the floor?,Color Identification,grey,blue
+352,What is that?,Object Identification,bag,table
+353,What is closest to the back chair?,Proximity,window,chair
+360,Where is floor relative to counter?,Direction,left and under,right
+367,What is that?,Object Identification,storage closet,wall
+372,What is the color of the desk?,Color Identification,white,brown
+375,What is that?,Object Identification,counter,wall
+378,What is closest to the sofa?,Proximity,backpack,pill
+381,What is closest to the shelf?,Proximity,books,shelf
+383,What is the color of the shelf?,Color Identification,brown,black
+384,How many tables are there?,Count,six,two
+387,What is closest to the cupboard?,Proximity,shelf,wall
+391,What is that?,Object Identification,floor,wall
+392,What is the color of the to stand?,Color Identification,white,black
+394,What is that?,Object Identification,window,floor
+396,What is closest to the couch?,Proximity,pillow,floor
+397,What is that?,Object Identification,door,tile
+398,What is the color of the floor?,Color Identification,gray,black
+402,What is that?,Object Identification,cabinet,wall
+407,What is closest to the floor?,Proximity,dining table,chair
+408,What is closest to the floor?,Proximity,dresser,floor
+409,What is the color of the table?,Color Identification,black,brown
+411,How many walls are there?,Count,four,two
+413,What is the color of the pillar?,Color Identification,white,brown
+415,What is the color of the books?,Color Identification,green,white
+417,Is there any dress?,Yes/No,yes,no
+419,What is closest to the floor?,Proximity,lamp,chair
+420,What is the color of the bed?,Color Identification,black,red
+421,What is closest to the table?,Proximity,pillow,floor
+425,How many sofas are there?,Count,two,one
+426,Where is floor relative to plant?,Direction,left and under,right
+429,Where is floor relative to bench seat?,Direction,left and under,right
+430,What is that?,Object Identification,ceiling,wall
+431,What is that?,Object Identification,wall storage,screen
+437,What is the color of the sofa?,Color Identification,brown,blue
+440,How many windows are there?,Count,one,two
+441,What is closest to the window?,Proximity,groans,wall
+445,What is closest to the floor?,Proximity,desk,table
+450,What is closest to the rug?,Proximity,hair,wall
+455,What is closest to the wall?,Proximity,chair,floor
+457,What is the color of the floor?,Color Identification,red,white
+458,Where is carpet relative to table?,Direction,left and under,right
+459,What is closest to the floor?,Proximity,shade,chair
+460,What is that?,Object Identification,sofa,wall
+462,What is closest to the window?,Proximity,sitting place,window
+464,What is closest to the desk?,Proximity,display information,desk
+465,What is closest to the floor?,Proximity,floor,chair
+469,What is closest to the theatre seating?,Proximity,floor,stage
+470,What is the color of the sofa?,Color Identification,tan,brown
+473,How many floors are there?,Count,one,two
+474,What is the color of the door?,Color Identification,brown,white
+477,Is there any hall?,Yes/No,yes,no
+478,What is the color of the floor?,Color Identification,brown,white
+479,What is the color of the shelf?,Color Identification,brown,black
+481,What is the color of the floor?,Color Identification,red,gray
+482,What is the color of the bed?,Color Identification,brown,blue
+486,What is closest to the table?,Proximity,chairs,table
+487,What is the color of the protector screen?,Color Identification,white,black
+489,What is that?,Object Identification,cabinet,wall
+491,What is that?,Object Identification,window,wall
+492,What is the color of the wall?,Color Identification,tan,be
+493,Where is chair relative to floor?,Direction,right and above,left
+494,What is closest to the wall?,Proximity,of,wall
+495,What is the color of the bed?,Color Identification,white,black
+497,What is closest to the wall?,Proximity,light,floor
+498,What is the color of the floor?,Color Identification,white,gray
+499,What is closest to the desk?,Proximity,keyboard,desk
+502,Where is shelf relative to window?,Direction,right and under,left
+503,What is the color of the floor?,Color Identification,grey,gray
+504,Where is chair relative to floor?,Direction,right and above,left
+510,Where is floor relative to wall?,Direction,left and under,right
+513,Where is wall relative to fridge?,Direction,left and above,right
+515,What is that?,Object Identification,window,wall
+516,What is that?,Object Identification,room divided,wall
+520,What is closest to the wall?,Proximity,floor,chair
+521,What is closest to the wall?,Proximity,cuttle,picture
+526,What is the color of the sofa?,Color Identification,green,blue
+528,How many bookss are there?,Count,two,one
+530,What is the color of the desk?,Color Identification,brown,black
+535,What is the color of the floor?,Color Identification,gray,white
+537,What is closest to the carpet?,Proximity,table,floor
+539,What is closest to the cabinet?,Proximity,pretzels,to
+543,What is that?,Object Identification,glass,mirror
+547,What is closest to the closet?,Proximity,washtub,wall
+550,Where is mirror relative to bottle?,Direction,right and above,left
+553,Where is bed relative to floor?,Direction,right and above,left
+555,What is closest to the tile floor?,Proximity,table leg,tile
+567,What is closest to the wall?,Proximity,book shelf,wall
+570,What is closest to the door?,Proximity,keyhole,door
+571,What is closest to the couch?,Proximity,t.v.remote,pill
+572,What is closest to the floor?,Proximity,weapon,chair
+578,What is that?,Object Identification,mushroom,wall
+579,What is closest to the treadmill?,Proximity,wall,floor
+581,What is closest to the wall?,Proximity,night stand,bed
+587,How many walls are there?,Count,four,one
+588,What is the color of the floor?,Color Identification,brown,gray
+589,What is closest to the counter?,Proximity,sink,counter
+594,What is closest to the wall?,Proximity,white board,wall
+595,What is the color of the wall?,Color Identification,white,yellow
+596,Where is floor relative to chair?,Direction,left and above,right
+599,Where is shower wall relative to shower door?,Direction,left and above,right
+600,What is closest to the wall?,Proximity,laptop,chair
+604,What is that?,Object Identification,cupboard,table
+605,What is the color of the chairs?,Color Identification,gray,red
+606,What is the color of the floor?,Color Identification,tan,white
+607,What is that?,Object Identification,cupboard,wall
+610,Where is mirror relative to floor?,Direction,right and above,left
+611,What is the color of the cabinet?,Color Identification,brown,white
+614,What is the color of the chair?,Color Identification,white,gray
+616,Where is shelf relative to cabinet?,Direction,right and above,left
+618,What is the color of the chair?,Color Identification,gray,black
+622,What is that?,Object Identification,bed,wall
+625,What is the color of the wall?,Color Identification,gray,white
+628,What is that?,Object Identification,window,wall
+629,Where is floor relative to seat?,Direction,right and above,left
+630,What is closest to the floor?,Proximity,trash can,chair
+631,Where is glass relative to hair?,Direction,right and above,left
+633,What is closest to the glass?,Proximity,hair,wall
+634,What is closest to the floor?,Proximity,hair,chair
+637,How many floors are there?,Count,one,two
+642,What is closest to the wall?,Proximity,chair,floor
+648,What is that?,Object Identification,counter,coffee
+650,Is there any wooden cart?,Yes/No,yes,no
+654,What is the color of the table?,Color Identification,tan,brown
+655,Where is wooden partition relative to floor?,Direction,left and above,right
+658,What is that?,Object Identification,curtain,cloth
+659,Where is cabinet relative to bottle?,Direction,right and under,left
+662,What is closest to the wooden wall?,Proximity,table,wood
+665,What is the color of the curtain?,Color Identification,white,red
+666,What is closest to the table?,Proximity,floor,table
+667,What is that?,Object Identification,poster,wall
+674,What is the color of the window?,Color Identification,white,black
+681,Where is wall relative to floor?,Direction,right and above,left
+683,What is closest to the table?,Proximity,late,table
+685,Where is floor relative to cupboard?,Direction,left and under,right
+691,What is the color of the floor?,Color Identification,grey,gray
+693,Where is fridge relative to cabinet?,Direction,right and above,left
+695,What is closest to the couch?,Proximity,couch cushion,wall
+700,How many columns are there?,Count,one,two
+703,What is the color of the window?,Color Identification,clear,red
+705,What is that?,Object Identification,seaboard,bed
+706,How many pictures are there?,Count,five,one
+708,Where is wall relative to towel?,Direction,left and under,right
+714,What is closest to the floor?,Proximity,table,chair
+718,What is that?,Object Identification,table,floor
+719,Where is table relative to wall?,Direction,left and under,right
+721,Where is wall relative to partition?,Direction,right and under,left
+723,What is that?,Object Identification,sofa,coffee
+728,What is the color of the floor?,Color Identification,grey,gray
+731,What is the color of the door?,Color Identification,yellow,brown
+739,How many blindss are there?,Count,two,one
+741,What is the color of the bed?,Color Identification,black,white
+743,What is closest to the bed?,Proximity,quilt,pill
+744,Where is floor relative to wall?,Direction,left and under,right
+747,Where is counter relative to pot?,Direction,left and under,right
+748,What is the color of the floor times?,Color Identification,white,gray
+752,Where is floor relative to wall?,Direction,left and under,right
+764,What is closest to the table?,Proximity,bowl,table
+769,What is closest to the floor?,Proximity,table,chair
+772,What is closest to the walls?,Proximity,rolling cart,wall
+774,Where is sofa relative to wall?,Direction,right and under,left
+776,Where is wall relative to floor?,Direction,right and above,left
+781,What is closest to the table top?,Proximity,floor,table
+786,What is closest to the floor?,Proximity,switch board,bed
+790,What is closest to the floor?,Proximity,up,chair
+791,What is closest to the cabinet?,Proximity,electrical outlet,to
+794,What is the color of the floor?,Color Identification,gray,white
+795,What is the color of the king long table?,Color Identification,green,black
+797,What is the color of the touch?,Color Identification,black,white
+801,Where is wall relative to door?,Direction,left and above,right
+805,How many shelfs are there?,Count,two,one
+806,Where is wall relative to person?,Direction,right and under,left
+820,What is closest to the protector screen?,Proximity,chair,screen
+821,What is that?,Object Identification,bathtubs,sink
+823,How many doors are there?,Count,one,two
+824,What is that?,Object Identification,floor,table
+829,What is closest to the bathtubs?,Proximity,curtain,floor
+830,How many sofa chairs are there?,Count,three,one
+832,What is the color of the desk?,Color Identification,black,white
+842,What is that?,Object Identification,table,wall
+844,What is the color of the armchair?,Color Identification,brown,red
+846,What is closest to the wall?,Proximity,book,floor
+847,What is the color of the floor?,Color Identification,grey,gray
+850,What is that?,Object Identification,couch,bed
+851,Where is floor relative to wall?,Direction,right and under,left
+855,What is the color of the desk?,Color Identification,gray,black
+858,What is the color of the person?,Color Identification,white,gray
+859,What is the color of the picture?,Color Identification,yellow,white
+860,What is closest to the wall?,Proximity,table,floor
+864,What is the color of the shelf?,Color Identification,white,black
+866,What is the color of the table?,Color Identification,green,gray
+869,Is there any monitor?,Yes/No,yes,no
+871,What is that?,Object Identification,table,wall
+872,What is the color of the slab?,Color Identification,black,white
+877,Where is bed relative to wall?,Direction,left and under,right
+878,How many walls are there?,Count,two,one
+884,What is the color of the cabinet?,Color Identification,white,blue
+885,How many cabinets are there?,Count,six,one
+886,What is closest to the table?,Proximity,lawton,table
+887,What is that?,Object Identification,wall,bed
+888,What is the color of the bed?,Color Identification,white,blue
+889,What is the color of the floor?,Color Identification,brown,gray
+893,Where is door relative to window?,Direction,right and under,left
+896,What is that?,Object Identification,carpet,floor
+897,How many desks are there?,Count,one,two
+898,What is the color of the floor?,Color Identification,grey,gray
+899,What is that?,Object Identification,picture,wall
+906,What is the color of the floor?,Color Identification,white,gray
+907,Where is fulton relative to floor?,Direction,left and under,right
+911,What is closest to the floor?,Proximity,format,floor
+917,What is closest to the wall?,Proximity,soapdish,floor
+919,What is the color of the window?,Color Identification,black,red
+920,What is closest to the desk?,Proximity,mouse,desk
+925,What is that?,Object Identification,stovetop,light
+927,What is the color of the floor?,Color Identification,grey,gray
+930,What is the color of the floor?,Color Identification,grey,gray
+931,What is that?,Object Identification,refrigerator,counter
+934,What is closest to the office?,Proximity,table,chair
+936,How many floors are there?,Count,one,two
+939,What is the color of the floor?,Color Identification,gray,blue
+945,What is closest to the wall?,Proximity,pillow,picture
+947,What is the color of the carpet?,Color Identification,gold,gray
+948,How many desks are there?,Count,one,two
+949,What is closest to the chair?,Proximity,floor,chair
+950,What is closest to the bed?,Proximity,mattress,bed
+951,What is the color of the window?,Color Identification,white,red
+954,What is the color of the table?,Color Identification,white,brown
+955,What is closest to the wall?,Proximity,chair,wall
+958,Where is dresser relative to rarer?,Direction,left and under,right
+963,What is the color of the file cabinet?,Color Identification,gray,white
+965,What is the color of the window?,Color Identification,brown,blue
+970,What is closest to the table?,Proximity,bottle,wall
+973,What is that?,Object Identification,window,wall
+974,What is that?,Object Identification,chair,wall
+975,Where is room relative to floor?,Direction,left and above,right
+976,Is there any recycle bin?,Yes/No,yes,no
+982,What is the color of the chair?,Color Identification,purple,blue
+983,Is there any refigerator?,Yes/No,yes,no
+987,What is closest to the floor?,Proximity,cushion,chair
+988,How many floors are there?,Count,one,two
+992,What is closest to the x-mastree?,Proximity,bulb,tree
+997,What is that?,Object Identification,cabinet,wall
