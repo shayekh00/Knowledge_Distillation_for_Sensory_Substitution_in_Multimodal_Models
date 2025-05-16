@@ -141,7 +141,7 @@ python evaluation/onevisionv3/sunrgbd/evaluate_onevision.py --ckpt_path path/to/
 
 - [LLaVA](https://github.com/haotian-liu/LLaVA)
 - [SUNRGBD Dataset](https://rgbd.cs.princeton.edu/)
-- [LoCa: Logit Calibration](https://arxiv.org/abs/2311.05480)
+- [LoCa: Logit Calibration](https://arxiv.org/abs/2409.04778)
 
 ---
 
