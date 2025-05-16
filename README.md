@@ -33,11 +33,11 @@ Knowledge_Distillation_for_Sensory_Substitution_in_Multimodal_Models/
 ---
 
 ## 🎯 Project Goals
-
+- Recreate a new version of the VQA-SUNRGBD dataset.
 - Distill from a large RGB-based teacher (7B) to a lightweight depth-based student (0.5B)
-- Enable multimodal understanding with missing or low-fidelity modalities
+- Enable multimodal understanding with depth data.
 - Experiment with multiple distillation strategies: feature-based, logit-based, and hybrid
-- Evaluate performance on real-world tasks (e.g., visual question answering)
+- Evaluate performance on VQA.
 
 ---
 
