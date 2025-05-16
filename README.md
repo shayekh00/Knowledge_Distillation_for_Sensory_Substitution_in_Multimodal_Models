@@ -75,22 +75,20 @@ hf_token=your_huggingface_token
 ### Phase 1: Vision-level contrastive distillation
 
 ```bash
-python distillation/knowledge_distillation7b_double_trouble/phase1/train_online_kd.py \
-  --batch_size 2 --max_epochs 5 --subset_percentage 1.0 --accumulate_grad_batches 32
+python distillation/knowledge_distillation7b_double_trouble/phase1/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --load_checkpoint
+
 ```
 
 ### Phase 2: Logit distillation via LoCa
 
 ```bash
-python distillation/knowledge_distillation7b_double_trouble/phase2/train_online_kd.py \
-  --batch_size 2 --max_epochs 5 --load_checkpoint
+python distillation/knowledge_distillation7b_double_trouble/phase2/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --load_checkpoint
 ```
 
 ### Phase 3: Optional Combined distillation (vision + logits)
 
 ```bash
-python distillation/knowledge_distillation7b_double_trouble/phase3/train_online_kd.py \
-  --batch_size 2 --max_epochs 5 --load_checkpoint
+python distillation/knowledge_distillation7b_double_trouble/phase3/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --load_checkpoint
 ```
 
 ---
@@ -100,20 +98,47 @@ python distillation/knowledge_distillation7b_double_trouble/phase3/train_online_
 ### RGB Student Baseline (0.5B)
 
 ```bash
-python distillation/baseline_rgb05b/train.py --batch_size 2 --max_epochs 10
+python distillation/baseline_rgb05b/train.py --batch_size 2 --max_epochs 5 --subset_percentage 1 --augmentation --accumulate_grad_batches 32
 ```
 
 ### RGB Teacher (7B)
 
 ```bash
-python distillation/baseline_rgb7b/train2.py --batch_size 2 --max_epochs 10
+python distillation/baseline_rgb7b/train2.py --batch_size 2 --max_epochs 10 --subset_percentage 1 --augmentation --accumulate_grad_batches 32
 ```
 
-### Depth-Only Baseline
+### Depth-Only Baseline (0.5B)
 
 ```bash
-python distillation/baseline_depth/train.py --batch_size 2 --max_epochs 10
+python distillation/baseline_depth/train.py --batch_size 2 --max_epochs 5 --subset_percentage 1 --augmentation --accumulate_grad_batches 32
 ```
+
+### 🛠️ Dataset Generation Steps
+
+1. **Extract the initial data:**
+
+    ```bash
+    python dataset/dataset_creation/extract_data.py
+    ```
+
+2. **Generate the question datasets:**
+
+    Run the following scripts:
+
+    ```bash
+    python dataset/dataset_creation/color_questions.py
+    python dataset/dataset_creation/count_questions.py
+    python dataset/dataset_creation/object_identification.py
+    python dataset/dataset_creation/ProximityQuestion.py
+    python dataset/dataset_creation/Yes_No_Questions.py
+    ```
+
+3. **Combine all individual datasets into a final dataset:**
+
+    ```bash
+    python dataset/dataset_creation/merge_all_csv.py
+    ```
+
 
 ---
 
