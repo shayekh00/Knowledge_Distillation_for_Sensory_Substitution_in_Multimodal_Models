@@ -29,6 +29,7 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         self.teacher_model = LlavaOnevisionForConditionalGeneration.from_pretrained(
             model_name_teacher, 
             low_cpu_mem_usage=True,
+            device_map="auto"
         )
         # checkpoint_path = "/XXXX/checkpoints/baseline7b_rgb/llava-onevision7b-epoch=02-val_loss=0.00510.ckpt"
         # self.teacher_model = LlavaOnevisionModule.load_from_checkpoint(
@@ -54,6 +55,7 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         self.student_model = LlavaOnevisionForConditionalGeneration.from_pretrained(
             model_name_student, 
             low_cpu_mem_usage=True,
+            device_map="auto"
         )
         print("Student Model Loaded")
 

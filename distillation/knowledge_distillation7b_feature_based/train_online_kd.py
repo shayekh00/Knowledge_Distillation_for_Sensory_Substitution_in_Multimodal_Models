@@ -3,7 +3,7 @@ import os
 import sys
 import argparse
 from datetime import datetime
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from pytorch_lightning import Trainer
 # from distillation.onevision_llava.LLavaOneVisionModule import LLaVAOneVisionModule
 from dataset.dataloader.OneVision.CustomSUNRGBDDatasetOneVision import CustomSUNRGBDDatasetOneVision
@@ -55,8 +55,8 @@ def extract_val_loss(filename):
 def main():
     '''
     Example command: 
-    python distillation/onevision_llava/knowledge_distillation7b_feature_based/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --load_checkpoint --accumulate_grad_batches 64
-    python distillation/onevision_llava/knowledge_distillation7b_feature_based/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --accumulate_grad_batches 64
+    python distillation/knowledge_distillation7b_feature_based/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --load_checkpoint --accumulate_grad_batches 64
+    python distillation/knowledge_distillation7b_feature_based/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --accumulate_grad_batches 64
     
     '''
 
