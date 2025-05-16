@@ -15,7 +15,8 @@ class LlavaOnevisionModule(pl.LightningModule):
         self.model = LlavaOnevisionForConditionalGeneration.from_pretrained(
             model_name, 
             low_cpu_mem_usage=True,
-        )
+            device_map="auto"
+         )
         self.model.train()
 
         self.config = self.model.config
@@ -24,6 +25,8 @@ class LlavaOnevisionModule(pl.LightningModule):
                              if self.processor.tokenizer.pad_token_id is None 
                              else self.processor.tokenizer.pad_token_id)
 
+        # self.freeze_all_except_last_n(4)
+        # self.make_vision_fully_trainable()
 
     def freeze_all_except_last_n(self, n):
         """
@@ -67,6 +70,7 @@ class LlavaOnevisionModule(pl.LightningModule):
         # Log trainable layers for verification
         trainable_params = [name for name, param in self.model.named_parameters() if param.requires_grad]
         print(f"Trainable parameters (Vision Fully Trainable): {trainable_params}")
+
 
 
     def forward(self, input_ids, rgb_pixel_values, depth_pixel_values, labels , image_sizes):

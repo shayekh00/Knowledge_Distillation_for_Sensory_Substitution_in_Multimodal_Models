@@ -9,7 +9,7 @@ import sys
 import pickle
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from LLavaOneVisionModule import LlavaOnevisionModule
+from distillation.LLavaOneVisionModule import LlavaOnevisionModule
 print("Current directory in KD :", os.getcwd())
 
 class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
@@ -27,6 +27,17 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         # self.teacher_model = teacher_model
         print("Phase:", self.phase)
 
+
+        print("Loading Student Model.....")
+        print("Model Name:", model_name_student)
+        self.student_model = LlavaOnevisionForConditionalGeneration.from_pretrained(
+            model_name_student, 
+            low_cpu_mem_usage=True,
+            device_map="auto"
+        )
+        print("Student Model Loaded")
+
+
         print("Loading Teacher Model.....")
 
         self.teacher_model = LlavaOnevisionForConditionalGeneration.from_pretrained(
@@ -36,16 +47,6 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
             device_map="auto"
         )
 
-        # checkpoint_path = "XXXXXX/checkpoints/baseline_rgb/llava-onevision0.5b-epoch=00-val_loss=0.0129.ckpt"
-        # self.teacher_model = LlavaOnevisionModule.load_from_checkpoint(
-        #         checkpoint_path,
-        #         low_cpu_mem_usage=True,
-        #         model_name=model_name_teacher,
-        #         processor=processor,
-        #         torch_dtype=torch.float16,
-        #         device_map="auto"
-        #     )
-        # self.teacher_model = self.teacher_model.model
         self.teacher_model.eval()
         
         # Freeze all parameters of the teacher model
@@ -54,21 +55,7 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         print("Teacher Model Loaded")
 
 
-        print("Loading Student Model.....")
-        self.student_model = LlavaOnevisionForConditionalGeneration.from_pretrained(
-            model_name_student, 
-            low_cpu_mem_usage=True,
-        )
-        print("Student Model Loaded")
-        # self.print_non_language_layers()
-
-        # self.freeze_student_language_layers()
-
-
-        # self.student_model
-        
-
-
+        print("Student Config Loading.....")
         self.config = self.student_model.config
         
         self.pad_token_id = (self.processor.tokenizer.eos_token_id 
@@ -90,6 +77,8 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
 
         self.layer_idx = 0
         self._register_hooks(self.layer_idx)
+        print("Model Loading done.....")
+
 
 
         # self.freeze_middle_n_layers_teacher(7)
@@ -389,11 +378,6 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
             soft_teacher_targets = nn.functional.softmax(teacher_logits / self.T, dim=-1)
             soft_student_probs = nn.functional.log_softmax(student_logits / self.T, dim=-1)
 
-            # KL Divergence loss
-            # print("soft_teacher_targets.shape:", soft_teacher_targets.shape)
-            # print("soft_teacher_targets.logits.shape:", soft_teacher_targets.shape)
-            # print("soft_student_probs.shape:", soft_student_probs.shape)
-
             kl_divergence_loss = torch.sum(soft_teacher_targets * (soft_teacher_targets.log() - soft_student_probs)) / soft_student_probs.size(0) * (self.T ** 2)
 
             # Cross-Entropy loss from student outputs
@@ -453,29 +437,29 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         Args:
             n (int): Number of layers to freeze from the middle.
         """
-        total_layers = len(self.teacher_model.language_model.model.layers)
+        total_layers = len(self.teacher_model.language_model.layers)
 
         # Calculate the start and end indices for the middle layers to freeze
         start_idx = (total_layers - n) // 2
         end_idx = start_idx + n
 
         # Freeze all layers of the teacher model initially
-        for param in self.teacher_model.language_model.model.parameters():
+        for param in self.teacher_model.language_model.parameters():
             param.requires_grad = False
 
         # Unfreeze layers outside the middle range (before start_idx and after end_idx)
-        for idx, layer in enumerate(self.teacher_model.language_model.model.layers):
+        for idx, layer in enumerate(self.teacher_model.language_model.layers):
             if idx < start_idx or idx >= end_idx:
                 for param in layer.parameters():
                     param.requires_grad = True
 
         # Log frozen and trainable layers for verification
         frozen_layers = [
-            idx for idx, layer in enumerate(self.teacher_model.language_model.model.layers)
+            idx for idx, layer in enumerate(self.teacher_model.language_model.layers)
             if not any(param.requires_grad for param in layer.parameters())
         ]
         trainable_layers = [
-            idx for idx, layer in enumerate(self.teacher_model.language_model.model.layers)
+            idx for idx, layer in enumerate(self.teacher_model.language_model.layers)
             if any(param.requires_grad for param in layer.parameters())
         ]
         print(f"Teacher Model - Frozen layers: {frozen_layers}")
@@ -486,13 +470,13 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         Freezes all the language model layers of the student model.
         """
         if hasattr(self.student_model, "language_model"):
-            for param in self.student_model.language_model.model.parameters():
+            for param in self.student_model.language_model.parameters():
                 param.requires_grad = False
             print("Student Model - All language layers are frozen.")
 
         # Log which layers are frozen
         frozen_layers = [
-            idx for idx, layer in enumerate(self.student_model.language_model.model.layers)
+            idx for idx, layer in enumerate(self.student_model.language_model.layers)
             if not any(param.requires_grad for param in layer.parameters())
         ]
         print(f"Student Model - Frozen language layers: {frozen_layers}")
@@ -504,7 +488,7 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         Freezes all the language model layers of the student model except the vision encoder.
         """
         if hasattr(self.student_model, "language_model"):
-            for param in self.student_model.language_model.model.parameters():
+            for param in self.student_model.language_model.parameters():
                 param.requires_grad = True
             print("Student Model - All language layers are unfrozen.")
 

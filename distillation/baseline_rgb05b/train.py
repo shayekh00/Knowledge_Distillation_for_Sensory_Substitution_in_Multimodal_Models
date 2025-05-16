@@ -2,14 +2,14 @@ from transformers import AutoProcessor, AutoConfig,AutoModelForCausalLM
 import os
 import argparse
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from pytorch_lightning import Trainer
 
 from dataset.dataloader.OneVision.CustomSUNRGBDDatasetOneVision import CustomSUNRGBDDatasetOneVision
 from dataset.datamodule.OneVision.CustomSUNRGBDOneVisionDataModule import CustomSUNRGBDOneVisionDataModule
 from llava.model.builder import load_pretrained_model
 import pytorch_lightning as pl
-from distillation.onevision_llava.LLavaOneVisionModule import LlavaOnevisionModule
+from distillation.baseline_rgb05b.LLavaOneVisionModule import LlavaOnevisionModule
 import torch
 from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -24,14 +24,14 @@ print("sys.path:", sys.path)
 
 
 load_dotenv()
-root_data_dir = os.getenv("root_data_dir2")
+root_data_dir = os.getenv("ROOT_DATA_DIR")
+MAIN_ROOT_DATA_DIR = os.getenv("MAIN_ROOT_DATA_DIR")
 print("root_data_dir:", root_data_dir)
-MAIN_ROOT_DATA_DIR = os.path.abspath(root_data_dir)
-ROOT_DATA_DIR_DATA = os.path.abspath(root_data_dir + "data/" )
+ROOT_DATA_DIR_DATA = os.path.abspath(root_data_dir )
 current_dir = os.getcwd()
 print("Current directory:", current_dir)
 
-import os
+# import os
 import torch
 
 
@@ -45,6 +45,11 @@ def extract_val_loss(filename):
         return float('inf')
     
 def main():
+    '''
+    Example command to run the script:
+    python distillation/baseline_rgb05b/train.py --batch_size 2 --max_epochs 5 --subset_percentage 0.1 --augmentation --accumulate_grad_batches 32
+    
+    '''
 
     parser = argparse.ArgumentParser(description="LLaVA OneVision Training Script")
 

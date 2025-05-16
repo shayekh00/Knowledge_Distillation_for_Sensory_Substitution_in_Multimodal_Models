@@ -14,62 +14,77 @@ import glob
 import re
 import argparse
 from scipy.ndimage import convolve
-from colormath.color_objects import sRGBColor, LabColor
-from colormath.color_conversions import convert_color
-from colormath.color_diff import delta_e_cie2000
-import torchvision.transforms as transforms
-# from evaluate import load
-# from torchmetrics.text.bert import BERTScore
+
 
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+print("sys.path:", sys.path)
+current_dir = os.getcwd()
+print("Current directory:", current_dir)
 
-from metric import simple_accuracy_metric , neural_similarity_metric , compute_bert_stats
-# print("sys.path:", sys.path)
-# current_dir = os.getcwd()
-# print("Current directory:", current_dir)
-from  LLavaOneVisionModule import LlavaOnevisionModule
+
 import spacy
-
-def are_texts_similar(nlp ,model_final_answer, answers, similarity_threshold=0.5):
-    """
-    Compares two texts semantically and returns True if they are similar.
-
-    Parameters:
-        model_final_answer (str): The first text to compare, ensured to be a string.
-        answers (list): The second text to compare, provided as a list of strings.
-        similarity_threshold (float): The similarity threshold to consider texts similar. Default is 0.7.
-
-    Returns:
-        bool: True if texts are similar, False otherwise.
-    """
-    # Ensure model_final_answer is a string
-    if not isinstance(model_final_answer, str):
-        raise ValueError("model_final_answer must be a string")
-
-    # Ensure answers is a list and join it into a single string
-    if not isinstance(answers, list):
-        raise ValueError("answers must be a list of strings")
-    answers = " ".join(answers)
-
-    # Strip whitespace from model_final_answer
-    model_final_answer = model_final_answer.strip()
-
-    # # Load the spaCy language model
-    # nlp = spacy.load("en_core_web_md")
-
-    # Process the texts
-    model_final_answer_doc1 = nlp(model_final_answer)
-    answers_doc2 = nlp(answers)
-
-    # Compute similarity
-    similarity = model_final_answer_doc1.similarity(answers_doc2)
-
-    # Return whether the similarity is above the threshold
-    # print("Similarity:", similarity >= similarity_threshold)
-    return similarity >= similarity_threshold
+'''
+Usage: 
+python evaluation/onevisionv3/sunrgbd/evaluate_onevision_kd_new.py --model_id llava-hf/llava-onevision-qwen2-0.5b-ov-hf --gts_type val --load_checkpoint
+python evaluation/onevisionv3/sunrgbd/evaluate_onevision_kd_new.py --model_id llava-hf/llava-onevision-qwen2-7b-ov-hf --gts_type val --load_checkpoint
+'''
 
 
+
+def initialize_model(MAIN_ROOT_DIR, model_id="llava-hf/llava-onevision-qwen2-0.5b-ov-hf", load_checkpoint=False, model_type="logit_based", phase_param=2):
+    """Initialize the processor and model."""
+
+        # Initialize the model
+    model_name_student = "llava-hf/llava-onevision-qwen2-0.5b-ov-hf"
+    model_name_teacher = "llava-hf/llava-onevision-qwen2-7b-ov-hf"
+    processor_name = "llava-hf/llava-onevision-qwen2-7b-ov-hf"
+
+
+    processor = AutoProcessor.from_pretrained( processor_name )
+
+    checkpoint_file = "llava_onevision_checkpoint_double_trouble_phase3_-epoch=00-val_loss=0.0111.ckpt"
+
+    checkpoint_dir = os.path.join(MAIN_ROOT_DIR, "checkpoints", "kd_checkpoints")
+    checkpoint_files = glob.glob(os.path.join(checkpoint_dir, checkpoint_file))
+    checkpoint_files.sort(key=extract_val_loss)
+    checkpoint_path = checkpoint_files[0]
+
+    if model_type == "logit_based":
+        from distillation.knowledge_distillation7b_logit_based.OnlineKnowledgeDistillationLLavaOneVision import OnlineKnowledgeDistillationLLavaOneVision
+        
+    if model_type == "feature_based":
+        from distillation.knowledge_distillation7b_feature_based.OnlineKnowledgeDistillationLLavaOneVision import OnlineKnowledgeDistillationLLavaOneVision
+
+    if model_type == "double_trouble":
+        from distillation.knowledge_distillation7b_double_trouble.phase1.OnlineKnowledgeDistillationLLavaOneVision import OnlineKnowledgeDistillationLLavaOneVision
+
+    model = OnlineKnowledgeDistillationLLavaOneVision.load_from_checkpoint(
+            checkpoint_path,
+            model_name_student = model_name_student,
+            model_name_teacher = model_name_teacher,
+            processor=processor,
+            torch_dtype=torch.float16,
+            map_location=torch.device('cpu'),
+            phase = phase_param
+        )
+    
+    model = model.student_model.to('cuda')
+    print("Model loaded from checkpoint at", checkpoint_path)
+
+
+    
+    pad_token_id = (
+        processor.tokenizer.eos_token_id
+        if processor.tokenizer.pad_token_id is None
+        else processor.tokenizer.pad_token_id
+    )
+
+    
+    model.to("cuda:0")
+    
+    return processor, model, pad_token_id
+   
 def load_environment():
     """Load environment variables."""
     load_dotenv()
@@ -93,69 +108,6 @@ def extract_val_loss(filename):
         # If no val_loss is found, return infinity so it's not selected
         return float('inf')
     
-def initialize_model(MAIN_ROOT_DIR, model_id="llava-hf/llava-onevision-qwen2-0.5b-ov-hf", load_checkpoint=False):
-    """Initialize the processor and model."""
-
-    processor = AutoProcessor.from_pretrained( model_id )
-    
-    if load_checkpoint:
-        #Check which model to load
-        if "0.5b" in model_id:
-            print("Loading 0.5b model.............")
-            model_id = "llava-hf/llava-onevision-qwen2-0.5b-ov-hf"
-            # checkpoint_file = "llava-onevision0.5b_depth-epoch=09-val_loss=0.0124.ckpt"
-            checkpoint_file = "llava-onevision0.5b_rgb-epoch=12-val_loss=0.0102.ckpt"
-            folder_name = "baseline_rgb"
-
-            # checkpoint_file = "llava-onevision0.5b*.ckpt"
-        else:
-            print("Loading 7b model.............")
-            model_id = "llava-hf/llava-onevision-qwen2-7b-ov-hf"
-            # checkpoint_file = "llava-onevision7b*.ckpt"
-            folder_name = "baseline7b_rgb"
-            checkpoint_file = "llava-onevision7b-epoch=04-val_loss=0.00477.ckpt"
-
-
-
-        checkpoint_dir = os.path.join(MAIN_ROOT_DIR, "checkpoints", folder_name)
-        checkpoint_files = glob.glob(os.path.join(checkpoint_dir, checkpoint_file))
-        # Sort the files by validation loss (lowest first)
-        checkpoint_files.sort(key=extract_val_loss)
-        # print("Checkpoint files:", checkpoint_files)        
-        # Load the checkpoint with the lowest validation loss
-        checkpoint_path = checkpoint_files[0]
-
-
-
-        model = LlavaOnevisionModule.load_from_checkpoint(
-                checkpoint_path,
-                model_name=model_id,
-                processor=processor,
-                torch_dtype=torch.float16,
-            )
-        model = model.model
-        print("Model loaded from checkpoint at", checkpoint_path)
-    else:
-        print("Model loaded from Pre-Trained", model_id)
-        model = LlavaOnevisionForConditionalGeneration.from_pretrained(
-                model_id,
-                torch_dtype=torch.float16,
-                low_cpu_mem_usage=True,
-                )
-
-
-
-    
-    pad_token_id = (
-        processor.tokenizer.eos_token_id
-        if processor.tokenizer.pad_token_id is None
-        else processor.tokenizer.pad_token_id
-    )
-
-    
-    model.to("cuda:0")
-    
-    return processor, model, pad_token_id
 
 def remove_substring_from_path(path, substring="SUNRGBD"):
     """Remove a specific substring from the path."""
@@ -279,58 +231,6 @@ def convert_depth_image(depth_image_path):
 
     return depth_image_pil
 
-def update_counters(nlp, model_final_answer, row_data, correct,answers, incorrect ,incorrect_df, data_count, question_type, correct_df):
-    # print("Model Final Answer1:", model_final_answer, "Answers", answers)
-
-    answers = ["left","and","down"]
-    model_answer = "down"
-    new_model_answer = "left and down"
-
-    #just check if the answer is contained in the model answers
-    #normalize the answers and model answers using spacy/n
-
-    model_final_answer = model_final_answer.strip()
-    
-    answers = answers.split()
-
-    if question_type == "Color Identification":
-        
-        if (model_final_answer in answers) or ((model_final_answer in ['gray', 'grey','white','silver']) and (answers[0] in ['gray', 'grey','white','silver'])):
-            correct += 1
-            correct_df.loc[len(correct_df)] = row_data
-        else:
-            incorrect += 1
-            incorrect_df.loc[len(incorrect_df)] = row_data
-
-    elif question_type == "Object Identification":
-        if are_texts_similar(nlp ,model_final_answer, answers):
-            correct += 1
-            correct_df.loc[len(correct_df)] = row_data
-
-        else:
-            incorrect += 1
-            incorrect_df.loc[len(incorrect_df)] = row_data
-
-    else:
-        #For Other Question Types
-        if ((model_final_answer !="no") and (len(model_final_answer) == 1 or len(model_final_answer) == 2)) or (model_final_answer not in answers):
-                incorrect_df.loc[len(incorrect_df)] = row_data
-                incorrect +=1
-                # print("Model Final Answer2:", model_final_answer, "Answers", answers)
-                # print((model_final_answer not in answers))
-
-        # elif are_texts_similar(nlp ,model_final_answer, answers):
-        #     correct += 1
-        # elif (model_final_answer not in answers):
-        #     incorrect += 1
-        #     incorrect_df.loc[len(incorrect_df)] = row_data
-        else:
-            correct_df.loc[len(correct_df)] = row_data
-            correct += 1
-
-    data_count += 1
-
-    return correct, incorrect, incorrect_df , data_count, correct_df
 
 
 mean = np.array([0.485, 0.456, 0.406])
@@ -411,12 +311,24 @@ def main():
     gts_type = args.gts_type
     load_checkpoint = args.load_checkpoint
 
-    if "0.5b" in model_id:
-        model_used = "0.5b"
+    # if "0.5b" in model_id:
+    #     model_used = "0.5b"
+    # else:
+    #     model_used = "7b"
+
+
+    # kd_model_type = "logit_based"
+    # kd_model_type = "feature_based"
+    kd_model_type = "double_trouble"
+
+    if kd_model_type == "double_trouble":
+        phase_no = 3
+        phase = "phase"+str(phase_no)
+        phase_param = phase_no
     else:
-        model_used = "7b"
-    
-    print("Model used:", model_used)
+        phase = "_"
+
+
 
     # model_id = "llava-hf/llava-onevision-qwen2-7b-ov-hf"
     # gts_type = "val"  # Change to "test" for test dataset
@@ -425,9 +337,11 @@ def main():
     # Load environment variables and initialize the model
     ROOT_DATA_DIR, MAIN_ROOT_DIR = load_environment()
 
-
-    processor, model, pad_token_id = initialize_model(MAIN_ROOT_DIR, model_id, load_checkpoint)
+    processor, model, pad_token_id = initialize_model(MAIN_ROOT_DIR, model_id="llava-hf/llava-onevision-qwen2-0.5b-ov-hf", load_checkpoint=False, model_type=kd_model_type, phase_param=phase_param)
+    # processor, model, pad_token_id = initialize_model(MAIN_ROOT_DIR, model_id, load_checkpoint)
     # #getting the model from the module
+    # model = model.model
+
     
     unique_tokens_path = os.path.join(ROOT_DATA_DIR, "SUNRGBD/", "unique_tokens_new5.csv")
 
@@ -475,7 +389,7 @@ def main():
     correct_df = pd.DataFrame(columns=['Question_Id', 'Questions', 'Question_Type', 'Answers',"Model_Answer"])
     results_df = pd.DataFrame(columns=['Question_Id', 'Questions', 'Question_Type', 'Answers',"Model_Answer"])
     data_list = []
-    pixel_data_type = "rgb"
+    pixel_data_type = "depth"
     
     print("Image used :", pixel_data_type)
 
@@ -526,28 +440,11 @@ def main():
 
     #Write the results to a CSV file
     results_df = pd.DataFrame(data_list)
-
-    if args.load_checkpoint:
-        model_type = "checkpoint"
-    else:
-        model_type = "pre-trained"
     
-    path_to_save = os.path.join( "dataset/predictions/", "results_"+model_type+"_"+pixel_data_type+"_"+gts_type+"_"+model_used+".csv")
+    path_to_save = os.path.join( "dataset/predictions/", "results_kd_modeltype:"+pixel_data_type+"_"+gts_type+"_"+kd_model_type+phase+".csv")
     
     results_df.to_csv(path_to_save, index=False)  
     print("Results saved to:", path_to_save)
-
-
-    # #Compute the metrics
-    # bert_result = bertscore(predictions, references)
-    # bert_stats = compute_bert_stats(bert_result)
-
-    # simple_accuracy = simple_accuracy_metric(predictions, references)
-    # neural_similarity = neural_similarity_metric(predictions, references)
-
-    # print("Bert Stats:", bert_stats)
-    # print("Simple Accuracy:", simple_accuracy)
-    # print("Neural Similarity:", neural_similarity)
 
 
 if __name__ == "__main__":

@@ -3,14 +3,14 @@ import os
 import sys
 import argparse
 from datetime import datetime
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
 from pytorch_lightning import Trainer
 # from distillation.onevision_llava.LLavaOneVisionModule import LLaVAOneVisionModule
 from dataset.dataloader.OneVision.CustomSUNRGBDDatasetOneVision import CustomSUNRGBDDatasetOneVision
 from dataset.datamodule.OneVision.CustomSUNRGBDOneVisionDataModule import CustomSUNRGBDOneVisionDataModule
 from llava.model.builder import load_pretrained_model
 import pytorch_lightning as pl
-from distillation.onevision_llava.knowledge_distillation7b_double_trouble.phase1.OnlineKnowledgeDistillationLLavaOneVision import OnlineKnowledgeDistillationLLavaOneVision
+from distillation.knowledge_distillation7b_double_trouble.phase1.OnlineKnowledgeDistillationLLavaOneVision import OnlineKnowledgeDistillationLLavaOneVision
 import torch
 from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -27,8 +27,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../.
 
 load_dotenv()
 
-ROOT_DATA_DIR = XXXX
-MAIN_ROOT_DATA_DIR = XXXX
+ROOT_DATA_DIR = os.getenv("ROOT_DATA_DIR")
+MAIN_ROOT_DATA_DIR = os.getenv("MAIN_ROOT_DATA_DIR")
 current_dir = os.getcwd()
 
 
@@ -55,7 +55,7 @@ def extract_val_loss(filename):
 def main():
     '''
     Example command: 
-    python distillation/onevision_llava/knowledge_distillation7b_double_trouble/phase3/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --load_checkpoint
+    python distillation/knowledge_distillation7b_double_trouble/phase3/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --load_checkpoint
     
     '''
 

@@ -8,15 +8,13 @@ import os
 import sys
 import pickle
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from LLavaOneVisionModule import LlavaOnevisionModule
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+from distillation.LLavaOneVisionModule import LlavaOnevisionModule
 print("Current directory in KD :", os.getcwd())
 
 class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
-    def __init__(self, model_name_student, model_name_teacher, processor, learning_rate=2e-5, phase=1):
+    def __init__(self, model_name_student, model_name_teacher, processor, learning_rate=2e-5):
         super().__init__()
-
-        self.phase = phase
         # self.model_name_student = model_name_student
         self.learning_rate = learning_rate   
 
@@ -31,11 +29,9 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         self.teacher_model = LlavaOnevisionForConditionalGeneration.from_pretrained(
             model_name_teacher, 
             low_cpu_mem_usage=True,
-            torch_dtype=torch.float16,
-            device_map="auto"
         )
 
-        # checkpoint_path = "XXXX/checkpoints/baseline_rgb/llava-onevision0.5b-epoch=00-val_loss=0.0129.ckpt"
+        # checkpoint_path = "/XXXXX/checkpoints/baseline7b_rgb/llava-onevision7b-epoch=01-val_loss=0.00547.ckpt"
         # self.teacher_model = LlavaOnevisionModule.load_from_checkpoint(
         #         checkpoint_path,
         #         low_cpu_mem_usage=True,
@@ -45,6 +41,8 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         #         device_map="auto"
         #     )
         # self.teacher_model = self.teacher_model.model
+
+
         self.teacher_model.eval()
         
         # Freeze all parameters of the teacher model
@@ -59,13 +57,6 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
             low_cpu_mem_usage=True,
         )
         print("Student Model Loaded")
-        # self.print_non_language_layers()
-
-        # self.freeze_student_language_layers()
-
-
-        # self.student_model
-        
 
 
         self.config = self.student_model.config
@@ -76,7 +67,6 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         
         #For loss computation
         # self.mse_loss_fn = nn.MSELoss()
-        self.soft_target_loss_weight = 0.1
         self.soft_target_loss_weight = 0.1
         self.ce_loss_weight = 0.8
         self.T = 0.8
@@ -99,21 +89,10 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         self.student_model.train()
         self.teacher_model.eval()
 
-        # self.student_model.gradient_checkpointing_enable()
-        # self.teacher_model.gradient_checkpointing_enable()
-
-
-            
 
 
     def _register_hooks(self, layer_idx):
         # # Adjust the layer index for both student and teacher models
-        # layer_student = self.student_model.language_model.model.layers[layer_idx].self_attn.q_proj
-        # layer_teacher = self.teacher_model.language_model.model.layers[layer_idx].self_attn.q_proj
-
-        # # Register forward hooks
-        # layer_student.register_forward_hook(self.hook_fn_student)
-        # layer_teacher.register_forward_hook(self.hook_fn_teacher)
 
         """Registers hooks on the last layer of the vision encoder."""
         teacher_layer = self.teacher_model.vision_tower.vision_model.post_layernorm
@@ -132,38 +111,11 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
 
     # def kl_divergence_loss(self,soft_student_probs, soft_teacher_targets, temperature):
     #     loss = F.kl_div(
-    #         soft_student_probs.log(),
+    #         soft_student_probs,
     #         soft_teacher_targets,
-    #         reduction='batchmean'
+    #         reduction='mean'
     #     ) * (temperature ** 2)
     #     return loss
-    
-    
-    def training_step(self, batch, batch_idx):
-        # Forward pass
-        loss = self(batch)
-        
-        # batch_size = batch["rgb_input_ids"].size(0)
-        # Log the validation loss
-        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-
-        return loss
-
-    def validation_step(self, batch, batch_idx):
-        # Forward pass
-        loss = self(batch)
-        
-        # batch_size = batch["rgb_input_ids"].size(0)
-        # Log the validation loss
-        # self.log("val_loss", loss, batch_size=batch_size, on_step=False, on_epoch=True, prog_bar=True, logger=True)
-        self.log('val_loss', loss,on_step=False ,on_epoch=True, prog_bar=True, logger=True)
-        return loss
-
-
-    def configure_optimizers(self):
-        return torch.optim.AdamW(self.parameters(), lr=self.learning_rate)
-    
-
 
     # working forward function
     def forward(self, batch):
@@ -176,11 +128,7 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
 
         labels = batch["labels"]
         image_sizes = batch["image_sizes"]
-        # question_id = batch["question_id"]
 
-
-        # self.teacher_representation_output = teacher_rep
-        # self.teacher_logits = teacher_logits
         # Teacher model forward pass
         rgb_inputs = {
             'input_ids': rgb_input_ids,
@@ -208,107 +156,37 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         teacher_features = F.normalize(teacher_features, p=2, dim=-1)
         student_features = F.normalize(student_features, p=2, dim=-1)
 
-        if self.phase == 1:
-            total_loss = self.compute_vision_loss(student_features, teacher_features, teacher_logits, student_outputs)
-
-        if self.phase == 2:
-            total_loss = self.compute_language_loss(teacher_logits, student_outputs)
-
-        if self.phase == 3:
-            total_loss = self.compute_combined_loss(student_features, teacher_features, teacher_logits, student_outputs)
-
-        # # Compute contrastive loss
-        # contrastive_loss_value = self.contrastive_loss(student_features, teacher_features)
+        # Compute contrastive loss
+        contrastive_loss_value = self.contrastive_loss(student_features, teacher_features)
         # total_loss = contrastive_loss_value
 
-        # total_loss = self.compute_language_loss(teacher_logits, student_outputs)
+        total_loss = self.compute_loss(teacher_logits, student_outputs, contrastive_loss_value)
 
         return total_loss
+        
+
+    def training_step(self, batch, batch_idx):
+        # Forward pass
+        loss = self(batch)
+        
+        # batch_size = batch["rgb_input_ids"].size(0)
+        # Log the validation loss
+        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        # Forward pass
+        loss = self(batch)
+        
+        # batch_size = batch["rgb_input_ids"].size(0)
+        # Log the validation loss
+        # self.log("val_loss", loss, batch_size=batch_size, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log('val_loss', loss,on_step=False ,on_epoch=True, prog_bar=True, logger=True)
+        return loss
+
     
-
-    def compute_combined_loss(self,student_features, teacher_features, teacher_logits, student_outputs):
-            """
-            Computes the total loss for knowledge distillation, including:
-            - Contrastive loss between teacher and student embeddings
-            - KL Divergence loss between the soft teacher and student distributions
-            - Cross-Entropy loss of student labels
-            
-            Args:
-                teacher_logits (torch.Tensor): Logits output by the teacher model.
-                student_outputs: The outputs from the student model, containing logits and loss.
-            
-            Returns:
-                torch.Tensor: The total computed loss.
-            """
-            #Resizing teacher logits for it to allign with the student
-            student_logits = student_outputs.logits
-            teacher_logits = teacher_logits[:, :, :student_logits.size(2)]
-
-            soft_teacher_targets = nn.functional.softmax(teacher_logits / self.T, dim=-1)
-            soft_student_probs = nn.functional.log_softmax(student_logits / self.T, dim=-1)
-
-
-            # kl_divergence_loss = torch.sum(soft_teacher_targets * (soft_teacher_targets.log() - soft_student_probs)) / soft_student_probs.size(0) * (self.T ** 2)
-            kl_divergence_loss = F.kl_div(
-                                soft_student_probs, 
-                                soft_teacher_targets, 
-                                reduction='mean',
-                                log_target = True
-                            ) * (self.T ** 2)
-            
-            contrastive_loss_value = self.contrastive_loss(student_features, teacher_features)
-
-            # # Cross-Entropy loss from student outputs
-            student_label_loss = student_outputs.loss
-
-            # Total loss combining all components
-            loss = (self.soft_target_loss_weight * kl_divergence_loss) + (self.ce_loss_weight * student_label_loss)  + contrastive_loss_value
-
-
-            return loss
-    
-
-    def compute_vision_loss(self,student_features, teacher_features, teacher_logits, student_outputs):
-            """
-            Computes the total loss for knowledge distillation, including:
-            - Contrastive loss between teacher and student embeddings
-            - KL Divergence loss between the soft teacher and student distributions
-            - Cross-Entropy loss of student labels
-            
-            Args:
-                teacher_logits (torch.Tensor): Logits output by the teacher model.
-                student_outputs: The outputs from the student model, containing logits and loss.
-            
-            Returns:
-                torch.Tensor: The total computed loss.
-            """
-            #Resizing teacher logits for it to allign with the student
-            student_logits = student_outputs.logits
-            teacher_logits = teacher_logits[:, :, :student_logits.size(2)]
-
-            soft_teacher_targets = nn.functional.softmax(teacher_logits / self.T, dim=-1)
-            soft_student_probs = nn.functional.log_softmax(student_logits / self.T, dim=-1)
-
-
-            # kl_divergence_loss = torch.sum(soft_teacher_targets * (soft_teacher_targets.log() - soft_student_probs)) / soft_student_probs.size(0) * (self.T ** 2)
-            kl_divergence_loss = F.kl_div(
-                                soft_student_probs, 
-                                soft_teacher_targets, 
-                                reduction='mean'
-                            ) * (self.T ** 2)
-            
-            contrastive_loss_value = self.contrastive_loss(student_features, teacher_features)
-
-            # # Cross-Entropy loss from student outputs
-            # student_label_loss = student_outputs.loss
-
-            # Total loss combining all components
-            loss = (self.soft_target_loss_weight * kl_divergence_loss) + (self.ce_loss_weight * contrastive_loss_value) 
-
-
-            return loss
-    
-    def compute_language_loss(self, teacher_logits, student_outputs):
+    def compute_loss(self, teacher_logits, student_outputs, contrastive_loss_value):
             """
             Computes the total loss for knowledge distillation, including:
             - Mean Squared Error (MSE) loss between the student and teacher representations
@@ -325,30 +203,85 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
             #Resizing teacher logits for it to allign with the student
             student_logits = student_outputs.logits
             teacher_logits = teacher_logits[:, :, :student_logits.size(2)]
-
-            # MSE loss between student and teacher representations            
-            # mse_loss = self.mse_loss(self.student_representation_output, self.teacher_representation_output)
-
             
             soft_teacher_targets = nn.functional.softmax(teacher_logits / self.T, dim=-1)
             soft_student_probs = nn.functional.log_softmax(student_logits / self.T, dim=-1)
 
-            # KL Divergence loss
-            # print("soft_teacher_targets.shape:", soft_teacher_targets.shape)
-            # print("soft_teacher_targets.logits.shape:", soft_teacher_targets.shape)
-            # print("soft_student_probs.shape:", soft_student_probs.shape)
-
-            kl_divergence_loss = torch.sum(soft_teacher_targets * (soft_teacher_targets.log() - soft_student_probs)) / soft_student_probs.size(0) * (self.T ** 2)
+            # kl_divergence_loss = torch.sum(soft_teacher_targets * (soft_teacher_targets.log() - soft_student_probs)) / soft_student_probs.size(0) * (self.T ** 2)
+            # kl_divergence_loss = self.kl_divergence_loss(soft_student_probs, soft_teacher_targets, self.T)
+            kl_divergence_loss = F.kl_div(
+                    soft_student_probs, 
+                    soft_teacher_targets, 
+                    reduction='mean',
+                    log_target = True
+                ) * (self.T ** 2)
+            
 
             # Cross-Entropy loss from student outputs
             student_label_loss = student_outputs.loss
+            # print("jsd_loss:", jsd_loss,"student_label_loss:", student_label_loss, "contrastive_loss_value:", contrastive_loss_value)
 
             # Total loss combining all components
-            loss = (self.soft_target_loss_weight * kl_divergence_loss) + (self.ce_loss_weight * student_label_loss) 
+            loss = (self.soft_target_loss_weight * kl_divergence_loss) + (self.ce_loss_weight * student_label_loss) + contrastive_loss_value
 
 
             return loss
+
+
+    def configure_optimizers(self):
+        return torch.optim.AdamW(self.parameters(), lr=self.learning_rate)
     
+
+    # def jsd_loss(self, student_logits, teacher_logits, temperature=1.0):
+    #     epsilon = 1e-6  # To avoid log(0) issues
+
+    #     # Normalize logits to prevent large values
+    #     student_probs = F.softmax((student_logits - student_logits.max(dim=-1, keepdim=True)[0]) / temperature, dim=-1)
+    #     teacher_probs = F.softmax((teacher_logits - teacher_logits.max(dim=-1, keepdim=True)[0]) / temperature, dim=-1)
+
+    #     # Compute midpoint distribution M (avoid zero values)
+    #     M = 0.5 * (student_probs + teacher_probs)
+    #     M = torch.clamp(M, min=epsilon)  # Prevent log(0)
+
+    #     # Compute KL divergence terms
+    #     kl_student_m = F.kl_div(student_probs.log(), M, reduction="batchmean")
+    #     kl_teacher_m = F.kl_div(teacher_probs.log(), M, reduction="batchmean")
+    #     print("kl_student_m:", kl_student_m, "kl_teacher_m:", kl_teacher_m)
+
+    #     # Compute final JSD loss
+    #     jsd_loss = 0.5 * (kl_student_m + kl_teacher_m)
+
+    #     return jsd_loss
+
+    # def jsd_loss(self, student_logits, teacher_logits, temperature=0.8):
+    #     """
+    #     Computes the Jensen-Shannon Divergence (JSD) Loss between the student and teacher distributions.
+        
+    #     Args:
+    #         student_logits (torch.Tensor): Logits from the student model.
+    #         teacher_logits (torch.Tensor): Logits from the teacher model.
+    #         temperature (float): Temperature scaling factor.
+            
+    #     Returns:
+    #         torch.Tensor: Computed JSD loss.
+    #     """
+
+    #     # Compute softmax probabilities
+    #     student_probs = F.softmax(student_logits / self.T , dim=-1)
+    #     teacher_probs = F.softmax(teacher_logits / self.T, dim=-1)
+
+    #     # Compute midpoint distribution M
+    #     M = 0.5 * (student_probs + teacher_probs)
+
+    #     # Compute KL divergence for both student->M and teacher->M
+    #     kl_student_m = F.kl_div(student_probs.log(), M, reduction="batchmean")
+    #     kl_teacher_m = F.kl_div(teacher_probs.log(), M, reduction="batchmean")
+
+    #     # Compute JSD loss
+    #     jsd_loss = 0.5 * (kl_student_m + kl_teacher_m)
+
+    #     return jsd_loss
+
 
     def contrastive_loss(self, student_features, teacher_features, temperature=0.07):
         """
@@ -441,8 +374,6 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         ]
         print(f"Student Model - Frozen language layers: {frozen_layers}")
 
-
-    
     def unfreeze_student_language_layers(self):
         """
         Freezes all the language model layers of the student model except the vision encoder.
@@ -458,17 +389,21 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
                 param.requires_grad = True
             print("Student Model - Vision encoder layers are trainable.")
 
-    def freeze_student_vision_layers(self):
+    def freeze_student_language_layers(self):
         """
-        Freezes all the vision model layers of the student model.
+        Freezes all the language model layers of the student model except the vision encoder.
         """
-        if hasattr(self.student_model, "vision_tower"):
-            for param in self.student_model.vision_tower.parameters():
+        if hasattr(self.student_model, "language_model"):
+            for param in self.student_model.language_model.model.parameters():
                 param.requires_grad = False
-            print("Student Model - All vision layers are frozen.")
+            print("Student Model - All language layers are frozen.")
 
-        # Log which layers are frozen
-        frozen_layers = [
-            name for name, param in self.student_model.vision_tower.named_parameters() if not param.requires_grad
-        ]
-        print(f"Student Model - Frozen vision layers: {frozen_layers}")
+        # Unfreeze vision encoder
+        if hasattr(self.student_model, "vision_model"):
+            for param in self.student_model.vision_model.parameters():
+                param.requires_grad = True
+            print("Student Model - Vision encoder layers are trainable.")
+
+
+
+

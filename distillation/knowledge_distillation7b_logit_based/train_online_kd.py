@@ -10,7 +10,7 @@ from dataset.dataloader.OneVision.CustomSUNRGBDDatasetOneVision import CustomSUN
 from dataset.datamodule.OneVision.CustomSUNRGBDOneVisionDataModule import CustomSUNRGBDOneVisionDataModule
 from llava.model.builder import load_pretrained_model
 import pytorch_lightning as pl
-from distillation.knowledge_distillation7b_double_trouble.phase1.OnlineKnowledgeDistillationLLavaOneVision import OnlineKnowledgeDistillationLLavaOneVision
+from distillation.knowledge_distillation7b_logit_based.OnlineKnowledgeDistillationLLavaOneVision import OnlineKnowledgeDistillationLLavaOneVision
 import torch
 from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -23,7 +23,7 @@ import torch.nn as nn
 from pytorch_lightning.callbacks import TQDMProgressBar
 from dotenv import load_dotenv
 from torch.distributed.fsdp.wrap import transformer_auto_wrap_policy
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../../')))
 
 load_dotenv()
 
@@ -55,7 +55,8 @@ def extract_val_loss(filename):
 def main():
     '''
     Example command: 
-    python distillation/knowledge_distillation7b_double_trouble/phase1/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --load_checkpoint
+    python distillation/onevision_llava/knowledge_distillation7b_logit_based/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --load_checkpoint --accumulate_grad_batches 64
+    python distillation/onevision_llava/knowledge_distillation7b_logit_based/train_online_kd.py --batch_size 1 --max_epochs 10 --subset_percentage 1 --accumulate_grad_batches 64
     
     '''
 
@@ -69,7 +70,6 @@ def main():
     parser.add_argument('--augmentation', action='store_true', help="Enable data augmentation for training")
     parser.add_argument('--accumulate_grad_batches', type=int, default=64, help="Input batch size for training (default: 64)")
 
-
     args = parser.parse_args()
 
     # Initialize the model
@@ -78,7 +78,7 @@ def main():
     processor_name = "llava-hf/llava-onevision-qwen2-7b-ov-hf"
 
     checkpoint_dir = os.path.join(MAIN_ROOT_DATA_DIR, "checkpoints", "kd_checkpoints")
-    checkpoint_files = glob.glob(os.path.join(checkpoint_dir, "llava_onevision_checkpoint_double_trouble_*.ckpt"))
+    checkpoint_files = glob.glob(os.path.join(checkpoint_dir, "llava_onevision_checkpoint_kd_logit_based_*.ckpt"))
     tensorboard_logs_dir = os.path.join(MAIN_ROOT_DATA_DIR, "tensorboard_logs", "kd_logs")
 
     processor = AutoProcessor.from_pretrained(processor_name)
@@ -102,13 +102,12 @@ def main():
                 torch_dtype=torch.float16,
                 map_location=torch.device('cpu')
             )
-        model.freeze_student_language_layers()
+        model.unfreeze_student_language_layers()
         model = model.to('cuda')
         print("Model loaded from checkpoint at", checkpoint_path)
     else:
         print("Model loaded from Pre-Trained")
-        model = OnlineKnowledgeDistillationLLavaOneVision(model_name_student, model_name_teacher, processor, phase = 1)
-        model.freeze_student_language_layers()
+        model = OnlineKnowledgeDistillationLLavaOneVision(model_name_student, model_name_teacher, processor)
 
 
     # processor = AutoProcessor.from_pretrained(processor_name)
@@ -126,15 +125,14 @@ def main():
     # Set up callbacks
     checkpoint_callback = ModelCheckpoint(
         dirpath=checkpoint_dir,
-        filename='llava_onevision_checkpoint_double_trouble_-{epoch:02d}-{val_loss:.4f}',
+        filename='llava_onevision_checkpoint_kd_logit_based_LoCa_-{epoch:02d}-{val_loss:.5f}',
         save_top_k=1,
         monitor='val_loss',
         mode='min'  
     )
 
     # Set up logger
-    # log_name = f"llava_onevision_kd_visionDistillLoss_batch_size{args.batch_size}_epochs{args.max_epochs}_grad_accum{args.accumulate_grad_batches}_RGB_{'aug' if args.augmentation else 'noaug'}"
-    log_name = f"kd_double_trouble_phase1_batch{args.batch_size}_epochs{args.max_epochs}_grad_accum{args.accumulate_grad_batches}_RGB_{'aug' if args.augmentation else 'noaug'}"
+    log_name = f"kd_logit_based_LoCa_batch{args.batch_size}_epochs{args.max_epochs}_grad_accum{args.accumulate_grad_batches}_RGB_{'aug' if args.augmentation else 'noaug'}"
     logger = TensorBoardLogger(tensorboard_logs_dir, name=log_name)
 
     # Initialize the Trainer
@@ -150,8 +148,7 @@ def main():
         check_val_every_n_epoch=1,    # Skip validation
         num_sanity_val_steps=0,         # Skip data sanity check
         fast_dev_run=False,               # Skip training
-        devices=1,
-        accumulate_grad_batches= args.accumulate_grad_batches 
+        devices=1, 
         # strategy=FSDPStrategy(
         # # auto_wrap_policy=transformer_auto_wrap_policy(
         # #     transformer_layer_cls={nn.TransformerEncoderLayer, nn.TransformerDecoderLayer}  # Specify transformer layer classes
