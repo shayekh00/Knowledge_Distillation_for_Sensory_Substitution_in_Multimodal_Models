@@ -1,7 +1,7 @@
 '''
 Example use: 
 
-python evaluation/onevisionv3/sunrgbd/get_results.py
+python evaluation/onevisionv3/get_results.py
 
 '''
 import pandas as pd

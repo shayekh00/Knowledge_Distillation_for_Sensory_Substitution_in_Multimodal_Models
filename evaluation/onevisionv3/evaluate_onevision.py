@@ -17,7 +17,7 @@ from scipy.ndimage import convolve
 
 
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 print("sys.path:", sys.path)
 current_dir = os.getcwd()
 print("Current directory:", current_dir)
@@ -32,7 +32,9 @@ python evaluation/onevisionv3/sunrgbd/evaluate_onevision_kd_new.py --model_id ll
 
 
 
-def initialize_model(MAIN_ROOT_DIR, model_id="llava-hf/llava-onevision-qwen2-0.5b-ov-hf", load_checkpoint=False, model_type="logit_based", phase_param=2):
+def initialize_model(MAIN_ROOT_DIR, checkpoint_filename, model_id="llava-hf/llava-onevision-qwen2-0.5b-ov-hf", load_checkpoint=False,
+                    model_type="logit_based", phase_param=2,):
+    
     """Initialize the processor and model."""
 
         # Initialize the model
@@ -43,9 +45,10 @@ def initialize_model(MAIN_ROOT_DIR, model_id="llava-hf/llava-onevision-qwen2-0.5
 
     processor = AutoProcessor.from_pretrained( processor_name )
 
-    checkpoint_file = "llava_onevision_checkpoint_double_trouble_phase3_-epoch=00-val_loss=0.0111.ckpt"
+    # checkpoint_file = "llava_onevision_checkpoint_double_trouble_phase3_-epoch=00-val_loss=0.0111.ckpt"
+    checkpoint_file = checkpoint_filename
 
-    checkpoint_dir = os.path.join(MAIN_ROOT_DIR, "checkpoints", "kd_checkpoints")
+    checkpoint_dir = os.path.join(MAIN_ROOT_DIR, "checkpoints", "kd_checkpoints","dummy_models")
     checkpoint_files = glob.glob(os.path.join(checkpoint_dir, checkpoint_file))
     checkpoint_files.sort(key=extract_val_loss)
     checkpoint_path = checkpoint_files[0]
@@ -89,15 +92,10 @@ def load_environment():
     """Load environment variables."""
     load_dotenv()
     # root_data_dir = os.getenv("root_data_dir")
-    root_data_dir = XXXX
-    print("Root data directory:", root_data_dir)
-    if root_data_dir is None:
-        raise ValueError("Environment variable 'root_data_dir' not set.")
-    
-    
-    MAIN_ROOT_DATA_DIR = os.path.abspath(root_data_dir)
-    ROOT_DATA_DIR_DATA = os.path.abspath(root_data_dir + "data/" )
-    return ROOT_DATA_DIR_DATA , MAIN_ROOT_DATA_DIR
+    ROOT_DATA_DIR = os.getenv("ROOT_DATA_DIR")
+    MAIN_ROOT_DATA_DIR = os.getenv("MAIN_ROOT_DATA_DIR")
+
+    return ROOT_DATA_DIR , MAIN_ROOT_DATA_DIR
 
 def extract_val_loss(filename):
     # Use regex to find the val_loss value in the filename
@@ -233,8 +231,7 @@ def convert_depth_image(depth_image_path):
 
 
 
-mean = np.array([0.485, 0.456, 0.406])
-std = np.array([0.229, 0.224, 0.225])
+
 
 
 def convert_depth_image_into_3D(depth_image_path):
@@ -242,6 +239,8 @@ def convert_depth_image_into_3D(depth_image_path):
     Loads a depth image, applies Prewitt filtering, normalizes the image, 
     and returns a normalized PIL image.
     """
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.224, 0.225])
     # Define Prewitt kernels
     Kx = np.array([[-1,  0,  1],
                    [-1,  0,  1],
@@ -294,14 +293,18 @@ def main():
     '''
     
     Usage: 
-    python evaluation/onevisionv3/sunrgbd/evaluate_onevision.py --model_id llava-hf/llava-onevision-qwen2-0.5b-ov-hf --gts_type val --load_checkpoint
-    python evaluation/onevisionv3/sunrgbd/evaluate_onevision.py --model_id llava-hf/llava-onevision-qwen2-7b-ov-hf --gts_type val --load_checkpoint
+    python evaluation/onevisionv3/evaluate_onevision.py --model_id llava-hf/llava-onevision-qwen2-0.5b-ov-hf --gts_type val --kd_model_type double_trouble --phase_no 1 --pixel_data_type depth --load_checkpoint --student_ckpt_path dummy_model-val_loss=6.1143.ckpt
+    python evaluation/onevisionv3/evaluate_onevision.py --model_id llava-hf/llava-onevision-qwen2-7b-ov-hf --gts_type val --load_checkpoint
     '''
 
     parser = argparse.ArgumentParser(description="Script for loading and initializing a model.")
     parser.add_argument("--model_id", type=str, required=True, help="The ID of the model to use.")
     parser.add_argument("--gts_type", type=str, choices=["val", "test"], required=True, help="The type of dataset to use (val or test).")
     parser.add_argument("--load_checkpoint", action="store_true", help="Whether to load the model from a checkpoint.")
+    parser.add_argument("--kd_model_type", type=str, choices=["double_trouble", "logit_based", "feature_based"], required=True, help="The type of model to be evaluated.")
+    parser.add_argument("--phase_no", type=int, default=1, help="Phase number (1: vision, 2: logit, 3: hybrid).")
+    parser.add_argument("--pixel_data_type", type=str, choices=["rgb", "depth"], default="depth", help="The type of pixel data to use (rgb or depth).")
+    parser.add_argument("--student_ckpt_path", type=str, help="Path to the student model checkpoint file.")
 
     # Parse the arguments
     args = parser.parse_args()
@@ -322,7 +325,7 @@ def main():
     kd_model_type = "double_trouble"
 
     if kd_model_type == "double_trouble":
-        phase_no = 3
+        phase_no = args.phase_no
         phase = "phase"+str(phase_no)
         phase_param = phase_no
     else:
@@ -337,7 +340,10 @@ def main():
     # Load environment variables and initialize the model
     ROOT_DATA_DIR, MAIN_ROOT_DIR = load_environment()
 
-    processor, model, pad_token_id = initialize_model(MAIN_ROOT_DIR, model_id="llava-hf/llava-onevision-qwen2-0.5b-ov-hf", load_checkpoint=False, model_type=kd_model_type, phase_param=phase_param)
+    processor, model, pad_token_id = initialize_model(MAIN_ROOT_DIR, model_id="llava-hf/llava-onevision-qwen2-0.5b-ov-hf", 
+                                                      load_checkpoint=False, model_type=kd_model_type, phase_param=phase_param,
+                                                      checkpoint_filename=args.student_ckpt_path) 
+                                                      
     # processor, model, pad_token_id = initialize_model(MAIN_ROOT_DIR, model_id, load_checkpoint)
     # #getting the model from the module
     # model = model.model
@@ -376,7 +382,7 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
 
         # Load the spaCy language model
-    nlp = spacy.load("en_core_web_md")
+    # nlp = spacy.load("en_core_web_md")
 
 
     results = []
@@ -393,7 +399,6 @@ def main():
     
     print("Image used :", pixel_data_type)
 
-    # bertscore = BERTScore(lang="en")
 
     #Loop through the dataset
     progress_bar = tqdm(range(ds_len))

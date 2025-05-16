@@ -124,9 +124,10 @@ def main():
     )
 
     # Set up callbacks
+    # f_name = 'llava_onevision_checkpoint_double_trouble_-{epoch:02d}-{val_loss:.4f}'
     checkpoint_callback = ModelCheckpoint(
         dirpath=checkpoint_dir,
-        filename='llava_onevision_checkpoint_double_trouble_-{epoch:02d}-{val_loss:.4f}',
+        filename="dummy_model",
         save_top_k=1,
         monitor='val_loss',
         mode='min'  

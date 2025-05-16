@@ -224,3 +224,4 @@ tensorboard
 albumentations
 wordcloud
 num2words
+spacy==3.8.3
