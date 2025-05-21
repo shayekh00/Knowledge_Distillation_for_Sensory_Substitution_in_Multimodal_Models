@@ -437,7 +437,7 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
         Args:
             n (int): Number of layers to freeze from the middle.
         """
-        total_layers = len(self.teacher_model.language_model.layers)
+        total_layers = len(self.teacher_model.language_model.model.layers)
 
         # Calculate the start and end indices for the middle layers to freeze
         start_idx = (total_layers - n) // 2
@@ -448,18 +448,18 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
             param.requires_grad = False
 
         # Unfreeze layers outside the middle range (before start_idx and after end_idx)
-        for idx, layer in enumerate(self.teacher_model.language_model.layers):
+        for idx, layer in enumerate(self.teacher_model.language_model.model.layers):
             if idx < start_idx or idx >= end_idx:
                 for param in layer.parameters():
                     param.requires_grad = True
 
         # Log frozen and trainable layers for verification
         frozen_layers = [
-            idx for idx, layer in enumerate(self.teacher_model.language_model.layers)
+            idx for idx, layer in enumerate(self.teacher_model.language_model.model.layers)
             if not any(param.requires_grad for param in layer.parameters())
         ]
         trainable_layers = [
-            idx for idx, layer in enumerate(self.teacher_model.language_model.layers)
+            idx for idx, layer in enumerate(self.teacher_model.language_model.model.layers)
             if any(param.requires_grad for param in layer.parameters())
         ]
         print(f"Teacher Model - Frozen layers: {frozen_layers}")
@@ -476,7 +476,7 @@ class OnlineKnowledgeDistillationLLavaOneVision(pl.LightningModule):
 
         # Log which layers are frozen
         frozen_layers = [
-            idx for idx, layer in enumerate(self.student_model.language_model.layers)
+            idx for idx, layer in enumerate(self.student_model.language_model.model.layers)
             if not any(param.requires_grad for param in layer.parameters())
         ]
         print(f"Student Model - Frozen language layers: {frozen_layers}")

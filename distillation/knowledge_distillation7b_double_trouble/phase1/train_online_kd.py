@@ -85,13 +85,13 @@ def main():
 
     if args.load_checkpoint:
         
-        # checkpoint_filename = "llava-onevision-RGB-7B-epoch=00-val_loss=0.01.ckpt"
-        # checkpoint_path = os.path.join(checkpoint_dir, checkpoint_filename)
+        checkpoint_filename = "llava_onevision_checkpoint_double_trouble_phase1_only_contrastive-epoch=00-val_loss=0.4519.ckpt"
+        checkpoint_path = os.path.join(checkpoint_dir, checkpoint_filename)
 
-        # Sort the files by validation loss (lowest first)
-        checkpoint_files.sort(key=extract_val_loss)        
-        # Load the checkpoint with the lowest validation loss
-        checkpoint_path = checkpoint_files[0]
+        # # Sort the files by validation loss (lowest first)
+        # checkpoint_files.sort(key=extract_val_loss)        
+        # # Load the checkpoint with the lowest validation loss
+        # checkpoint_path = checkpoint_files[0]
 
         print("Model Loading from checkpoint ....", checkpoint_path)
         model = OnlineKnowledgeDistillationLLavaOneVision.load_from_checkpoint(

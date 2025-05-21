@@ -48,7 +48,7 @@ def initialize_model(MAIN_ROOT_DIR, checkpoint_filename, model_id="llava-hf/llav
     # checkpoint_file = "llava_onevision_checkpoint_double_trouble_phase3_-epoch=00-val_loss=0.0111.ckpt"
     checkpoint_file = checkpoint_filename
 
-    checkpoint_dir = os.path.join(MAIN_ROOT_DIR, "checkpoints", "kd_checkpoints","dummy_models")
+    checkpoint_dir = os.path.join(MAIN_ROOT_DIR, "checkpoints", "kd_checkpoints")
     checkpoint_files = glob.glob(os.path.join(checkpoint_dir, checkpoint_file))
     checkpoint_files.sort(key=extract_val_loss)
     checkpoint_path = checkpoint_files[0]
@@ -337,16 +337,15 @@ def main():
     # gts_type = "val"  # Change to "test" for test dataset
     # load_checkpoint = True
 
+    checkpoint_filename = args.student_ckpt_path
+
     # Load environment variables and initialize the model
     ROOT_DATA_DIR, MAIN_ROOT_DIR = load_environment()
 
     processor, model, pad_token_id = initialize_model(MAIN_ROOT_DIR, model_id="llava-hf/llava-onevision-qwen2-0.5b-ov-hf", 
                                                       load_checkpoint=False, model_type=kd_model_type, phase_param=phase_param,
-                                                      checkpoint_filename=args.student_ckpt_path) 
+                                                      checkpoint_filename=checkpoint_filename) 
                                                       
-    # processor, model, pad_token_id = initialize_model(MAIN_ROOT_DIR, model_id, load_checkpoint)
-    # #getting the model from the module
-    # model = model.model
 
     
     unique_tokens_path = os.path.join(ROOT_DATA_DIR, "SUNRGBD/", "unique_tokens_new5.csv")
@@ -441,13 +440,21 @@ def main():
 
         predictions.append(model_final_answer)
         references.append(answers)
+        
 
 
     #Write the results to a CSV file
     results_df = pd.DataFrame(data_list)
     
-    path_to_save = os.path.join( "dataset/predictions/", "results_kd_modeltype:"+pixel_data_type+"_"+gts_type+"_"+kd_model_type+phase+".csv")
     
+    path_to_save = os.path.join( "dataset/predictions/",checkpoint_filename, "_results_kd_model_type:"+pixel_data_type+"_"+gts_type+"_"+kd_model_type+phase+".csv")
+    
+    # Extract the directory from the path
+    directory = os.path.dirname(path_to_save)
+
+    # Create the directory if it doesn't exist
+    os.makedirs(directory, exist_ok=True)
+
     results_df.to_csv(path_to_save, index=False)  
     print("Results saved to:", path_to_save)
 
