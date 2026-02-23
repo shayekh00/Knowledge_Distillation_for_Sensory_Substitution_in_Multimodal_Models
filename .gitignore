@@ -1,2 +1,8 @@
 .env
 *.pyc
+dataset/SUNRGBD/*
+further_scripts/OpenAI_Eval/openai_results/*
+further_scripts/Panesar_Recreation/panesar_model_results/*
+further_scripts/.DS_Store
+.gitignore
+.DS_Store
