@@ -1,5 +1,6 @@
 import os
 import sys
+import gc
 import argparse
 import json
 import torch
@@ -20,9 +21,43 @@ MODELS_PATH = os.path.join(BASE_DIR, 'models')
 sys.path.append(SYS_PATH)
 sys.path.append(MODELS_PATH)
 
-from inference_utils import get_image_paths, load_environment
+# from inference_utils import get_image_paths, load_environment
+from dotenv import load_dotenv
 from vqa_sunrgbd_model import VQASUNRGBDModel
 import re
+
+def remove_substring_from_path(path, substring="SUNRGBD"):
+    """Remove a specific substring from the path."""
+    index = path.find(substring)
+    if index != -1:
+        path = path[:index] + path[index + len(substring):]
+    return path
+
+
+def load_environment():
+    """Load environment variables."""
+    load_dotenv()
+    # root_data_dir = os.getenv("root_data_dir")
+    ROOT_DATA_DIR = os.getenv("ROOT_DATA_DIR")
+    MAIN_ROOT_DATA_DIR = os.getenv("MAIN_ROOT_DATA_DIR")
+
+    return ROOT_DATA_DIR , MAIN_ROOT_DATA_DIR
+
+
+def get_image_paths(img_name_rgb, img_name_depth, root_data_dir):
+    """Build and clean the paths for RGB and depth images."""
+    directory = os.path.join(root_data_dir, "SUNRGBD")
+
+    # Build full paths
+    rgb_image_path = os.path.join(directory, img_name_rgb)
+    depth_image_path = os.path.join(directory, img_name_depth)
+
+    # Clean up the paths
+    rgb_image_path = remove_substring_from_path(rgb_image_path).replace("\\", "/")
+    depth_image_path = remove_substring_from_path(depth_image_path).replace("\\", "/")
+
+    return rgb_image_path, depth_image_path
+
 
 def normalize_answer(text):
     text = str(text).lower()
@@ -162,6 +197,9 @@ class VQADataset(Dataset):
         
         return rgb_tensor, depth_tensor, q_tensor, ans_tensor
 
+
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 def main():
     import optuna
     
@@ -189,15 +227,19 @@ def main():
     
     train_dataset = VQADataset(dataset["train"], word2idx, ans2idx, ROOT_DATA_DIR)
     val_dataset = VQADataset(dataset["validation"], word2idx, ans2idx, ROOT_DATA_DIR)
+    if torch.cuda.is_available():
+        print("CUDA detected! Running on GPU.")
+    else:
+        print("CUDA not detected. Running on CPU/MPS.")
     device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     def objective(trial):
         # Bayesian optimization parameter space
         lr = trial.suggest_float("lr", 1e-4, 2.0, log=True)
-        batch_size = trial.suggest_categorical("batch_size", [16, 32, 64])
+        batch_size = 1
         
-        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4, drop_last=True)
-        val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, drop_last=True)
+        val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
         
         model = VQASUNRGBDModel(vocab_size=vocab_size, num_classes=num_classes, fusion_method=args.fusion_method)
         model.to(device)
@@ -205,6 +247,7 @@ def main():
         criterion = nn.CrossEntropyLoss()
         # The paper specifies training using Adadelta, which is implemented below
         optimizer = optim.Adadelta(model.parameters(), lr=lr)
+        scaler = torch.cuda.amp.GradScaler()
         
         best_val_loss = float('inf')
         epochs_no_improve = 0
@@ -219,11 +262,14 @@ def main():
                 rgb_t, depth_t, q_t, ans_t = rgb_t.to(device), depth_t.to(device), q_t.to(device), ans_t.to(device)
                 
                 optimizer.zero_grad()
-                logits = model(rgb_t, depth_t, q_t)
-                loss = criterion(logits, ans_t)
                 
-                loss.backward()
-                optimizer.step()
+                with torch.cuda.amp.autocast():
+                    logits = model(rgb_t, depth_t, q_t)
+                    loss = criterion(logits, ans_t)
+                
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
                 
                 train_loss += loss.item()
                 loop.set_postfix(loss=loss.item())
@@ -268,6 +314,11 @@ def main():
             if epochs_no_improve >= args.patience:
                 print(f"Early stopping triggered during trial! Patience metric of {args.patience} reached without val improvement.")
                 break
+        
+        # Cleanup memory after each trial
+        del model, optimizer, train_loader, val_loader
+        gc.collect()
+        torch.cuda.empty_cache()
                 
         return best_val_loss
 

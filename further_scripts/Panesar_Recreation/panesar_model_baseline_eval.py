@@ -153,6 +153,10 @@ def main():
     else:
         print("Warning: No model weights provided. Running inference with randomly initialized Question/MLP weights for demonstration!")
         
+    if torch.cuda.is_available():
+        print("CUDA detected! Running on GPU.")
+    else:
+        print("CUDA not detected. Running on CPU/MPS.")
     device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
     print(f"Using device: {device}")
     model.to(device)
