@@ -1,5 +1,6 @@
 {
   "frozen_at_utc": "2026-09-04T21:14:00.624323+00:00",
+  "manifest_hash_note": "data/index/manifest.json is hashed over its substantive fields only, excluding the wall-clock built_at_utc. The value originally recorded here was a raw-bytes hash (a8e173512dc1c6a0...), which cannot be stable across P0 runs and made --verify report drift for a rebuild that changed nothing. Corrected to the content hash; the release CSVs themselves were re-verified byte-identical at the same time.",
   "note": "Any change to a tracked input or a rule_based/*.csv file invalidates this version. Bump `version` and re-freeze rather than editing in place. Verify with --verify.",
   "release_files": {
     "test.csv": {
@@ -17,7 +18,7 @@
   },
   "tracked_inputs": {
     "data/config.yaml": "b26f1ed4db2ff718d2ddd3949508ef6587762e4d2928eea0a547d2033b64674e",
-    "data/index/manifest.json": "a8e173512dc1c6a024c6b36626446fb543c23d528509ca6ae4c03dc179ff608b",
+    "data/index/manifest.json": "aec6ab8420149c0c2a3943c3ce5f90b3c4a788afc19c6b6674f030e5d175b9cb",
     "data/splits/test_images.txt": "d98729e2420c3d6d95a36956c868b9716fa2913daaa0b3175f9f03fd3a774d68",
     "data/splits/train_images.txt": "7fdcde5b6e00ce895386085f9f9e110014571d5e0c00ce7aa68cb70f41b2e733",
     "data/splits/val_images.txt": "c908a17dc8390f3f18bdaad4389fed6f906ff824b7f7d099dda83aaef6f45150",

@@ -109,10 +109,13 @@ def run_generator(question_type: str, generate_candidates_for_scene, seed_offset
     scenes.sort(key=lambda scene: scene["image_id"])  # deterministic iteration order
 
     min_area_frac = config["geometry"]["min_area_frac"]
-    crop_area_ratio = config["geometry"]["crop_area_ratio"]
+    # Frame-crop gate: built and measured, but NOT adopted — absent from
+    # config.yaml means off, which is the released configuration. See
+    # DATASET_CREATION_PLAN.md §13.17 for the measurement that decided it.
+    crop_area_ratio = config["geometry"].get("crop_area_ratio", 0.0)
     typical_area_by_concept = load_concept_typical_area(
         os.path.join(DATA_DIR, "vocab", "concept_typical_area.json")
-    )
+    ) if crop_area_ratio else {}
     drop_logger = DropLogger(question_type)
 
     os.makedirs(CANDIDATES_DIR, exist_ok=True)

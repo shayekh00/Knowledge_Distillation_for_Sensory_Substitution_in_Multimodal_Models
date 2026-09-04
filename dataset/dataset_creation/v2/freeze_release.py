@@ -44,12 +44,35 @@ TRACKED_INPUTS = [
 RELEASE_FILES = ["train.csv", "val.csv", "test.csv"]
 
 
+# Fields that change on every run without the build's *content* changing.
+# Hashing them makes --verify cry wolf after any rebuild, which trains the
+# reader to ignore a drift report — worse than not checking at all.
+VOLATILE_MANIFEST_FIELDS = {"built_at_utc"}
+
+
 def sha256_of(path: str) -> str:
+    if os.path.basename(path) == "manifest.json":
+        return _sha256_of_manifest(path)
     digest = hashlib.sha256()
     with open(path, "rb") as file_handle:
         for chunk in iter(lambda: file_handle.read(1 << 20), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _sha256_of_manifest(path: str) -> str:
+    """Hash the P0 manifest's meaningful content only.
+
+    The manifest records a wall-clock `built_at_utc`, so its raw bytes
+    differ after every P0 run even when the config, toolbox checksums and
+    per-type counts it exists to pin are all unchanged. Those substantive
+    fields are what a freeze needs to detect drift in; the build time is not.
+    """
+    with open(path, "r") as manifest_file:
+        manifest = json.load(manifest_file)
+    substantive = {k: v for k, v in manifest.items() if k not in VOLATILE_MANIFEST_FIELDS}
+    canonical = json.dumps(substantive, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode()).hexdigest()
 
 
 def row_count(path: str) -> int:
