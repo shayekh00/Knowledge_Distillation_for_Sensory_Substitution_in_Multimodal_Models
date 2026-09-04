@@ -1,5 +1,5 @@
 """
-P3 of the VQA-SUNRGBD-v2 pipeline (plan §6-§8): assembles the six raw
+P3 of the VQA-SUNRGBD-v2 pipeline (plan §6-§8): assembles the five raw
 candidate pools written by P2 (data/candidates/*.csv) into the released,
 balanced, stratified per-split CSVs.
 
@@ -29,8 +29,6 @@ from balance import (  # noqa: E402
     cap_distinct_types_per_image,
     cap_majority_share,
     dedup_one_row_per_image,
-    dedup_one_row_per_image_targeted,
-    scale_to_target_distribution,
     stratified_subsample,
 )
 from generator_common import CANDIDATE_COLUMNS, CANDIDATES_DIR, DATA_DIR, load_config  # noqa: E402
@@ -41,9 +39,8 @@ RELEASE_DIR = os.path.join(REPO_ROOT, "release", "VQA-SUNRGBD-v2", "rule_based")
 BUILD_LOG_DIR = os.path.join(REPO_ROOT, "build_log")
 
 QUESTION_TYPES = [
-    "existence", "count", "identify_superlative", "relative_depth", "nearest_object", "left_right",
+    "existence", "identify_superlative", "relative_depth", "nearest_object", "left_right",
 ]
-COUNT_TARGET_DISTRIBUTION = {"1": 0.32, "2": 0.27, "3": 0.19, "4": 0.13, "5": 0.09}
 OPEN_VOCAB_MAX_SHARE = 0.08
 BINARY_BALANCED_TYPES = {"existence", "left_right"}
 TRAIN_TYPE_FLOOR = 0.12
@@ -57,14 +54,9 @@ def load_candidates(question_type: str, split: str) -> pd.DataFrame:
 
 
 def balance_for_split(question_type: str, df: pd.DataFrame, split: str, rng: random.Random) -> pd.DataFrame:
-    if question_type == "count" and split != "train":
-        df = dedup_one_row_per_image_targeted(df, "answer", COUNT_TARGET_DISTRIBUTION, rng)
-    else:
-        df = dedup_one_row_per_image(df, rng)
+    df = dedup_one_row_per_image(df, rng)
     if split == "train" or df.empty:
         return df
-    if question_type == "count":
-        return scale_to_target_distribution(df, "answer", COUNT_TARGET_DISTRIBUTION, rng)
     if question_type in ("identify_superlative", "nearest_object"):
         return cap_majority_share(df, "answer", OPEN_VOCAB_MAX_SHARE, rng)
     if question_type in BINARY_BALANCED_TYPES:
@@ -149,13 +141,12 @@ def run_sanity_checks(split_results: dict) -> dict:
                         f"from the split overall (Rule 6.3 target: <=3%)"
                     )
 
-            for question_type in ("count", "identify_superlative", "nearest_object", "existence", "left_right"):
+            for question_type in ("identify_superlative", "nearest_object", "existence", "left_right"):
                 frame = result["frames"][question_type]
                 if frame.empty:
                     continue
                 majority_share = frame["answer"].value_counts(normalize=True).iloc[0]
                 cap = {
-                    "count": max(COUNT_TARGET_DISTRIBUTION.values()),
                     "identify_superlative": OPEN_VOCAB_MAX_SHARE,
                     "nearest_object": OPEN_VOCAB_MAX_SHARE,
                     "existence": 0.51,

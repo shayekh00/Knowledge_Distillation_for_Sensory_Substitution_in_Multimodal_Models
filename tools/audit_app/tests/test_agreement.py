@@ -38,12 +38,6 @@ def test_similar_looking_but_different_answers_are_not_snapped_together():
     assert not agree("chair", "television")
 
 
-def test_number_words_agree_with_digits_for_count():
-    assert agree("five", "5", qtype="count")
-    assert agree("3", "3", qtype="count")
-    assert not agree("2", "3", qtype="count")
-
-
 def test_yes_no_and_left_right_compare_literally():
     assert agree("Yes.", "yes", qtype="existence")
     assert not agree("no", "yes", qtype="existence")
@@ -64,4 +58,3 @@ def test_out_of_vocab_answers_compare_on_their_normalised_form():
 
 def test_canonical_answer_form_is_stable_for_fixed_types():
     assert canonical_answer_form("YES", "existence", SYNONYMS, VOCAB) == "yes"
-    assert canonical_answer_form("four", "count", SYNONYMS, VOCAB) == "4"

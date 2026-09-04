@@ -4,8 +4,8 @@ Lightweight spelling correction for the audit tool's "your answer" box
 what they think the right answer is).
 
 Correction targets are always the dataset's own controlled answer
-vocabulary — yes/no, left/right, the digits 1-5, or the 151 canonical
-object names in data/vocab/canonical_objects.csv — never a general
+vocabulary — yes/no, left/right, or the canonical object names in
+data/vocab/canonical_objects.csv — never a general
 English dictionary. That distinction matters: v1's neural spell-corrector
 silently mutated gold labels toward whatever English word was statistically
 likely ("red"->"bed", see docs/DATASET_CREATION_PLAN.md D7). Here the
@@ -20,11 +20,6 @@ import difflib
 FIXED_ANSWER_SPACES = {
     "existence": ("yes", "no"),
     "left_right": ("left", "right"),
-    "count": ("1", "2", "3", "4", "5"),
-}
-
-_NUMBER_WORDS_TO_DIGITS = {
-    "zero": "0", "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
 }
 
 
@@ -39,14 +34,13 @@ def candidate_answers_for(question_type: str, canonical_display_names: list) -> 
 def correct_spelling(raw_answer: str, candidates: list, cutoff: float = 0.6) -> str:
     """Best-matching member of `candidates` for `raw_answer`, or
     `raw_answer` unchanged (just trimmed) if nothing is close enough.
-    Exact match (case/underscore-insensitive) and number-word spelling
-    ("five" -> "5") are tried before fuzzy matching."""
+    Exact match (case/underscore-insensitive) is tried before fuzzy
+    matching."""
     normalized = raw_answer.strip()
     if not normalized:
         return normalized
 
     lowered = normalized.lower().replace("_", " ")
-    lowered = _NUMBER_WORDS_TO_DIGITS.get(lowered, lowered)
 
     candidate_lookup = {candidate.lower().replace("_", " "): candidate for candidate in candidates}
     if lowered in candidate_lookup:

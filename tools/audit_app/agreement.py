@@ -28,12 +28,8 @@ from vocab import canonicalize  # noqa: E402  (dataset_creation/v2/vocab.py)
 
 # Types whose answers are a small fixed set of literals, not object names —
 # these must not be run through the object vocabulary.
-FIXED_ANSWER_TYPES = {"existence", "left_right", "count"}
+FIXED_ANSWER_TYPES = {"existence", "left_right"}
 
-_NUMBER_WORDS = {
-    "zero": "0", "one": "1", "two": "2", "three": "3", "four": "4",
-    "five": "5", "six": "6", "seven": "7", "eight": "8", "nine": "9",
-}
 _LEADING_ARTICLE_RE = re.compile(r"^(the|a|an)\s+")
 _WHITESPACE_RE = re.compile(r"\s+")
 
@@ -44,7 +40,6 @@ def canonical_answer_form(text: str, question_type: str,
     normalized = str(text or "").strip().lower().rstrip(".!?")
     normalized = _WHITESPACE_RE.sub(" ", normalized).replace("_", " ")
     normalized = _LEADING_ARTICLE_RE.sub("", normalized)  # "the bookshelf" -> "bookshelf"
-    normalized = _NUMBER_WORDS.get(normalized, normalized)
     if not normalized or question_type in FIXED_ANSWER_TYPES:
         return normalized
     resolved = canonicalize(normalized, synonym_map, canonical_vocab)

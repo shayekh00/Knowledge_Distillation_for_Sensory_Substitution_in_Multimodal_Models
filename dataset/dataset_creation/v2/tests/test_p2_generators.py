@@ -8,7 +8,6 @@ import math
 
 import numpy as np
 
-import count
 import existence
 import identify_superlative
 import left_right
@@ -110,14 +109,6 @@ def test_clears_gap_uses_the_larger_of_absolute_and_relative_threshold():
     assert relative_depth._clears_gap(1.0, 1.20) is False  # gap 0.20 < 0.3
     assert relative_depth._clears_gap(5.0, 5.80) is True   # gap 0.80 >= max(0.3, 0.75)
     assert relative_depth._clears_gap(5.0, 5.70) is False  # gap 0.70 < 0.75
-
-
-# --------------------------------------------------------------- count.py
-
-def test_plural_form_handles_irregular_and_compound_nouns():
-    assert count._plural_form("chair") == "chairs"
-    assert count._plural_form("shelf") == "shelves"
-    assert count._plural_form("trash_can") == "trash cans"
 
 
 # ------------------------------------------------------------ existence.py

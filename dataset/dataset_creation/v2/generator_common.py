@@ -1,6 +1,6 @@
 """
 Shared plumbing for the P2 per-type question generators (existence.py,
-count.py, identify_superlative.py, relative_depth.py, nearest_object.py,
+identify_superlative.py, relative_depth.py, nearest_object.py,
 left_right.py): template loading/rendering, the candidate CSV schema, and
 the CLI runner boilerplate every generator would otherwise repeat.
 
