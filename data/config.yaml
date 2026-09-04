@@ -1,0 +1,23 @@
+# VQA-SUNRGBD-v2 build configuration.
+# Changing any value here changes the manifest hash and therefore the
+# reproducibility fingerprint of the released dataset (see DATASET_CREATION_PLAN.md §8.1).
+
+seed: 42
+
+split:
+  val_fraction: 0.15          # fraction of the official *train* pool held out for val (Rule S2)
+  sun3d_group_by: "building_room"  # xtion/sun3ddata sequences are grouped by <building>/<room> to
+                                     # prevent near-duplicate video frames from crossing splits.
+                                     # All other sensors (kv1, kv2, realsense, xtion_align_data) have
+                                     # one capture per folder, so each scene is its own group there
+                                     # (verified: 10,335 meta entries all have distinct sequenceName).
+
+depth:
+  # Official SUNRGBD depth decoding (SUNRGBDtoolbox/readData/read3dPoints.m):
+  # depthInpaint = bitor(bitshift(depthVis,-3), bitshift(depthVis,16-3)); depth_m = depthInpaint / 1000
+  clip_max_m: 8.0
+  min_valid_fraction: 0.30    # a polygon's depth is only trusted if >=30% of masked pixels are non-zero
+
+geometry:
+  min_area_frac: 0.005        # 0.5% of image area — instances smaller than this are ignored for
+                                # answers (Rule "min_area" in DATASET_CREATION_PLAN.md §4)

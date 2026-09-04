@@ -1,0 +1,6 @@
+What is the closest object to the {object}?
+Which object is nearest to the {object}?
+What sits closest to the {object}?
+Which item is positioned nearest to the {object}?
+What is right next to the {object}?
+Which object is closest in distance to the {object}?

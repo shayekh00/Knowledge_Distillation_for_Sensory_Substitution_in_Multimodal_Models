@@ -1,0 +1,29 @@
+{
+  "frozen_at_utc": "2026-09-04T20:11:45.318946+00:00",
+  "note": "Any change to a tracked input or a rule_based/*.csv file invalidates this version. Bump `version` and re-freeze rather than editing in place. Verify with --verify. Relabelled from v1.0 to v2.0 before anything depended on it: the dataset is named VQA-SUNRGBD-v2, so a release line of v1.x read as 'v1.0 of v2'. Content is byte-identical \u2014 the hashes below are unchanged.",
+  "release_files": {
+    "test.csv": {
+      "rows": 15613,
+      "sha256": "9234b87dc7568039b75ec58a62cfc653f20069a2d853ebda67e8d89e763a14d2"
+    },
+    "train.csv": {
+      "rows": 20461,
+      "sha256": "865d5d099fa04c2980d74287903f9e76f1049890fe168e24a567fa407595b296"
+    },
+    "val.csv": {
+      "rows": 2244,
+      "sha256": "1691cf42f02f77a4d9918514d28e51b83d22204643e526c51c5faa6fef570971"
+    }
+  },
+  "tracked_inputs": {
+    "data/config.yaml": "b26f1ed4db2ff718d2ddd3949508ef6587762e4d2928eea0a547d2033b64674e",
+    "data/index/manifest.json": "a8e173512dc1c6a024c6b36626446fb543c23d528509ca6ae4c03dc179ff608b",
+    "data/splits/test_images.txt": "d98729e2420c3d6d95a36956c868b9716fa2913daaa0b3175f9f03fd3a774d68",
+    "data/splits/train_images.txt": "7fdcde5b6e00ce895386085f9f9e110014571d5e0c00ce7aa68cb70f41b2e733",
+    "data/splits/val_images.txt": "c908a17dc8390f3f18bdaad4389fed6f906ff824b7f7d099dda83aaef6f45150",
+    "data/vocab/canonical_objects.csv": "33a51956fe5762a69e3203aeb250ced6d7ce7d0de1dba83b96169a066315bb12",
+    "data/vocab/scene_type_cooccurrence.json": "f79ecba2a72bc4429de65dfb6633bd4a7223ff79dffbae198dc22a6f1ce4610f",
+    "data/vocab/synonyms.csv": "47d87434f82b7903308a175b8b2e8584b2adad3c068932144375cd252e01658a"
+  },
+  "version": "v2.0"
+}

@@ -1,0 +1,6 @@
+Is there a {object} in this room?
+Do you see a {object} here?
+Does this room contain a {object}?
+Can you spot a {object} in the picture?
+Is a {object} present in this scene?
+Is there any {object} visible in the image?

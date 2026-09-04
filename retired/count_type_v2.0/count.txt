@@ -1,0 +1,6 @@
+How many {object_plural} are in the image?
+How many {object_plural} can you count in this room?
+What is the number of {object_plural} visible here?
+How many {object_plural} do you see in this scene?
+Count the {object_plural} in this picture.
+How many {object_plural} are there in total?

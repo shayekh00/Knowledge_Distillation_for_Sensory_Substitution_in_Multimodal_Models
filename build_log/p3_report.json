@@ -1,0 +1,46 @@
+{
+  "per_split": {
+    "train": {
+      "total_items": 20461,
+      "per_type_counts": {
+        "existence": 4194,
+        "count": 4157,
+        "identify_superlative": 3758,
+        "relative_depth": 2457,
+        "nearest_object": 2789,
+        "left_right": 3106
+      }
+    },
+    "val": {
+      "total_items": 2244,
+      "per_type_counts": {
+        "existence": 358,
+        "count": 375,
+        "identify_superlative": 395,
+        "relative_depth": 374,
+        "nearest_object": 384,
+        "left_right": 358
+      }
+    },
+    "test": {
+      "total_items": 15613,
+      "per_type_counts": {
+        "existence": 2620,
+        "count": 2606,
+        "identify_superlative": 2614,
+        "relative_depth": 2593,
+        "nearest_object": 2598,
+        "left_right": 2582
+      }
+    }
+  },
+  "sanity_check_failures": [],
+  "sanity_check_warnings": [
+    "val/existence: sensor mix deviates 3.7% from the split overall (Rule 6.3 target: <=3%)",
+    "val/count: sensor mix deviates 5.5% from the split overall (Rule 6.3 target: <=3%)",
+    "val/nearest_object: sensor mix deviates 5.7% from the split overall (Rule 6.3 target: <=3%)",
+    "val/count: majority answer share 33.1% exceeds target 32.0%",
+    "test/relative_depth: sensor mix deviates 3.1% from the split overall (Rule 6.3 target: <=3%)",
+    "test/nearest_object: sensor mix deviates 4.5% from the split overall (Rule 6.3 target: <=3%)"
+  ]
+}

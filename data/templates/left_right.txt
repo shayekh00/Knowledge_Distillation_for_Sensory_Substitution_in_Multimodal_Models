@@ -1,0 +1,6 @@
+Is the {a} to the left or to the right of the {b}?
+Relative to the {b}, is the {a} on the left or the right?
+Looking at the {b}, is the {a} positioned on its left or right?
+Is the {a} on the left side or the right side of the {b}?
+Which side of the {b} is the {a} on, left or right?
+From the {b}, which direction is the {a} in, left or right?

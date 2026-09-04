@@ -1,0 +1,26 @@
+raw_normalized,canonical_concept,reason
+couch,sofa,informal synonym for the same seating furniture
+tv,television,expand the common abbreviation to match the seg37 class name
+moniter,monitor,common misspelling
+computermonitor,monitor,redundant qualifier; in an indoor scene a bare monitor is a computer monitor
+refridgerator,refrigerator,common misspelling
+fridge,refrigerator,informal synonym; also the seg37 class name
+filingcabinet,filecabinet,spelling variant of the same furniture item
+bookcase,bookshelf,near-synonym; bookshelf is the seg37 class name
+tablelamp,lamp,subtype folded into the generic lamp class; no contrasting floor-lamp class exists
+waterbottle,bottle,subtype folded into the generic bottle class
+photoframe,pictureframe,synonym for the same object
+glasswindow,window,redundant material qualifier on the same object
+glassdoor,door,redundant material qualifier on the same object
+cardboardbox,box,redundant material qualifier on the same object
+plasticbag,bag,redundant material qualifier on the same object
+tabletop,table,annotators used this interchangeably with the table itself
+countertop,counter,annotators used this interchangeably with the counter itself
+garbagebin,trashcan,synonym for a general waste receptacle
+garbagecan,trashcan,synonym for a general waste receptacle
+dustbin,trashcan,synonym for a general waste receptacle
+trashbin,trashcan,synonym for a general waste receptacle
+wastebin,trashcan,synonym for a general waste receptacle
+electricaloutlet,outlet,spelling variant of the same fixture
+switch,lightswitch,in an indoor-scene context a bare "switch" is almost always a light switch
+remote,remotecontrol,bare "remote" in this context means a remote control

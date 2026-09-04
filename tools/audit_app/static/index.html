@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VQA-SUNRGBD-v2 — Test Set Audit</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<header id="top-bar">
+  <h1>VQA-SUNRGBD-v2 audit</h1>
+  <div id="annotator-box">
+    <label for="annotator-input">Annotator ID</label>
+    <input id="annotator-input" type="text" placeholder="e.g. navid" autocomplete="off">
+  </div>
+  <div id="progress-box">
+    <span id="progress-text">— / —</span>
+    <div id="progress-bar"><div id="progress-bar-fill"></div></div>
+  </div>
+  <button id="stats-toggle" class="secondary">Stats</button>
+</header>
+
+<div id="status-banner" class="hidden"></div>
+
+<main id="app" class="hidden">
+  <aside id="filters">
+    <label>Question type
+      <select id="type-filter"><option value="">All</option></select>
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" id="only-unanswered">
+      Only unanswered
+    </label>
+    <label>Review order
+      <select id="sort-order">
+        <option value="disagreements">Disagreements first</option>
+        <option value="sample">Sample order</option>
+      </select>
+    </label>
+    <div id="type-progress-list"></div>
+    <div id="model-summary"></div>
+  </aside>
+
+  <section id="item-panel">
+    <div id="item-nav">
+      <button id="prev-btn" class="secondary">&larr; Prev</button>
+      <span id="item-position">item — of —</span>
+      <button id="next-btn" class="secondary">Next &rarr;</button>
+    </div>
+
+    <div id="image-wrap">
+      <img id="rgb-image" alt="scene RGB">
+      <canvas id="overlay-canvas"></canvas>
+      <div id="image-loading" class="hidden">loading…</div>
+    </div>
+
+    <div id="meta-line">
+      <span id="meta-type"></span>
+      <span id="meta-sensor"></span>
+      <span id="meta-scene"></span>
+      <span id="meta-qid"></span>
+    </div>
+
+    <p id="question-text"></p>
+
+    <div id="gold-block">
+      <div id="gold-answer-line">Gold answer: <strong id="gold-answer-text"></strong></div>
+
+      <div id="model-hint" class="hidden">
+        <span id="model-hint-badge"></span>
+        <span id="model-hint-answer"></span>
+        <a href="#" id="model-reasoning-toggle">why?</a>
+        <div id="model-hint-reasoning" class="hidden"></div>
+      </div>
+      <div id="verdict-buttons">
+        <button data-verdict="correct" class="verdict correct">Correct (1)</button>
+        <button data-verdict="incorrect" class="verdict incorrect">Incorrect (2)</button>
+        <button data-verdict="ambiguous" class="verdict ambiguous">Ambiguous (3)</button>
+        <button id="use-model-btn" class="verdict use-model hidden">Use model answer (4)</button>
+      </div>
+
+      <div id="correction-block" class="hidden">
+        <label for="own-answer-input">What's the correct answer?</label>
+        <input id="own-answer-input" type="text" autocomplete="off" placeholder="e.g. chair">
+        <button id="save-correction-btn">Save correction (Enter)</button>
+        <p class="hint">Saved automatically toward the closest known answer if it looks like a typo.</p>
+      </div>
+
+      <div id="saved-indicator" class="hidden"></div>
+
+      <label for="notes-input">Notes (optional)</label>
+      <textarea id="notes-input" rows="2"></textarea>
+    </div>
+  </section>
+</main>
+
+<div id="stats-panel" class="hidden">
+  <div id="stats-panel-inner">
+    <button id="stats-close" class="secondary">Close</button>
+    <h2>Audit stats</h2>
+    <p class="hint">Acceptance rule (§8.3): gold accuracy ≥ 95% and ambiguous share ≤ 3%, per type.</p>
+    <table id="stats-table">
+      <thead>
+        <tr>
+          <th>Type</th><th>Sampled</th><th>Verdicts</th><th>Gold acc.</th>
+          <th>Corrections match gold</th><th>Ambiguous</th><th>Cohen's κ</th><th>Meets §8.3</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

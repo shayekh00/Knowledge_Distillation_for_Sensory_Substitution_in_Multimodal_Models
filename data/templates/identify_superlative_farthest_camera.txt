@@ -1,0 +1,6 @@
+Which object is farthest from the camera?
+What is the most distant object from the camera?
+Which item is farthest from where the picture was taken?
+What object is farthest from the viewer?
+Which object is farthest away in this image?
+What is the most distant visible object in the scene?

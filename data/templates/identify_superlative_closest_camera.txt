@@ -1,0 +1,6 @@
+Which object is closest to the camera?
+What is the nearest object to the camera?
+Which item is closest to where the picture was taken from?
+What object is nearest the viewer?
+Which object is closest to us in this image?
+What is the closest visible object to the camera?

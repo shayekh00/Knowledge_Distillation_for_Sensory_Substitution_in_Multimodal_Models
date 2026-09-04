@@ -1,0 +1,6 @@
+Which object takes up the most space in the image?
+What is the largest object in this room?
+Which item occupies the biggest area in the picture?
+What object is the biggest one visible here?
+Which object covers the most of the image?
+What is the largest visible object in the scene?

@@ -6,4 +6,15 @@ further_scripts/Panesar_Recreation/panesar_model_results/*
 further_scripts/.DS_Store
 .gitignore
 .DS_Store
-dataset/SUNRGBD.zip
+
+# Raw SUNRGBD toolbox download — not source, fetched separately (see docs).
+dataset/SUNRGBDtoolbox.zip
+dataset/SUNRGBDtoolbox/
+dataset/__MACOSX/
+
+# v2 pipeline intermediates — regenerable from data/config.yaml + the raw
+# toolbox via build_index.py (P0) and the P2 generators. Not committed to
+# keep repo size sane; data/vocab, data/splits, data/templates (curated
+# decisions) and release/ (the frozen deliverable) are kept.
+data/index/
+data/candidates/
