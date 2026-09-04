@@ -123,6 +123,10 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   font-weight: 600;
   margin: 14px 0;
 }
+#question-text strong {
+  font-weight: 800;
+  color: var(--accent, #2f6feb);
+}
 
 #gold-block {
   border-top: 1px solid var(--border);

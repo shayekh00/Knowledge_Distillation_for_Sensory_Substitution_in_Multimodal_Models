@@ -21,6 +21,7 @@ import yaml
 from scene_objects import (
     load_scene_index,
     load_split_image_ids,
+    load_concept_typical_area,
     resolve_scene_objects,
 )
 from vocab import load_canonical_vocab, load_synonyms
@@ -108,6 +109,10 @@ def run_generator(question_type: str, generate_candidates_for_scene, seed_offset
     scenes.sort(key=lambda scene: scene["image_id"])  # deterministic iteration order
 
     min_area_frac = config["geometry"]["min_area_frac"]
+    crop_area_ratio = config["geometry"]["crop_area_ratio"]
+    typical_area_by_concept = load_concept_typical_area(
+        os.path.join(DATA_DIR, "vocab", "concept_typical_area.json")
+    )
     drop_logger = DropLogger(question_type)
 
     os.makedirs(CANDIDATES_DIR, exist_ok=True)
@@ -119,7 +124,10 @@ def run_generator(question_type: str, generate_candidates_for_scene, seed_offset
         writer.writeheader()
 
         for scene in scenes:
-            resolved_objects = resolve_scene_objects(scene, synonym_map, canonical_vocab, min_area_frac)
+            resolved_objects = resolve_scene_objects(
+                scene, synonym_map, canonical_vocab, min_area_frac,
+                typical_area_by_concept, crop_area_ratio,
+            )
             scene_rng = random.Random(f"{config['seed'] + seed_offset}:{question_type}:{scene['image_id']}")
             candidates = generate_candidates_for_scene(scene, resolved_objects, scene_rng, config, drop_logger)
             for candidate in candidates:

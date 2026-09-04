@@ -118,6 +118,30 @@ def decode_sunrgbd_depth(depth_path: str, clip_max_m: float) -> np.ndarray:
     return np.clip(depth_m, 0.0, clip_max_m)
 
 
+BORDER_TOLERANCE_PX = 2.0
+
+
+def touches_image_border(polygon: Polygon, image_width: int, image_height: int) -> bool:
+    """True if the polygon's bounding box reaches the edge of the frame.
+
+    A polygon is annotated only over what is visible, so we cannot measure
+    how much of an object lies outside the frame — only that its silhouette
+    is cut off exactly at the boundary, which is the signal an audited
+    disagreement traced back to (P4: a reference object visible only as a
+    sliver at the image edge, e.g. a cup, cannot be identified by a human
+    or a model from that sliver alone, no matter how the question is
+    worded). `min_area` alone does not catch this: a small sliver can still
+    clear the area floor while being unidentifiable.
+    """
+    min_x, min_y, max_x, max_y = polygon.bounds
+    return (
+        min_x <= BORDER_TOLERANCE_PX
+        or min_y <= BORDER_TOLERANCE_PX
+        or max_x >= image_width - BORDER_TOLERANCE_PX
+        or max_y >= image_height - BORDER_TOLERANCE_PX
+    )
+
+
 def rasterize_polygon_mask(polygon: Polygon, image_height: int, image_width: int) -> np.ndarray:
     from PIL import ImageDraw
 
@@ -153,6 +177,7 @@ def build_polygon_records(annotation_data: dict, image_width: int, image_height:
                 "area_px": None, "area_frac": None,
                 "centroid_x": None, "centroid_y": None,
                 "depth_median_m": None, "depth_valid_frac": None,
+                "touches_border": False,
             })
             continue
 
@@ -185,6 +210,7 @@ def build_polygon_records(annotation_data: dict, image_width: int, image_height:
                 "area_px": None, "area_frac": None,
                 "centroid_x": None, "centroid_y": None,
                 "depth_median_m": None, "depth_valid_frac": None,
+                "touches_border": False,
             })
             continue
 
@@ -216,6 +242,7 @@ def build_polygon_records(annotation_data: dict, image_width: int, image_height:
             "centroid_y": float(centroid.y),
             "depth_median_m": depth_median_m,
             "depth_valid_frac": float(depth_valid_frac),
+            "touches_border": touches_image_border(union_polygon, image_width, image_height),
         })
 
     return object_records

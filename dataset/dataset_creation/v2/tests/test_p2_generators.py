@@ -187,6 +187,68 @@ def test_true_instance_counts_ignores_the_area_and_structural_gates():
     assert scene_objects.true_instance_counts(resolved)["chair"] == 2
 
 
+TYPICAL_AREA = {"chair": 0.04, "cup": 0.01}
+
+
+def _is_sliver(concept, area_frac, touches_border, ratio=0.5):
+    return scene_objects.is_cropped_sliver(concept, area_frac, touches_border, TYPICAL_AREA, ratio)
+
+
+def test_cropped_sliver_needs_both_the_border_touch_and_the_shortfall():
+    # A chair cut down to a tenth of a chair's usual size, at the frame edge.
+    assert _is_sliver("chair", 0.004, touches_border=True) is True
+    # Same tiny size, but nowhere near an edge: a distant chair, not a cropped one.
+    assert _is_sliver("chair", 0.004, touches_border=False) is False
+    # Touches the edge but is a normal-sized chair: runs off-frame, still identifiable.
+    assert _is_sliver("chair", 0.05, touches_border=True) is False
+
+
+def test_cropped_sliver_is_relative_to_the_concept_not_an_absolute_size():
+    # 0.008 is a fine size for a cup (typical 0.01) but a sliver of a chair
+    # (typical 0.04) — an absolute area threshold could not tell these apart.
+    assert _is_sliver("cup", 0.008, touches_border=True) is False
+    assert _is_sliver("chair", 0.008, touches_border=True) is True
+
+
+def test_cropped_sliver_never_flags_a_concept_with_no_typical_size():
+    assert _is_sliver("harpsichord", 0.0001, touches_border=True) is False
+
+
+def test_resolve_scene_objects_excludes_cropped_slivers_from_eligibility():
+    scene = {"objects": [
+        {"object_index": 0, "raw_name": "chair", "is_valid_polygon": True, "area_frac": 0.004,
+         "centroid_x": 5.0, "centroid_y": 100.0, "depth_median_m": 2.0, "depth_valid_frac": 1.0,
+         "touches_border": True},
+        {"object_index": 1, "raw_name": "chair", "is_valid_polygon": True, "area_frac": 0.05,
+         "centroid_x": 200.0, "centroid_y": 100.0, "depth_median_m": 2.0, "depth_valid_frac": 1.0,
+         "touches_border": True},
+    ]}
+    canonical_vocab = {"chair": {"display_name": "chair", "category": "furniture", "is_structural": False}}
+    resolved = scene_objects.resolve_scene_objects(
+        scene, {}, canonical_vocab, min_area_frac=0.001,
+        typical_area_by_concept=TYPICAL_AREA, crop_area_ratio=0.5,
+    )
+    assert resolved[0]["is_cropped_sliver"] is True
+    assert resolved[0]["eligible"] is False and resolved[0]["reference_eligible"] is False
+    assert resolved[1]["is_cropped_sliver"] is False
+    assert resolved[1]["eligible"] is True
+    # The cropped one is still a chair a viewer can see, so "the chair" stays
+    # ambiguous and the single-instance gates must still count both.
+    assert scene_objects.true_instance_counts(resolved)["chair"] == 2
+
+
+def test_crop_gate_is_inert_when_no_typical_area_table_is_supplied():
+    scene = {"objects": [
+        {"object_index": 0, "raw_name": "chair", "is_valid_polygon": True, "area_frac": 0.004,
+         "centroid_x": 5.0, "centroid_y": 100.0, "depth_median_m": 2.0, "depth_valid_frac": 1.0,
+         "touches_border": True},
+    ]}
+    canonical_vocab = {"chair": {"display_name": "chair", "category": "furniture", "is_structural": False}}
+    resolved = scene_objects.resolve_scene_objects(scene, {}, canonical_vocab, min_area_frac=0.001)
+    assert resolved[0]["is_cropped_sliver"] is False
+    assert resolved[0]["eligible"] is True
+
+
 # ------------------------------------------------------------- depth_utils.py
 
 def test_backproject_maps_the_principal_point_to_the_camera_axis():

@@ -27,6 +27,18 @@ from tools.audit_app.scene_index import SceneIndex
 
 REQUIRED_COLUMNS = ("question_id", "image_id", "question_type", "question", "answer")
 
+# Which evidence keys name an object that is spoken aloud in the *question
+# text itself* (as opposed to the answer, e.g. nearest_object's
+# answer_concept, which must stay unbolded so the overlay doesn't spoil it).
+# identify_superlative has no object in its question ("which object is
+# largest?") so it is deliberately absent here.
+HIGHLIGHT_EVIDENCE_KEYS: dict[str, tuple[str, ...]] = {
+    "existence": ("concept",),
+    "left_right": ("a_concept", "b_concept"),
+    "relative_depth": ("a_concept", "b_concept"),
+    "nearest_object": ("anchor_concept",),
+}
+
 _NUMBER_WORDS = {
     "zero": "0", "one": "1", "two": "2", "three": "3",
     "four": "4", "five": "5", "six": "6",
@@ -52,6 +64,7 @@ class AuditItem:
     answer: str
     row: dict = field(repr=False)
     evidence_object_indices: tuple[int, ...] = ()
+    highlight_words: tuple[str, ...] = ()
 
     @property
     def sensor(self) -> str | None:
@@ -75,18 +88,50 @@ class AuditItem:
             "sensor": self.sensor,
             "scene_type": self.scene_type,
             "evidence_object_indices": list(self.evidence_object_indices),
+            "highlight_words": list(self.highlight_words),
         }
 
 
-def _parse_evidence_indices(evidence_raw: object) -> set[int] | None:
+def _load_evidence_json(evidence_raw: object) -> object | None:
     if evidence_raw is None or (isinstance(evidence_raw, float) and math.isnan(evidence_raw)):
         return None
     text = str(evidence_raw).strip()
     if not text:
         return None
     try:
-        parsed = json.loads(text)
+        return json.loads(text)
     except json.JSONDecodeError:
+        return None
+
+
+def extract_highlight_words(
+    question_type: str, evidence_raw: object, concept_display_names: dict[str, str]
+) -> tuple[str, ...]:
+    """Display names of the objects named in `question` itself, in evidence
+    order, for the audit UI to bold (readability only — never reveals the
+    answer for types like nearest_object where the answer object is not
+    among the named keys, see HIGHLIGHT_EVIDENCE_KEYS)."""
+    keys = HIGHLIGHT_EVIDENCE_KEYS.get(question_type, ())
+    if not keys:
+        return ()
+    parsed = _load_evidence_json(evidence_raw)
+    if not isinstance(parsed, dict):
+        return ()
+
+    words: list[str] = []
+    for key in keys:
+        concept = parsed.get(key)
+        if not isinstance(concept, str) or not concept:
+            continue
+        display_name = concept_display_names.get(concept, concept.replace("_", " "))
+        if display_name not in words:
+            words.append(display_name)
+    return tuple(words)
+
+
+def _parse_evidence_indices(evidence_raw: object) -> set[int] | None:
+    parsed = _load_evidence_json(evidence_raw)
+    if parsed is None:
         return None
 
     if isinstance(parsed, list):
@@ -153,25 +198,32 @@ def resolve_evidence_object_indices(
     return tuple(sorted(scene_index.object_indices_matching_names(image_id, mentioned)))
 
 
-def load_audit_items(csv_path: Path, scene_index: SceneIndex) -> list[AuditItem]:
+def load_audit_items(
+    csv_path: Path, scene_index: SceneIndex, concept_display_names: dict[str, str] | None = None
+) -> list[AuditItem]:
     frame = pd.read_csv(csv_path, dtype={"question_id": str, "image_id": str})
     missing = [column for column in REQUIRED_COLUMNS if column not in frame.columns]
     if missing:
         raise ValueError(f"{csv_path} is missing required column(s): {missing}")
 
+    concept_display_names = concept_display_names or {}
     items: list[AuditItem] = []
     for row in frame.to_dict(orient="records"):
         question = str(row["question"])
+        question_type = str(row["question_type"])
+        evidence_raw = row.get("evidence")
         evidence = resolve_evidence_object_indices(
-            question, row.get("evidence"), scene_index, str(row["image_id"])
+            question, evidence_raw, scene_index, str(row["image_id"])
         )
+        highlight_words = extract_highlight_words(question_type, evidence_raw, concept_display_names)
         items.append(AuditItem(
             question_id=str(row["question_id"]),
             image_id=str(row["image_id"]),
-            question_type=str(row["question_type"]),
+            question_type=question_type,
             question=question,
             answer=str(row["answer"]),
             row=row,
             evidence_object_indices=evidence,
+            highlight_words=highlight_words,
         ))
     return items

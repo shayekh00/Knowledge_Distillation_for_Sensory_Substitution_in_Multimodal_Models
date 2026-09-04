@@ -1,41 +1,41 @@
 {
   "per_split": {
     "train": {
-      "total_items": 16304,
+      "total_items": 16035,
       "per_type_counts": {
-        "existence": 4194,
-        "identify_superlative": 3758,
-        "relative_depth": 2457,
-        "nearest_object": 2789,
-        "left_right": 3106
+        "existence": 4193,
+        "identify_superlative": 3770,
+        "relative_depth": 2359,
+        "nearest_object": 2709,
+        "left_right": 3004
       }
     },
     "val": {
-      "total_items": 2021,
+      "total_items": 2012,
       "per_type_counts": {
-        "existence": 396,
-        "identify_superlative": 409,
-        "relative_depth": 399,
-        "nearest_object": 411,
-        "left_right": 406
+        "existence": 400,
+        "identify_superlative": 408,
+        "relative_depth": 400,
+        "nearest_object": 406,
+        "left_right": 398
       }
     },
     "test": {
-      "total_items": 14122,
+      "total_items": 13899,
       "per_type_counts": {
         "existence": 2774,
-        "identify_superlative": 2856,
-        "relative_depth": 2823,
-        "nearest_object": 2823,
-        "left_right": 2846
+        "identify_superlative": 2806,
+        "relative_depth": 2775,
+        "nearest_object": 2770,
+        "left_right": 2774
       }
     }
   },
   "sanity_check_failures": [],
   "sanity_check_warnings": [
     "val/existence: sensor mix deviates 4.4% from the split overall (Rule 6.3 target: <=3%)",
-    "val/nearest_object: sensor mix deviates 5.7% from the split overall (Rule 6.3 target: <=3%)",
-    "test/existence: sensor mix deviates 3.1% from the split overall (Rule 6.3 target: <=3%)",
-    "test/nearest_object: sensor mix deviates 3.8% from the split overall (Rule 6.3 target: <=3%)"
+    "val/nearest_object: sensor mix deviates 4.6% from the split overall (Rule 6.3 target: <=3%)",
+    "test/existence: sensor mix deviates 3.2% from the split overall (Rule 6.3 target: <=3%)",
+    "test/nearest_object: sensor mix deviates 3.7% from the split overall (Rule 6.3 target: <=3%)"
   ]
 }

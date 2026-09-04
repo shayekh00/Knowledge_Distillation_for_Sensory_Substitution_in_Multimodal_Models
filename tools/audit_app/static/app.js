@@ -177,6 +177,29 @@ function moveTo(index) {
   renderCurrentItem();
 }
 
+function escapeHtml(text) {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function escapeRegExp(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Bolds the object name(s) the question is actually about (item.highlight_words,
+// computed server-side from that question's evidence — see audit_items.py's
+// extract_highlight_words) so a reviewer can spot them at a glance. Longer
+// phrases are matched first so "trash can" isn't split by a bare "can".
+function questionHtmlWithHighlights(question, highlightWords) {
+  const escapedQuestion = escapeHtml(question);
+  if (!highlightWords || highlightWords.length === 0) return escapedQuestion;
+  const alternation = [...highlightWords]
+    .sort((a, b) => b.length - a.length)
+    .map((word) => escapeRegExp(escapeHtml(word)))
+    .join("|");
+  const pattern = new RegExp(`\\b(${alternation})\\b`, "gi");
+  return escapedQuestion.replace(pattern, "<strong>$1</strong>");
+}
+
 function renderEmptyItem() {
   el("item-position").textContent = "no items match this filter";
   el("question-text").textContent = "";
@@ -196,7 +219,7 @@ async function renderCurrentItem() {
   el("meta-sensor").textContent = `sensor: ${item.sensor ?? "?"}`;
   el("meta-scene").textContent = `scene: ${item.scene_type ?? "?"}`;
   el("meta-qid").textContent = `id: ${item.question_id}`;
-  el("question-text").textContent = item.question;
+  el("question-text").innerHTML = questionHtmlWithHighlights(item.question, item.highlight_words);
   el("gold-answer-text").textContent = item.answer;
   renderModelHint(item);
 

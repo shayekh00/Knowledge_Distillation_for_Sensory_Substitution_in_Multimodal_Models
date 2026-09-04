@@ -1,14 +1,14 @@
 {
-  "total_object_instances": 176543,
-  "unique_normalized_names": 9805,
-  "final_canonical_concepts": 151,
+  "total_object_instances": 172384,
+  "unique_normalized_names": 9574,
+  "final_canonical_concepts": 148,
   "from_seg37_only": 1,
-  "from_frequency_only": 114,
+  "from_frequency_only": 111,
   "from_both": 36,
   "excluded_placeholder_concepts": [
     "object",
     "unknown"
   ],
-  "review_queue_size": 117,
-  "instance_coverage_fraction": 0.7925
+  "review_queue_size": 109,
+  "instance_coverage_fraction": 0.7926
 }

@@ -74,7 +74,18 @@ def _load_canonical_display_names(path: Path) -> list[str]:
         return [row["display_name"].replace("_", " ") for row in csv.DictReader(csv_file)]
 
 
+def _load_concept_display_names(path: Path) -> dict[str, str]:
+    if not path.is_file():
+        return {}
+    with path.open(newline="", encoding="utf-8") as csv_file:
+        return {
+            row["canonical_concept"]: row["display_name"].replace("_", " ")
+            for row in csv.DictReader(csv_file)
+        }
+
+
 CANONICAL_DISPLAY_NAMES = _load_canonical_display_names(CANONICAL_OBJECTS_CSV)
+CONCEPT_DISPLAY_NAMES = _load_concept_display_names(CANONICAL_OBJECTS_CSV)
 
 _ITEMS: list[AuditItem] = []
 _ITEMS_BY_ID: dict[str, AuditItem] = {}
@@ -114,7 +125,7 @@ def _load_items() -> None:
         _LOAD_ERROR = f"{AUDIT_ITEMS_CSV} does not exist yet — run tools.audit_app.sampling first."
         return
     try:
-        _ITEMS = load_audit_items(AUDIT_ITEMS_CSV, SCENE_INDEX)
+        _ITEMS = load_audit_items(AUDIT_ITEMS_CSV, SCENE_INDEX, CONCEPT_DISPLAY_NAMES)
         _ITEMS_BY_ID = {item.question_id: item for item in _ITEMS}
         _LOAD_ERROR = None
     except Exception as exc:  # surfaced to the UI, never crashes the app

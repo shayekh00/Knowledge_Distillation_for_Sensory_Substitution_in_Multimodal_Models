@@ -14,6 +14,11 @@ in data/index/scene_index.jsonl (written by build_index.py / P0):
   4. assign each canonical concept a category (for hard-negative sampling
      in later question generators) and an is_structural flag (Rule V3:
      wall/floor/ceiling/door_frame/window_frame/etc. are never an answer)
+  5. record each concept's median visible size, from its non-border-touching
+     instances only, to data/vocab/concept_typical_area.json — the frozen
+     reference scene_objects.py compares a border-touching instance's area
+     against, to tell a naturally-small-but-visible object apart from a
+     large object that is mostly cropped out of frame (§13, crop gate)
 
 Placeholder/failed-annotation labels ("unknown", "object") are excluded
 outright, never merged into a real object class.
@@ -30,7 +35,11 @@ from __future__ import annotations
 import csv
 import json
 import os
+import statistics
 import sys
+from collections import defaultdict
+
+import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from vocab import load_synonyms, normalize_raw_name  # noqa: E402
@@ -38,11 +47,18 @@ from vocab import load_synonyms, normalize_raw_name  # noqa: E402
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 DATA_DIR = os.path.join(REPO_ROOT, "data")
 BUILD_LOG_DIR = os.path.join(REPO_ROOT, "build_log")
+
+# An object concept needs at least this many clearly-visible (non-touching)
+# instances corpus-wide before its median size is trusted as "typical" —
+# see TYPICAL_AREA_PATH below.
+MIN_SAMPLES_FOR_TYPICAL_AREA = 10
 SCENE_INDEX_PATH = os.path.join(DATA_DIR, "index", "scene_index.jsonl")
 SYNONYMS_PATH = os.path.join(DATA_DIR, "vocab", "synonyms.csv")
 SEG37_MAT_PATH = os.path.join(REPO_ROOT, "dataset", "SUNRGBDtoolbox", "Metadata", "seg37list.mat")
 CANONICAL_OBJECTS_PATH = os.path.join(DATA_DIR, "vocab", "canonical_objects.csv")
 REVIEW_QUEUE_PATH = os.path.join(DATA_DIR, "vocab", "vocab_review_queue.csv")
+TYPICAL_AREA_PATH = os.path.join(DATA_DIR, "vocab", "concept_typical_area.json")
+CONFIG_PATH = os.path.join(DATA_DIR, "config.yaml")
 
 FREQUENCY_THRESHOLD = 100
 REVIEW_QUEUE_MIN_FREQUENCY = 50
@@ -233,6 +249,49 @@ def main() -> None:
     frequent_concepts = {c for c, freq in concept_frequency.items() if freq >= FREQUENCY_THRESHOLD}
     final_concepts = sorted(seg37_concepts | frequent_concepts)
 
+    with open(CONFIG_PATH) as config_file:
+        min_area_frac = yaml.safe_load(config_file)["geometry"]["min_area_frac"]
+
+    # Median visible size of each concept, measured only from instances that
+    # are NOT touching the image border — i.e. presumed fully visible. This
+    # is the frozen reference build_index.py's touches_border flag is
+    # compared against (see scene_objects.py) to tell "naturally small
+    # object, fully visible" apart from "large object, mostly cropped out of
+    # frame": an absolute area threshold cannot make that distinction, since
+    # both can land at the same area_frac. Frozen once here rather than
+    # recomputed live by a generator, for the same reason
+    # scene_type_cooccurrence.json is frozen (see its docstring in
+    # existence.py and DATASET_CREATION_PLAN.md §13.15): a live recompute
+    # would couple a test scene's crop verdict to which other scenes exist,
+    # breaking the "test depends only on itself" invariance.
+    visible_area_fracs_by_concept = defaultdict(list)
+    for record in records:
+        for obj in record["objects"]:
+            if not obj.get("is_valid_polygon") or obj.get("touches_border"):
+                continue
+            area_frac = obj.get("area_frac")
+            if area_frac is None or area_frac < min_area_frac:
+                continue
+            normalized = normalize_raw_name(obj["raw_name"])
+            if not normalized:
+                continue
+            concept = synonym_map.get(normalized, normalized)
+            if concept not in final_concepts:
+                continue
+            visible_area_fracs_by_concept[concept].append(area_frac)
+
+    typical_area_by_concept = {
+        concept: statistics.median(fracs)
+        for concept, fracs in visible_area_fracs_by_concept.items()
+        if len(fracs) >= MIN_SAMPLES_FOR_TYPICAL_AREA
+    }
+    os.makedirs(os.path.dirname(TYPICAL_AREA_PATH), exist_ok=True)
+    with open(TYPICAL_AREA_PATH, "w") as typical_area_file:
+        json.dump({
+            "min_samples": MIN_SAMPLES_FOR_TYPICAL_AREA,
+            "median_area_frac_by_concept": typical_area_by_concept,
+        }, typical_area_file, indent=2, sort_keys=True)
+
     missing_category = [c for c in final_concepts if c not in CATEGORY_AND_STRUCTURAL]
     if missing_category:
         raise SystemExit(
@@ -295,6 +354,9 @@ def main() -> None:
     print(json.dumps(report, indent=2))
     print(f"\nCanonical vocabulary written: {CANONICAL_OBJECTS_PATH} ({len(final_concepts)} concepts)")
     print(f"Review queue written: {REVIEW_QUEUE_PATH} ({len(review_queue)} concepts, freq 50-99)")
+    print(f"Typical area table written: {TYPICAL_AREA_PATH} "
+          f"({len(typical_area_by_concept)} / {len(final_concepts)} concepts with "
+          f">={MIN_SAMPLES_FOR_TYPICAL_AREA} non-touching samples)")
     if coverage < 0.90:
         print(f"\nWARNING: instance coverage {coverage:.1%} is below the plan's 90% acceptance target.")
 

@@ -21,3 +21,11 @@ depth:
 geometry:
   min_area_frac: 0.005        # 0.5% of image area — instances smaller than this are ignored for
                                 # answers (Rule "min_area" in DATASET_CREATION_PLAN.md §4)
+  # Frame-truncation gate (Rule "crop", §4): an instance whose polygon reaches the image
+  # border AND whose visible area is below this fraction of that concept's typical
+  # (non-border-touching) size is treated as mostly cropped out of frame, and is never a
+  # question subject or an answer. Only a sliver of it is visible, so neither a human nor a
+  # model can identify it — min_area_frac alone cannot catch this, since a naturally small
+  # object that is fully visible and a large object cropped to a sliver land at the same
+  # area_frac. Typical sizes come from data/vocab/concept_typical_area.json (P1).
+  crop_area_ratio: 0.5

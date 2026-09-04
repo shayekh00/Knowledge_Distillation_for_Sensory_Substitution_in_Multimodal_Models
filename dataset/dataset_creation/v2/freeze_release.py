@@ -35,6 +35,7 @@ TRACKED_INPUTS = [
     os.path.join(DATA_DIR, "vocab", "synonyms.csv"),
     os.path.join(DATA_DIR, "vocab", "canonical_objects.csv"),
     os.path.join(DATA_DIR, "vocab", "scene_type_cooccurrence.json"),
+    os.path.join(DATA_DIR, "vocab", "concept_typical_area.json"),
     os.path.join(DATA_DIR, "splits", "train_images.txt"),
     os.path.join(DATA_DIR, "splits", "val_images.txt"),
     os.path.join(DATA_DIR, "splits", "test_images.txt"),
