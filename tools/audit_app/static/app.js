@@ -47,7 +47,7 @@ async function init() {
 
   el("annotator-input").addEventListener("input", onAnnotatorChanged);
   el("type-filter").addEventListener("change", applyFilters);
-  el("only-unanswered").addEventListener("change", applyFilters);
+  el("answered-filter").addEventListener("change", applyFilters);
   el("sort-order").addEventListener("change", applyFilters);
   el("model-reasoning-toggle").addEventListener("click", (event) => {
     event.preventDefault();
@@ -112,10 +112,12 @@ const MODEL_STATUS_PRIORITY = { disagrees: 0, agrees: 1, unavailable: 2 };
 
 function applyFilters() {
   const typeFilter = el("type-filter").value;
-  const onlyUnanswered = el("only-unanswered").checked;
+  const answeredFilter = el("answered-filter").value;
   const filtered = state.items.filter((item) => {
     if (typeFilter && item.question_type !== typeFilter) return false;
-    if (onlyUnanswered && state.responses[item.question_id]) return false;
+    const isAnswered = Boolean(state.responses[item.question_id]);
+    if (answeredFilter === "unanswered" && isAnswered) return false;
+    if (answeredFilter === "answered" && !isAnswered) return false;
     return true;
   });
 
@@ -393,9 +395,9 @@ async function saveResponse(verdict, ownAnswer) {
   if (verdict === "incorrect") el("own-answer-input").value = result.saved.own_answer;
   await refreshProgress();
 
-  const onlyUnanswered = el("only-unanswered").checked;
+  const removedFromView = el("answered-filter").value === "unanswered";
   setTimeout(() => {
-    if (onlyUnanswered) applyFilters();
+    if (removedFromView) applyFilters();
     else moveTo(state.currentIndex + 1);
   }, 250);
 }

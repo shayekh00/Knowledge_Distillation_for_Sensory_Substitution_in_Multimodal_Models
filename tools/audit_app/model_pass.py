@@ -18,6 +18,7 @@ Usage::
     python -m tools.audit_app.model_pass                  # all sampled items
     python -m tools.audit_app.model_pass --limit 20       # smoke test
     python -m tools.audit_app.model_pass --workers 8
+    python -m tools.audit_app.model_pass --types existence,left_right
 
 Resumable: results are appended per item, and a rerun skips question_ids
 already present in the output CSV.
@@ -157,6 +158,8 @@ def main() -> None:
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--limit", type=int, default=None, help="Process at most N pending items.")
     parser.add_argument("--workers", type=int, default=8)
+    parser.add_argument("--types", default="",
+                        help="Comma-separated question_types; default is every sampled type.")
     args = parser.parse_args()
 
     load_dotenv(str(PROJECT_ROOT / ".env"))
@@ -167,6 +170,12 @@ def main() -> None:
 
     synonym_map, canonical_vocab = _load_vocab_tables()
     items = pd.read_csv(AUDIT_ITEMS_CSV)
+    requested_types = [t.strip() for t in args.types.split(",") if t.strip()]
+    if requested_types:
+        unknown = sorted(set(requested_types) - set(items["question_type"]))
+        if unknown:
+            raise SystemExit(f"No sampled items for question_type(s): {', '.join(unknown)}")
+        items = items[items["question_type"].isin(requested_types)]
     done = _already_done(MODEL_ANSWERS_CSV)
     pending = items[~items["question_id"].isin(done)]
     if args.limit:

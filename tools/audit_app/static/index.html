@@ -27,9 +27,12 @@
     <label>Question type
       <select id="type-filter"><option value="">All</option></select>
     </label>
-    <label class="checkbox">
-      <input type="checkbox" id="only-unanswered">
-      Only unanswered
+    <label>Show
+      <select id="answered-filter">
+        <option value="all">All items</option>
+        <option value="unanswered">Only unanswered</option>
+        <option value="answered">Only answered</option>
+      </select>
     </label>
     <label>Review order
       <select id="sort-order">

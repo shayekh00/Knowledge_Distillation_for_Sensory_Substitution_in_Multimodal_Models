@@ -1,0 +1,47 @@
+[
+  {
+    "question_type": "existence",
+    "n_sampled": 150,
+    "n_verdicts": 150,
+    "gold_accuracy": 0.8266666666666667,
+    "human_accuracy_vs_gold": 0.0,
+    "ambiguous_share": 0.0,
+    "meets_acceptance": false
+  },
+  {
+    "question_type": "identify_superlative",
+    "n_sampled": 150,
+    "n_verdicts": 150,
+    "gold_accuracy": 0.9733333333333334,
+    "human_accuracy_vs_gold": null,
+    "ambiguous_share": 0.02666666666666667,
+    "meets_acceptance": true
+  },
+  {
+    "question_type": "left_right",
+    "n_sampled": 150,
+    "n_verdicts": 150,
+    "gold_accuracy": 0.9533333333333334,
+    "human_accuracy_vs_gold": 0.0,
+    "ambiguous_share": 0.02,
+    "meets_acceptance": true
+  },
+  {
+    "question_type": "nearest_object",
+    "n_sampled": 150,
+    "n_verdicts": 150,
+    "gold_accuracy": 1.0,
+    "human_accuracy_vs_gold": null,
+    "ambiguous_share": 0.0,
+    "meets_acceptance": true
+  },
+  {
+    "question_type": "relative_depth",
+    "n_sampled": 150,
+    "n_verdicts": 150,
+    "gold_accuracy": 1.0,
+    "human_accuracy_vs_gold": null,
+    "ambiguous_share": 0.0,
+    "meets_acceptance": true
+  }
+]
