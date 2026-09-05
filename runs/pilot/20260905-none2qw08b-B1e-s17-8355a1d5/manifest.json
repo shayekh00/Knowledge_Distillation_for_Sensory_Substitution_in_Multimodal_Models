@@ -1,0 +1,19 @@
+{
+  "description": "Zero-shot depth, section 6.4 enumerated prompt (B1e)",
+  "distillation_mode": "none",
+  "epochs": null,
+  "learning_rate": null,
+  "lora_rank": null,
+  "modality": "depth",
+  "model": "Qwen/Qwen3.5-0.8B",
+  "notes": "Prompt-design evidence, not a capability measurement. Identical model, inputs and decoding to B1; only the instruction wording differs. The section 6.4 wording enumerates the legal answers and this 0.8B model echoes that list back. Read the invalid rate, not the accuracy.",
+  "pilot": true,
+  "prompt_style": "enumerated",
+  "recipe": "B1e",
+  "recorded_utc": "2026-09-05T17:30:02+00:00",
+  "representation": "replicated",
+  "run_id": "20260905-none2qw08b-B1e-s17-8355a1d5",
+  "seed": 17,
+  "split": "val",
+  "teacher": null
+}

@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from dataclasses import asdict, dataclass
 
@@ -60,8 +61,68 @@ class TypeScore:
     question_type: str
     n_items: int
     n_predicted: int
+    n_invalid: int
     accuracy: float
     macro_f1: float | None
+
+
+def is_missing(value) -> bool:
+    """True for an absent answer: None, a pandas/NumPy NaN, or blank text.
+
+    The NaN case has to be tested *before* `str()`: `str(float("nan"))` is
+    `"nan"`, a perfectly non-empty string, so a NaN prediction would otherwise
+    be counted as an item the model successfully answered.
+    """
+    if value is None:
+        return True
+    if isinstance(value, float) and value != value:
+        return True
+    return str(value).strip() == ""
+
+
+def parse_answer_space(answer_space) -> list[str]:
+    """The options a row declares, or `[]` when it declares none.
+
+    Open-vocabulary rows carry NaN in this column. `NaN` is *truthy* in Python,
+    so the obvious `answer_space or ""` guard never fires: `str(NaN)` yields the
+    literal string `"nan"`, and every caller downstream then treats `"nan"` as
+    the row's one and only legal answer. That is exactly the defect that made
+    the random baseline score 0.0% on both open-vocabulary types.
+    """
+    if is_missing(answer_space):
+        return []
+    options = [option.strip() for option in str(answer_space).split("|")]
+    return [option for option in options if option and option.lower() != "nan"]
+
+
+def answerable_vocabulary(canonical_vocab: dict) -> list[str]:
+    """Display forms of every non-structural concept — the eligible answer set
+    for the open-vocabulary types, sorted so sampling from it is reproducible."""
+    return sorted(entry["display_name"].replace("_", " ")
+                  for entry in canonical_vocab.values() if not entry["is_structural"])
+
+
+def is_legal_answer(prediction, row, question_type: str, synonym_map: dict,
+                    canonical_vocab: dict, legal_open_answers: set | None = None) -> bool:
+    """Whether a prediction is a *legal* answer for this row — not whether it is
+    correct. Closed rows must name a declared option; open rows must name a
+    non-structural concept in the vocabulary.
+
+    Membership is tested on the canonical *display* form, not on
+    `canonicalize()["in_vocab"]`. The vocabulary is keyed by concept
+    (`tissuebox`) while the release answers carry the display form
+    (`tissue box`), so `in_vocab` is False for every multiword concept — it
+    would flag 146 `trash can` and 48 `file cabinet` gold answers in the test
+    split as invalid.
+    """
+    options = parse_answer_space(row["answer_space"])
+    if options:
+        return any(answers_agree(prediction, option, question_type, synonym_map, canonical_vocab)
+                   for option in options)
+    if legal_open_answers is None:
+        legal_open_answers = set(answerable_vocabulary(canonical_vocab))
+    return canonical_answer_form(prediction, question_type,
+                                 synonym_map, canonical_vocab) in legal_open_answers
 
 
 def load_release_split(split: str, release_dir: str = RELEASE_DIR) -> pd.DataFrame:
@@ -72,11 +133,54 @@ def load_release_split(split: str, release_dir: str = RELEASE_DIR) -> pd.DataFra
 
 
 def load_predictions(path: str) -> pd.DataFrame:
+    """Load a prediction file, refusing anything ambiguous.
+
+    A duplicated `question_id` used to be resolved by silently keeping the last
+    row. That hides a real defect in a generation run — two different answers
+    for one item — and makes the reported denominator unverifiable, so it is now
+    an error the caller has to fix.
+    """
     frame = pd.read_csv(path)
     missing = {"question_id", "prediction"} - set(frame.columns)
     if missing:
         raise SystemExit(f"{path} is missing required column(s): {', '.join(sorted(missing))}")
-    return frame.drop_duplicates(subset="question_id", keep="last")
+    duplicated = frame.loc[frame["question_id"].duplicated(), "question_id"].unique()
+    if len(duplicated):
+        shown = ", ".join(str(question_id) for question_id in duplicated[:5])
+        raise SystemExit(
+            f"{path} contains {len(duplicated)} duplicated question_id(s): {shown}"
+            + (", ..." if len(duplicated) > 5 else "")
+            + ". Refusing to guess which row was intended — deduplicate the file.")
+    return frame
+
+
+def prediction_id_report(gold: pd.DataFrame, predictions: pd.DataFrame) -> dict:
+    """Which gold items went unanswered, and which predicted ids are not in the
+    evaluated split. Unexpected ids are reported, never scored."""
+    gold_ids = set(gold["question_id"])
+    predicted_ids = set(predictions["question_id"])
+    return {
+        "n_gold_items": len(gold_ids),
+        "n_prediction_rows": int(len(predictions)),
+        "n_missing": len(gold_ids - predicted_ids),
+        "n_unexpected": len(predicted_ids - gold_ids),
+        "unexpected_examples": sorted(predicted_ids - gold_ids)[:5],
+    }
+
+
+_NON_ALPHANUMERIC_RE = re.compile(r"[^a-z0-9]+")
+
+
+def _mention_form(text) -> str:
+    """Whitespace-delimited form used to look for an option inside a sentence.
+
+    Punctuation has to collapse to spaces, not be left in place: searching for
+    `" left "` inside `"it is on the left."` fails on the trailing period, which
+    is precisely the case a verbose model produces. That miss used to be hidden
+    by the `options[0]` fallback, which returned the right answer for the wrong
+    reason whenever the intended option happened to be listed first.
+    """
+    return _NON_ALPHANUMERIC_RE.sub(" ", str(text or "").lower()).strip()
 
 
 def snap_to_answer_space(prediction: str, answer_space: str, question_type: str,
@@ -85,35 +189,36 @@ def snap_to_answer_space(prediction: str, answer_space: str, question_type: str,
 
     True constrained decoding restricts generation to the answer space, so the
     model cannot produce an illegal string at all. Scoring a free-form run
-    afterwards can only approximate that, in three steps: take an exact
-    canonical match; else the option mentioned earliest in the answer
-    ("the right side" -> `right`), since a model that names an option is
-    choosing it; else the first option, so a constrained model always commits
-    rather than abstaining.
+    afterwards can only approximate that, in two steps: take an exact canonical
+    match; else the option mentioned earliest in the answer ("the right side" ->
+    `right`), since a model that names an option is choosing it.
 
     Earliest-mention rather than first-listed matters for `relative_depth`,
     where both options appear in the question and a verbose answer may repeat
     both ("the chair is closer than the table").
 
+    A response that names no option at all is returned **unchanged**, and so
+    scores wrong. It used to be snapped onto `options[0]`, which manufactured a
+    decision the model never made: an unparsable answer is not evidence that it
+    selected the first option, and on a binary type that fallback hands out
+    accuracy at chance for free (plan §6.3).
+
     Open-vocabulary types declare no `answer_space` and are returned untouched.
     Constraining them would mean snapping onto the 151-concept vocabulary, and
-    the fallback — commit to *some* legal concept — has no meaning when the
-    options are not the two the question named; it would just award or destroy
-    accuracy at random. Constrained decoding is therefore reported for the
-    closed types only, which is where R1 asked for it.
+    committing to *some* legal concept has no meaning when the options are not
+    the two the question named. Constrained decoding is therefore reported for
+    the closed types only, which is where R1 asked for it.
     """
-    if answer_space is None or (isinstance(answer_space, float) and answer_space != answer_space):
-        return prediction  # NaN: no declared answer space
-    options = [option for option in str(answer_space).split("|") if option and option != "nan"]
+    options = parse_answer_space(answer_space)
     if not options:
         return prediction
     for option in options:
         if answers_agree(prediction, option, question_type, synonym_map, canonical_vocab):
             return option
-    normalized = " " + str(prediction or "").strip().lower().replace("_", " ") + " "
-    mentioned = [(normalized.find(f" {option.lower()} "), option) for option in options]
+    normalized = f" {_mention_form(prediction)} "
+    mentioned = [(normalized.find(f" {_mention_form(option)} "), option) for option in options]
     mentioned = [(position, option) for position, option in mentioned if position >= 0]
-    return min(mentioned)[1] if mentioned else options[0]
+    return min(mentioned)[1] if mentioned else prediction
 
 
 def score_predictions(gold: pd.DataFrame, predictions: pd.DataFrame,
@@ -125,13 +230,18 @@ def score_predictions(gold: pd.DataFrame, predictions: pd.DataFrame,
     silently scoring only the rows a model answered would reward abstention.
     """
     predicted_by_id = dict(zip(predictions["question_id"], predictions["prediction"]))
+    legal_open_answers = set(answerable_vocabulary(canonical_vocab))
     scores = []
     for question_type, rows in gold.groupby("question_type", sort=True):
-        correct, gold_labels, predicted_labels, n_predicted = 0, [], [], 0
+        correct, gold_labels, predicted_labels, n_predicted, n_invalid = 0, [], [], 0, 0
         for _, row in rows.iterrows():
             prediction = predicted_by_id.get(row["question_id"])
-            has_prediction = prediction is not None and str(prediction).strip() != ""
+            has_prediction = not is_missing(prediction)
             n_predicted += int(has_prediction)
+            if has_prediction and not is_legal_answer(prediction, row, question_type,
+                                                      synonym_map, canonical_vocab,
+                                                      legal_open_answers):
+                n_invalid += 1
             if has_prediction and constrained:
                 prediction = snap_to_answer_space(
                     prediction, row["answer_space"], question_type, synonym_map, canonical_vocab)
@@ -150,24 +260,44 @@ def score_predictions(gold: pd.DataFrame, predictions: pd.DataFrame,
             question_type=question_type,
             n_items=len(rows),
             n_predicted=n_predicted,
+            n_invalid=n_invalid,
             accuracy=correct / len(rows),
-            macro_f1=(float(f1_score(gold_labels, predicted_labels, average="macro",
+            # `labels=` pins the averaged classes to the ones the benchmark
+            # defines, so the <invalid> sentinel is never itself scored.
+            macro_f1=(float(f1_score(gold_labels, predicted_labels,
+                                     labels=sorted(set(gold_labels)), average="macro",
                                      zero_division=0)) if question_type in CLOSED_TYPES else None),
         ))
     return scores
 
 
+INVALID_LABEL = "<invalid>"
+
+
 def _closed_type_prediction_label(question_type: str, row, prediction, has_prediction: bool,
                                   synonym_map: dict, canonical_vocab: dict) -> str:
+    """The F1 label for a prediction on a closed type.
+
+    Anything that is not one of the row's declared options collapses to a single
+    `<invalid>` sentinel rather than to its own canonical form. Letting arbitrary
+    generated strings through would mint a fresh F1 class per hallucination
+    ("banana"), and macro-F1 would then average over classes the benchmark never
+    defined. The sentinel is excluded from the averaged label set by
+    `score_predictions`, so an invalid answer costs the true class a false
+    negative and nothing else (plan §6.1).
+    """
     if not has_prediction:
-        return "<none>"
-    if question_type != "relative_depth":
-        return canonical_answer_form(prediction, question_type, synonym_map, canonical_vocab)
-    options = str(row["answer_space"]).split("|")
-    for position, option in zip(("first", "second"), options):
+        return INVALID_LABEL
+    options = parse_answer_space(row["answer_space"])
+    if question_type == "relative_depth":
+        for position, option in zip(("first", "second"), options):
+            if answers_agree(prediction, option, question_type, synonym_map, canonical_vocab):
+                return position
+        return INVALID_LABEL
+    for option in options:
         if answers_agree(prediction, option, question_type, synonym_map, canonical_vocab):
-            return position
-    return "<none>"
+            return canonical_answer_form(option, question_type, synonym_map, canonical_vocab)
+    return INVALID_LABEL
 
 
 def macro_accuracy(scores: list[TypeScore]) -> float:
@@ -176,22 +306,64 @@ def macro_accuracy(scores: list[TypeScore]) -> float:
     return float(np.mean([score.accuracy for score in scores])) if scores else 0.0
 
 
-def random_baseline(gold: pd.DataFrame, canonical_vocab: dict, seed: int = DEFAULT_SEED) -> dict:
-    """Uniform over the row's declared answer space, or over the answerable
-    vocabulary for open types."""
+def random_baseline(gold: pd.DataFrame, synonym_map: dict, canonical_vocab: dict,
+                    seed: int = DEFAULT_SEED) -> dict:
+    """Seeded empirical random guessing: uniform over the row's declared answer
+    space, or over the answerable vocabulary for the open types.
+
+    Two defects used to make this score 0.0% on both open-vocabulary types:
+    `str(answer_space or "")` yielded `"nan"` for their NaN answer space (NaN is
+    truthy), so every draw guessed the literal string "nan"; and the draw was
+    compared to gold with `==`, bypassing the shared canonicaliser that every
+    other comparison in this file goes through.
+    """
     rng = np.random.default_rng(seed)
-    open_vocabulary = sorted(concept for concept, entry in canonical_vocab.items()
-                             if not entry["is_structural"])
+    open_vocabulary = answerable_vocabulary(canonical_vocab)
     accuracies = {}
     for question_type, rows in gold.groupby("question_type", sort=True):
         correct = 0
         for _, row in rows.iterrows():
-            options = [option for option in str(row["answer_space"] or "").split("|") if option]
-            if not options:
-                options = open_vocabulary
-            correct += int(options[int(rng.integers(len(options)))] == row["answer"])
+            options = parse_answer_space(row["answer_space"]) or open_vocabulary
+            sampled = options[int(rng.integers(len(options)))]
+            correct += int(answers_agree(sampled, row["answer"], question_type,
+                                         synonym_map, canonical_vocab))
         accuracies[question_type] = correct / len(rows)
     return accuracies
+
+
+def theoretical_chance(gold: pd.DataFrame, canonical_vocab: dict) -> dict:
+    """Uniform chance computed rather than sampled: the mean of 1/|options| over
+    the rows of each type.
+
+    Reported beside the seeded empirical baseline because the two answer
+    different questions, and because the per-type value is the honest floor:
+    `relative_depth` chance is 50% over the two objects that row names, not
+    ~1/151 over every object name in the vocabulary (plan §6.2).
+    """
+    open_size = len(answerable_vocabulary(canonical_vocab))
+    chances = {}
+    for question_type, rows in gold.groupby("question_type", sort=True):
+        total = 0.0
+        for _, row in rows.iterrows():
+            options = parse_answer_space(row["answer_space"])
+            total += 1.0 / (len(options) if options else open_size)
+        chances[question_type] = total / len(rows)
+    return chances
+
+
+def split_majority_share(gold: pd.DataFrame) -> dict:
+    """Share of the *evaluated* split held by its own most frequent answer.
+
+    This is a descriptive oracle statistic, not a baseline a model could reach
+    without seeing the split's labels. It is reported separately from
+    `majority_baseline`, which fits on train, so the two are never confused
+    (plan §6.2).
+    """
+    shares = {}
+    for question_type, rows in gold.groupby("question_type", sort=True):
+        labels = [target_label(question_type, row) for _, row in rows.iterrows()]
+        shares[question_type] = float(pd.Series(labels).value_counts().max() / len(labels))
+    return shares
 
 
 def majority_baseline(train: pd.DataFrame, gold: pd.DataFrame) -> dict:
@@ -233,31 +405,56 @@ def render_markdown(scores: list[TypeScore] | None, baselines: dict, split: str,
     if scores:
         lines += [f"Model: **{model_name}**"
                   + ("  ·  constrained decoding over the answer space" if constrained else ""), ""]
-    lines += ["| Type | n | Random | Majority | Question-only |"
-              + (" Model | Macro-F1 |" if scores else ""),
-              "|---|---:|---:|---:|---:|" + ("---:|---:|" if scores else "")]
+    lines += ["| Type | n | Chance | Random | Majority | Question-only |"
+              + (" Model | Macro-F1 | Invalid |" if scores else ""),
+              "|---|---:|---:|---:|---:|---:|" + ("---:|---:|---:|" if scores else "")]
     score_by_type = {score.question_type: score for score in (scores or [])}
     for question_type in types:
         score = score_by_type.get(question_type)
         row = (f"| {question_type} | {score.n_items if score else '—'} "
+               f"| {baselines['chance'][question_type]:.1%} "
                f"| {baselines['random'][question_type]:.1%} "
                f"| {baselines['majority'][question_type]:.1%} "
                f"| {baselines['question_only'][question_type]:.1%} |")
         if scores:
             f1 = f"{score.macro_f1:.3f}" if score.macro_f1 is not None else "—"
-            row += f" {score.accuracy:.1%} | {f1} |"
+            invalid = score.n_invalid / score.n_items if score.n_items else 0.0
+            row += f" {score.accuracy:.1%} | {f1} | {invalid:.1%} |"
         lines.append(row)
-    lines += ["", f"Macro accuracy (random): {np.mean(list(baselines['random'].values())):.1%}",
+    lines += ["", f"Macro accuracy (chance): {np.mean(list(baselines['chance'].values())):.1%}",
+              f"Macro accuracy (random): {np.mean(list(baselines['random'].values())):.1%}",
               f"Macro accuracy (majority): {np.mean(list(baselines['majority'].values())):.1%}",
               f"Macro accuracy (question-only): {np.mean(list(baselines['question_only'].values())):.1%}"]
     if scores:
         lines += [f"**Macro accuracy (model): {macro_accuracy(scores):.1%}**", "",
                   f"Items answered: {sum(s.n_predicted for s in scores)}"
-                  f" / {sum(s.n_items for s in scores)} (unanswered items count as wrong)."]
+                  f" / {sum(s.n_items for s in scores)} (unanswered items count as wrong)."
+                  f"  Invalid answers: {sum(s.n_invalid for s in scores)}"
+                  f" / {sum(s.n_items for s in scores)}."]
     lines += ["", "Macro-F1 is reported for closed answer spaces only; for `relative_depth` the "
               "classes are answer *position* (first / second named object), because its answer "
-              "space is item-specific.", ""]
+              "space is item-specific.",
+              "",
+              "`Chance` is computed uniform chance (mean of 1/|options|); `Random` is a seeded "
+              "empirical draw. `Majority` is fitted on **train**; the evaluated split's own "
+              "majority share is an oracle statistic and is reported in the JSON output only.",
+              ""]
     return "\n".join(lines)
+
+
+def check_reported_aggregates(scores: list[TypeScore], reported_macro: float) -> None:
+    """The printed macro must equal the mean of the printed per-type numbers.
+
+    R1 could not reconcile the previous submission's headline with its own
+    ablation tables. This makes that class of mismatch impossible to print.
+    """
+    if not scores:
+        return
+    recomputed = float(np.mean([score.accuracy for score in scores]))
+    if abs(recomputed - reported_macro) > 1e-9:
+        raise SystemExit(
+            f"Aggregate check failed: reported macro {reported_macro:.6f} does not equal the "
+            f"mean of the per-type accuracies {recomputed:.6f}.")
 
 
 def main() -> None:
@@ -283,14 +480,22 @@ def main() -> None:
     train = load_release_split("train")
 
     baselines = {
-        "random": random_baseline(gold, canonical_vocab, args.seed),
+        "chance": theoretical_chance(gold, canonical_vocab),
+        "random": random_baseline(gold, synonym_map, canonical_vocab, args.seed),
         "majority": majority_baseline(train, gold),
         "question_only": question_only_baseline(train, gold, args.seed),
     }
-    scores = None
+    scores, id_report = None, None
     if args.predictions:
-        scores = score_predictions(gold, load_predictions(args.predictions),
-                                   synonym_map, canonical_vocab, args.constrained)
+        predictions = load_predictions(args.predictions)
+        id_report = prediction_id_report(gold, predictions)
+        if id_report["n_unexpected"]:
+            examples = ", ".join(str(item) for item in id_report["unexpected_examples"])
+            print(f"warning: {id_report['n_unexpected']} predicted question_id(s) are not in "
+                  f"the '{args.split}' split and were ignored: {examples}", file=sys.stderr)
+        scores = score_predictions(gold, predictions, synonym_map, canonical_vocab,
+                                   args.constrained)
+        check_reported_aggregates(scores, macro_accuracy(scores))
 
     report = render_markdown(scores, baselines, args.split, args.constrained, args.model_name)
     print(report)
@@ -301,6 +506,8 @@ def main() -> None:
     if args.json_path:
         payload = {"split": args.split, "seed": args.seed, "constrained": args.constrained,
                    "baselines": baselines,
+                   "split_majority_share_oracle": split_majority_share(gold),
+                   "prediction_ids": id_report,
                    "per_type": [asdict(score) for score in scores] if scores else None,
                    "macro_accuracy": macro_accuracy(scores) if scores else None}
         with open(args.json_path, "w", encoding="utf-8") as handle:

@@ -1,0 +1,1721 @@
+question_id,prediction
+val_000000,Yes
+val_000001,drawer
+val_000002,Light
+val_000003,right
+val_000004,desk
+val_000005,bed
+val_000006,chair
+val_000007,chair
+val_000008,right
+val_000009,Floor
+val_000010,A sign.
+val_000011,desk
+val_000012,Desk
+val_000013,shelf
+val_000014,table
+val_000015,No
+val_000016,chair
+val_000017,Left side
+val_000018,The farthest object is the chair.
+val_000019,Sofa
+val_000020,The bed is closest to the camera.
+val_000021,Right
+val_000022,chair
+val_000023,chair
+val_000024,Left
+val_000025,shelf
+val_000026,Table
+val_000027,Yes
+val_000028,shelf
+val_000029,Table
+val_000030,Yes
+val_000031,Bookshelf
+val_000032,Right
+val_000033,Cabinet
+val_000034,No
+val_000035,"No, the picture is farther from the camera."
+val_000036,bar stools
+val_000037,window
+val_000038,Left
+val_000039,Right
+val_000040,Chair
+val_000041,Desk
+val_000042,table
+val_000043,cpu
+val_000044,No
+val_000045,chair
+val_000046,shelf
+val_000047,computer monitor
+val_000048,"No, the clothes are farther from the camera."
+val_000049,Left
+val_000050,The sofa is the farthest object from the camera.
+val_000051,bed
+val_000052,bed
+val_000053,pot
+val_000054,Printer
+val_000055,Chair
+val_000056,Mirror
+val_000057,bed
+val_000058,Laptop
+val_000059,The picture is closest to the floor.
+val_000060,Furniture
+val_000061,Cabinet
+val_000062,No
+val_000063,No
+val_000064,Light
+val_000065,Right side
+val_000066,Left
+val_000067,Yes
+val_000068,Mirror
+val_000069,Rug
+val_000070,No
+val_000071,No
+val_000072,Yes
+val_000073,chair
+val_000074,Left
+val_000075,table
+val_000076,No
+val_000077,Chair
+val_000078,computer monitor
+val_000079,Left side
+val_000080,floor
+val_000081,desk
+val_000082,desk
+val_000083,Cabinet
+val_000084,Right
+val_000085,No.
+val_000086,Yes
+val_000087,chair
+val_000088,No
+val_000089,desk
+val_000090,Right
+val_000091,box
+val_000092,door
+val_000093,desk
+val_000094,No
+val_000095,No
+val_000096,Window
+val_000097,Yes
+val_000098,shelf
+val_000099,No
+val_000100,Left
+val_000101,table
+val_000102,Left
+val_000103,bar stool
+val_000104,Yes
+val_000105,chair
+val_000106,bin
+val_000107,Monitor
+val_000108,Left
+val_000109,Left
+val_000110,Right
+val_000111,Left
+val_000112,Laptop
+val_000113,right
+val_000114,box
+val_000115,pillow
+val_000116,Chalkboard
+val_000117,Book
+val_000118,Mattress
+val_000119,chair
+val_000120,Yes
+val_000121,No
+val_000122,Table
+val_000123,No
+val_000124,No
+val_000125,chair
+val_000126,door
+val_000127,bed
+val_000128,The wall is farthest from the picture.
+val_000129,computer monitor
+val_000130,door
+val_000131,sink
+val_000132,No
+val_000133,Left
+val_000134,Right
+val_000135,No
+val_000136,TV
+val_000137,Yes
+val_000138,"No, the screen is closer to the camera."
+val_000139,Left side
+val_000140,Yes
+val_000141,Mirror
+val_000142,right
+val_000143,counter
+val_000144,No.
+val_000145,desk
+val_000146,Water bottle
+val_000147,shelf
+val_000148,desk
+val_000149,No
+val_000150,Trash can
+val_000151,shelf
+val_000152,The board is farther from the camera.
+val_000153,door
+val_000154,Left side
+val_000155,Chair
+val_000156,right
+val_000157,Bed
+val_000158,sign
+val_000159,right
+val_000160,desk
+val_000161,shelf
+val_000162,No
+val_000163,Right
+val_000164,No
+val_000165,Sofa
+val_000166,right
+val_000167,box
+val_000168,Left side
+val_000169,No
+val_000170,No
+val_000171,table
+val_000172,window
+val_000173,No
+val_000174,desk
+val_000175,No
+val_000176,drawer
+val_000177,table
+val_000178,No
+val_000179,chair
+val_000180,sign
+val_000181,Stove
+val_000182,Yes
+val_000183,No
+val_000184,chair
+val_000185,poster
+val_000186,chair
+val_000187,Left
+val_000188,"No, the whiteboard is closer to the camera."
+val_000189,chalkboard
+val_000190,Right.
+val_000191,No
+val_000192,chair
+val_000193,Yes
+val_000194,Printer
+val_000195,Sign
+val_000196,desk
+val_000197,The trash can is closest to the camera.
+val_000198,trash bin
+val_000199,No.
+val_000200,Yes
+val_000201,To the right.
+val_000202,bed
+val_000203,No
+val_000204,"No, the television is farther from the camera."
+val_000205,No
+val_000206,Yes
+val_000207,No
+val_000208,No
+val_000209,desk
+val_000210,No.
+val_000211,computer monitor
+val_000212,No
+val_000213,No.
+val_000214,table
+val_000215,Rug
+val_000216,Right
+val_000217,Yes
+val_000218,No
+val_000219,window
+val_000220,No
+val_000221,right
+val_000222,chair
+val_000223,Yes
+val_000224,Keyboard
+val_000225,Right
+val_000226,Right.
+val_000227,No
+val_000228,box
+val_000229,chair
+val_000230,The door is farther from the camera.
+val_000231,Left
+val_000232,computer monitor
+val_000233,Right
+val_000234,chair
+val_000235,No explanation.
+val_000236,Table
+val_000237,Left side
+val_000238,Yes
+val_000239,Yes
+val_000240,Right
+val_000241,Yes
+val_000242,plant
+val_000243,table
+val_000244,Coffee table
+val_000245,chair
+val_000246,Yes
+val_000247,table
+val_000248,table
+val_000249,phone
+val_000250,Table
+val_000251,keyboard
+val_000252,No.
+val_000253,No
+val_000254,Printer
+val_000255,chair
+val_000256,A chair.
+val_000257,No
+val_000258,right
+val_000259,right
+val_000260,Chair
+val_000261,basket
+val_000262,File cabinet
+val_000263,No chair.
+val_000264,Printer
+val_000265,Dishwasher
+val_000266,Left side
+val_000267,Right
+val_000268,cabinet
+val_000269,bed
+val_000270,No
+val_000271,Bag
+val_000272,whiteboard
+val_000273,No
+val_000274,bed
+val_000275,Pillow
+val_000276,No.
+val_000277,Phone
+val_000278,No
+val_000279,Door frame.
+val_000280,desk
+val_000281,Fire extinguisher
+val_000282,Window
+val_000283,Table
+val_000284,Sofa
+val_000285,Right side
+val_000286,The farthest object is the wall.
+val_000287,No
+val_000288,Right side
+val_000289,No
+val_000290,plant
+val_000291,Speaker
+val_000292,Right
+val_000293,No
+val_000294,chair
+val_000295,stove
+val_000296,Door
+val_000297,Photo
+val_000298,No
+val_000299,File cabinet
+val_000300,Yes
+val_000301,book
+val_000302,Right
+val_000303,right
+val_000304,chair
+val_000305,Window
+val_000306,computer monitor
+val_000307,trash can
+val_000308,Left
+val_000309,Yes
+val_000310,Right side
+val_000311,Right
+val_000312,Window
+val_000313,Mirror
+val_000314,Sofa
+val_000315,The closest object is the floor.
+val_000316,desk
+val_000317,Right side
+val_000318,mat
+val_000319,Left
+val_000320,No explanation.
+val_000321,Computer
+val_000322,table
+val_000323,Chair
+val_000324,Yes
+val_000325,clothes
+val_000326,Left
+val_000327,tool box
+val_000328,No
+val_000329,Chair
+val_000330,Left
+val_000331,The table.
+val_000332,Sofa
+val_000333,table
+val_000334,The farthest object is the table.
+val_000335,desk
+val_000336,table
+val_000337,right
+val_000338,No
+val_000339,No
+val_000340,No
+val_000341,chair
+val_000342,No
+val_000343,right
+val_000344,right
+val_000345,Right
+val_000346,The farthest object is the wall.
+val_000347,Right side
+val_000348,No
+val_000349,door
+val_000350,Lounge chair
+val_000351,No
+val_000352,right
+val_000353,No
+val_000354,poster
+val_000355,sink
+val_000356,right
+val_000357,whiteboard
+val_000358,Yes.
+val_000359,Right
+val_000360,desk
+val_000361,Fireplace
+val_000362,chair
+val_000363,Yes
+val_000364,Right side
+val_000365,The box is farther from the camera.
+val_000366,table
+val_000367,The closest object is the armchair.
+val_000368,table
+val_000369,Right
+val_000370,computer
+val_000371,door
+val_000372,chair
+val_000373,chair
+val_000374,No
+val_000375,No
+val_000376,Table
+val_000377,right
+val_000378,The door is farther from the camera.
+val_000379,Yes
+val_000380,Right
+val_000381,Right side.
+val_000382,Right
+val_000383,"No, the clothes are farther from the camera."
+val_000384,No.
+val_000385,The table is farther from the camera.
+val_000386,Table
+val_000387,Chair
+val_000388,table
+val_000389,The cabinet is the farthest object from the camera.
+val_000390,Paper
+val_000391,No
+val_000392,Window
+val_000393,Rug
+val_000394,Table
+val_000395,door
+val_000396,The clock is farther from the camera.
+val_000397,Right
+val_000398,chair
+val_000399,desk
+val_000400,chair
+val_000401,bench
+val_000402,chair
+val_000403,Chair
+val_000404,trash can
+val_000405,Toilet
+val_000406,No
+val_000407,right
+val_000408,No
+val_000409,Left
+val_000410,No
+val_000411,No.
+val_000412,Right
+val_000413,Right
+val_000414,floor
+val_000415,No
+val_000416,computer monitor
+val_000417,right
+val_000418,No
+val_000419,desk
+val_000420,Monitor
+val_000421,Door
+val_000422,chair
+val_000423,Yes
+val_000424,table
+val_000425,table
+val_000426,window
+val_000427,No
+val_000428,shelf
+val_000429,Stove
+val_000430,Window
+val_000431,No
+val_000432,mouse
+val_000433,Counter
+val_000434,table
+val_000435,Left
+val_000436,Printer
+val_000437,Right side
+val_000438,Headboard
+val_000439,Yes.
+val_000440,Left
+val_000441,The farthest object is the table.
+val_000442,Right
+val_000443,right
+val_000444,cpu
+val_000445,"No, the sofa is closer to the camera."
+val_000446,Yes
+val_000447,No
+val_000448,Bookshelf
+val_000449,Yes
+val_000450,right
+val_000451,The farthest object is the window.
+val_000452,A chair.
+val_000453,No explanation.
+val_000454,chair
+val_000455,No
+val_000456,Bookshelf
+val_000457,table
+val_000458,Chair
+val_000459,Mirror
+val_000460,Yes
+val_000461,Left
+val_000462,table
+val_000463,Yes
+val_000464,chair
+val_000465,table
+val_000466,No
+val_000467,chair
+val_000468,Right
+val_000469,chair
+val_000470,No
+val_000471,Pillow
+val_000472,bed
+val_000473,Poster
+val_000474,Mouse
+val_000475,No
+val_000476,right
+val_000477,desk
+val_000478,table
+val_000479,Bag
+val_000480,The farthest object is the sofa.
+val_000481,No
+val_000482,Yes
+val_000483,No
+val_000484,A window.
+val_000485,chair
+val_000486,Mirror
+val_000487,computer monitor
+val_000488,chair
+val_000489,No
+val_000490,chair
+val_000491,Desk
+val_000492,bed
+val_000493,chair
+val_000494,Table
+val_000495,No chair
+val_000496,trash bin
+val_000497,chair
+val_000498,The farthest object is the wall.
+val_000499,No
+val_000500,Monitor
+val_000501,Table
+val_000502,chair
+val_000503,desk
+val_000504,table
+val_000505,sink
+val_000506,computer monitor
+val_000507,table
+val_000508,Chair
+val_000509,Yes
+val_000510,No chair.
+val_000511,Mirror
+val_000512,Table
+val_000513,The farthest furniture is the desk.
+val_000514,Door
+val_000515,No
+val_000516,Chair
+val_000517,Yes.
+val_000518,Fire extinguisher
+val_000519,right
+val_000520,Cushion
+val_000521,Laptop
+val_000522,right
+val_000523,No
+val_000524,Chair
+val_000525,door
+val_000526,Left
+val_000527,The farthest object is the door.
+val_000528,Right
+val_000529,Picture
+val_000530,bed
+val_000531,table
+val_000532,A sign.
+val_000533,No
+val_000534,right
+val_000535,"No, the chair is farther from the camera."
+val_000536,Table
+val_000537,right
+val_000538,bed
+val_000539,chair
+val_000540,desk
+val_000541,Yes
+val_000542,table
+val_000543,bed
+val_000544,No
+val_000545,desk
+val_000546,No
+val_000547,bench
+val_000548,mouse
+val_000549,No.
+val_000550,chair
+val_000551,Door
+val_000552,No
+val_000553,Left
+val_000554,bed
+val_000555,sink
+val_000556,Yes
+val_000557,The picture is closest to the floor.
+val_000558,Yes
+val_000559,Mirror
+val_000560,right
+val_000561,Yes
+val_000562,Yes.
+val_000563,Chair
+val_000564,Right side
+val_000565,Door
+val_000566,Yes.
+val_000567,Door
+val_000568,No
+val_000569,desk
+val_000570,No
+val_000571,Left
+val_000572,bed
+val_000573,faucet
+val_000574,window
+val_000575,Right
+val_000576,Chalkboard
+val_000577,Right
+val_000578,Yes
+val_000579,File cabinet
+val_000580,table
+val_000581,The farthest object is the sofa.
+val_000582,No
+val_000583,No
+val_000584,Table
+val_000585,desk
+val_000586,No
+val_000587,desk
+val_000588,right
+val_000589,Right
+val_000590,Left side
+val_000591,mirror
+val_000592,Chair
+val_000593,door
+val_000594,Left
+val_000595,Window
+val_000596,bin
+val_000597,desk
+val_000598,No
+val_000599,chair
+val_000600,Fan
+val_000601,shelf
+val_000602,bed
+val_000603,"No, the chair is farther from the camera."
+val_000604,The shelf is farther from the camera.
+val_000605,Bed frame
+val_000606,right
+val_000607,Right.
+val_000608,bed
+val_000609,No explanation.
+val_000610,No
+val_000611,right
+val_000612,No
+val_000613,right
+val_000614,Left
+val_000615,right
+val_000616,washing machine
+val_000617,The farthest object is the table.
+val_000618,No
+val_000619,No
+val_000620,No
+val_000621,lamp
+val_000622,window
+val_000623,chair
+val_000624,chair
+val_000625,Right
+val_000626,window
+val_000627,Left
+val_000628,door
+val_000629,TV
+val_000630,No
+val_000631,No
+val_000632,Desk
+val_000633,Left
+val_000634,Left
+val_000635,counter
+val_000636,right
+val_000637,Bed
+val_000638,table
+val_000639,bed
+val_000640,Right
+val_000641,"No, the stove is farther from the camera."
+val_000642,bedside table
+val_000643,Carpet
+val_000644,bed
+val_000645,"No, the table is closer to the camera."
+val_000646,Right
+val_000647,Chair
+val_000648,dishwasher
+val_000649,Right
+val_000650,No
+val_000651,No
+val_000652,Right
+val_000653,Yes
+val_000654,basket
+val_000655,Washing machine
+val_000656,The farthest object is the ceiling.
+val_000657,The table.
+val_000658,Left side
+val_000659,desk
+val_000660,No
+val_000661,Yes
+val_000662,No
+val_000663,No
+val_000664,door
+val_000665,The plant is farthest from the picture.
+val_000666,No.
+val_000667,No
+val_000668,No
+val_000669,Yes
+val_000670,Right
+val_000671,bed
+val_000672,Yes
+val_000673,No
+val_000674,Cabinet
+val_000675,No
+val_000676,Yes
+val_000677,Window
+val_000678,Cabinet
+val_000679,No
+val_000680,window
+val_000681,table
+val_000682,Left
+val_000683,Bed
+val_000684,right
+val_000685,chair
+val_000686,No
+val_000687,No
+val_000688,Chair
+val_000689,Right
+val_000690,refrigerator
+val_000691,door
+val_000692,shelf
+val_000693,No
+val_000694,computer monitor
+val_000695,Chair
+val_000696,Toilet
+val_000697,No
+val_000698,No
+val_000699,Right
+val_000700,table
+val_000701,No
+val_000702,Left
+val_000703,No
+val_000704,desk
+val_000705,chair
+val_000706,carpet
+val_000707,Right
+val_000708,bed
+val_000709,Table
+val_000710,Nightstand
+val_000711,Yes
+val_000712,chair
+val_000713,window
+val_000714,Left side
+val_000715,desk
+val_000716,Window
+val_000717,No
+val_000718,Desk
+val_000719,chair
+val_000720,Toilet
+val_000721,No
+val_000722,chair
+val_000723,trash can
+val_000724,Right
+val_000725,Right
+val_000726,Right side
+val_000727,Monitor
+val_000728,Mirror
+val_000729,Right
+val_000730,The picture was taken from the floor.
+val_000731,Trash can
+val_000732,desk
+val_000733,Toilet
+val_000734,No
+val_000735,Yes
+val_000736,desk
+val_000737,chair
+val_000738,shelf
+val_000739,Right
+val_000740,Sofa
+val_000741,Cabinet
+val_000742,Left
+val_000743,No.
+val_000744,Picture
+val_000745,refrigerator
+val_000746,No
+val_000747,desk
+val_000748,Left
+val_000749,The stapler is farthest from the camera.
+val_000750,chair
+val_000751,right
+val_000752,The blanket is farther from the camera.
+val_000753,No.
+val_000754,box
+val_000755,No
+val_000756,"No, the trash can is farther from the camera."
+val_000757,chair
+val_000758,Right
+val_000759,Chalkboard
+val_000760,Television
+val_000761,Right
+val_000762,Rack
+val_000763,No
+val_000764,Desk
+val_000765,Right
+val_000766,No
+val_000767,chair
+val_000768,chair
+val_000769,bed
+val_000770,Yes
+val_000771,box
+val_000772,Desk
+val_000773,No
+val_000774,paper
+val_000775,toilet
+val_000776,plant
+val_000777,Chair
+val_000778,chair
+val_000779,Cabinet
+val_000780,desk
+val_000781,TV
+val_000782,right
+val_000783,chair
+val_000784,No.
+val_000785,chair
+val_000786,Left
+val_000787,No
+val_000788,Yes
+val_000789,bed
+val_000790,right
+val_000791,right
+val_000792,Right
+val_000793,Yes
+val_000794,trash bin
+val_000795,chair
+val_000796,desk
+val_000797,No
+val_000798,Night stand
+val_000799,Table
+val_000800,Right
+val_000801,Yes
+val_000802,Yes
+val_000803,window
+val_000804,Trash can
+val_000805,Right
+val_000806,Stool
+val_000807,chair
+val_000808,Bookshelf
+val_000809,Furniture
+val_000810,Left
+val_000811,Book
+val_000812,No
+val_000813,No.
+val_000814,table
+val_000815,desk
+val_000816,table
+val_000817,Chair
+val_000818,"No, the window is farther from the camera."
+val_000819,right
+val_000820,desk
+val_000821,No
+val_000822,Yes
+val_000823,Right
+val_000824,table
+val_000825,table
+val_000826,Sink
+val_000827,table
+val_000828,table
+val_000829,Left
+val_000830,Table
+val_000831,desk
+val_000832,A postcard.
+val_000833,Yes
+val_000834,book
+val_000835,Right
+val_000836,No
+val_000837,Right
+val_000838,Right
+val_000839,Left
+val_000840,stand
+val_000841,Right
+val_000842,The light is farther from the camera.
+val_000843,Desk
+val_000844,shelf
+val_000845,chair
+val_000846,Left
+val_000847,No
+val_000848,Yes
+val_000849,Right side
+val_000850,Right
+val_000851,pillow
+val_000852,desk
+val_000853,chair
+val_000854,Dresser
+val_000855,sink
+val_000856,Right
+val_000857,window
+val_000858,The floor
+val_000859,chair
+val_000860,Left
+val_000861,No
+val_000862,chair
+val_000863,Yes
+val_000864,Right
+val_000865,The table is farthest from the picture.
+val_000866,computer monitor
+val_000867,chair
+val_000868,bed
+val_000869,desk
+val_000870,Bookshelf
+val_000871,No
+val_000872,board
+val_000873,right
+val_000874,stove
+val_000875,Bed
+val_000876,window
+val_000877,Floor
+val_000878,Chair
+val_000879,mug
+val_000880,whiteboard
+val_000881,Left side
+val_000882,Yes.
+val_000883,Yes
+val_000884,A printer.
+val_000885,No
+val_000886,Window
+val_000887,desk
+val_000888,bookshelf
+val_000889,Yes
+val_000890,Chair
+val_000891,No
+val_000892,desk
+val_000893,Right.
+val_000894,The sofa is closest to the camera.
+val_000895,No
+val_000896,No explanation.
+val_000897,trash can
+val_000898,No
+val_000899,bed
+val_000900,Right
+val_000901,Sink
+val_000902,No
+val_000903,Bag
+val_000904,paper towel
+val_000905,trash can
+val_000906,Left
+val_000907,No
+val_000908,Printer
+val_000909,Printer
+val_000910,The picture was taken from the floor.
+val_000911,desk
+val_000912,Chair
+val_000913,No
+val_000914,No
+val_000915,box
+val_000916,desk
+val_000917,Yes
+val_000918,Chair
+val_000919,Table
+val_000920,Window
+val_000921,chair
+val_000922,right side
+val_000923,clothes
+val_000924,Right
+val_000925,No
+val_000926,To the left
+val_000927,Right side
+val_000928,chair
+val_000929,table
+val_000930,Dishwasher
+val_000931,No
+val_000932,A trash can.
+val_000933,trash can
+val_000934,chair
+val_000935,No.
+val_000936,No
+val_000937,Yes
+val_000938,Table
+val_000939,bed
+val_000940,Yes
+val_000941,Yes
+val_000942,right
+val_000943,No
+val_000944,Paper
+val_000945,Right
+val_000946,No
+val_000947,Yes
+val_000948,chair
+val_000949,Yes
+val_000950,Mug
+val_000951,No
+val_000952,Right side
+val_000953,No.
+val_000954,No
+val_000955,No
+val_000956,chair
+val_000957,No
+val_000958,A lamp.
+val_000959,No.
+val_000960,Headboard
+val_000961,table
+val_000962,Chair
+val_000963,Left side
+val_000964,counter
+val_000965,Left
+val_000966,No.
+val_000967,Keyboard
+val_000968,drainer
+val_000969,The chair is farthest from the camera.
+val_000970,Cabinet
+val_000971,No
+val_000972,sofa
+val_000973,No
+val_000974,Yes
+val_000975,No
+val_000976,right
+val_000977,Sofa
+val_000978,Left
+val_000979,The door is farther from the camera.
+val_000980,Machine
+val_000981,No
+val_000982,right
+val_000983,No
+val_000984,Right
+val_000985,Towel
+val_000986,Left
+val_000987,Right
+val_000988,Left
+val_000989,Table
+val_000990,shelf
+val_000991,bed
+val_000992,desk
+val_000993,A chair.
+val_000994,Chair
+val_000995,plant
+val_000996,Yes
+val_000997,desk
+val_000998,door
+val_000999,chair
+val_001000,mirror
+val_001001,Left
+val_001002,No
+val_001003,chair
+val_001004,Right
+val_001005,Right
+val_001006,chair
+val_001007,right
+val_001008,right
+val_001009,Yes
+val_001010,No
+val_001011,Bed
+val_001012,desk
+val_001013,Yes.
+val_001014,Chair
+val_001015,No
+val_001016,chair
+val_001017,No.
+val_001018,Left side
+val_001019,table
+val_001020,The object closest to the camera is the shower door.
+val_001021,No
+val_001022,No
+val_001023,No
+val_001024,Chair
+val_001025,Trash can
+val_001026,Bed
+val_001027,No
+val_001028,table
+val_001029,Right
+val_001030,Trash can.
+val_001031,Dresser
+val_001032,right
+val_001033,Right
+val_001034,Right
+val_001035,Furniture
+val_001036,Jar
+val_001037,No
+val_001038,counter
+val_001039,door
+val_001040,No
+val_001041,TV
+val_001042,Left
+val_001043,The chair is farthest from the picture.
+val_001044,Right
+val_001045,keyboard
+val_001046,Chair
+val_001047,Mirror
+val_001048,sink
+val_001049,right
+val_001050,Table
+val_001051,basket
+val_001052,right
+val_001053,To the right.
+val_001054,Bed
+val_001055,Table
+val_001056,Yes
+val_001057,No
+val_001058,The floor is closest to the camera.
+val_001059,table
+val_001060,Door
+val_001061,chair
+val_001062,No
+val_001063,bed
+val_001064,No
+val_001065,No
+val_001066,bag
+val_001067,stove
+val_001068,Right
+val_001069,table
+val_001070,No
+val_001071,No
+val_001072,Stove
+val_001073,keyboard
+val_001074,Yes
+val_001075,Chair
+val_001076,Chair
+val_001077,No
+val_001078,No
+val_001079,No
+val_001080,No
+val_001081,Right
+val_001082,No
+val_001083,No
+val_001084,Pumpkins
+val_001085,Yes.
+val_001086,chair
+val_001087,Desk
+val_001088,table
+val_001089,Left
+val_001090,monitor
+val_001091,Rug
+val_001092,chair
+val_001093,table
+val_001094,Bed
+val_001095,printer
+val_001096,chair
+val_001097,The closest object is the chair.
+val_001098,Fire extinguisher
+val_001099,Mirror
+val_001100,shelf
+val_001101,box
+val_001102,right
+val_001103,No
+val_001104,table
+val_001105,Right
+val_001106,Yes
+val_001107,The picture was taken from the floor.
+val_001108,table
+val_001109,No table is closer to the camera than the whiteboard.
+val_001110,sink
+val_001111,The picture is closest to the sofa.
+val_001112,lamp
+val_001113,Cabinet
+val_001114,desk
+val_001115,table
+val_001116,Yes.
+val_001117,shelf
+val_001118,No.
+val_001119,Yes
+val_001120,Chair.
+val_001121,Floor
+val_001122,Sofa
+val_001123,The trash can is farther from the camera.
+val_001124,stove
+val_001125,chair
+val_001126,Keyboard
+val_001127,right
+val_001128,refrigerator
+val_001129,Monitor
+val_001130,No
+val_001131,chair
+val_001132,No.
+val_001133,plant
+val_001134,No
+val_001135,mirror
+val_001136,Right
+val_001137,bookcase
+val_001138,The chair is nearest to the table.
+val_001139,Yes
+val_001140,bar stools
+val_001141,No
+val_001142,Printer
+val_001143,Right
+val_001144,chair
+val_001145,Right
+val_001146,Left
+val_001147,door
+val_001148,No
+val_001149,Right side.
+val_001150,desk
+val_001151,Chair
+val_001152,right
+val_001153,Refrigerator
+val_001154,"No, the wire is closer to the camera."
+val_001155,table
+val_001156,Yes
+val_001157,No
+val_001158,Yes
+val_001159,book
+val_001160,Left
+val_001161,chair
+val_001162,Left
+val_001163,Curtain
+val_001164,wall
+val_001165,Left
+val_001166,refrigerator
+val_001167,The bed is closest to the camera.
+val_001168,chair
+val_001169,The farthest object is the window.
+val_001170,Trash can
+val_001171,To the right.
+val_001172,Right
+val_001173,A stapler.
+val_001174,Right
+val_001175,sink
+val_001176,"No, the monitor is farther from the camera."
+val_001177,Sink
+val_001178,The farthest object is the ceiling.
+val_001179,Picture
+val_001180,Right
+val_001181,chair
+val_001182,bed
+val_001183,table
+val_001184,Right
+val_001185,right
+val_001186,Bottle
+val_001187,dishwasher
+val_001188,Toilet
+val_001189,Computer
+val_001190,right
+val_001191,A table.
+val_001192,window
+val_001193,Book
+val_001194,box
+val_001195,chair
+val_001196,chair
+val_001197,chair
+val_001198,No
+val_001199,No
+val_001200,Book
+val_001201,Yes
+val_001202,No.
+val_001203,Window
+val_001204,paper
+val_001205,chair
+val_001206,table
+val_001207,The chair is farthest from the picture.
+val_001208,No
+val_001209,board
+val_001210,window
+val_001211,desk
+val_001212,No.
+val_001213,No.
+val_001214,person
+val_001215,right
+val_001216,Monitor
+val_001217,Yes
+val_001218,Left
+val_001219,No
+val_001220,No
+val_001221,To the right
+val_001222,To the right.
+val_001223,Right
+val_001224,No
+val_001225,The wall is farthest from the picture.
+val_001226,desk
+val_001227,bed
+val_001228,right
+val_001229,No
+val_001230,Cabinet
+val_001231,No
+val_001232,chair
+val_001233,No
+val_001234,desk
+val_001235,No
+val_001236,chair
+val_001237,No
+val_001238,Floor mat
+val_001239,Window
+val_001240,right
+val_001241,Left
+val_001242,desk
+val_001243,box
+val_001244,Yes
+val_001245,Yes
+val_001246,table
+val_001247,Left
+val_001248,counter
+val_001249,table
+val_001250,mirror
+val_001251,No.
+val_001252,right
+val_001253,The plant.
+val_001254,bed
+val_001255,Right
+val_001256,Right
+val_001257,box
+val_001258,Rug
+val_001259,Left
+val_001260,No
+val_001261,window
+val_001262,chair
+val_001263,Yes
+val_001264,chair
+val_001265,trash can
+val_001266,box
+val_001267,Yes
+val_001268,Right
+val_001269,Floor
+val_001270,Left
+val_001271,table
+val_001272,The table is closest to the camera.
+val_001273,Right side
+val_001274,Left
+val_001275,No
+val_001276,Right.
+val_001277,Right
+val_001278,No.
+val_001279,Table
+val_001280,No.
+val_001281,Printer
+val_001282,The picture is closest to the floor.
+val_001283,Yes
+val_001284,table
+val_001285,Window
+val_001286,A sign.
+val_001287,Chair
+val_001288,right
+val_001289,table
+val_001290,No
+val_001291,Yes
+val_001292,No.
+val_001293,Left
+val_001294,chair
+val_001295,Yes
+val_001296,dishwasher
+val_001297,No
+val_001298,Right
+val_001299,chair
+val_001300,Left
+val_001301,chair
+val_001302,Yes
+val_001303,No
+val_001304,right
+val_001305,No
+val_001306,No
+val_001307,table
+val_001308,bed
+val_001309,desk
+val_001310,Yes
+val_001311,bed
+val_001312,desk
+val_001313,chair
+val_001314,door
+val_001315,Right
+val_001316,chair
+val_001317,window
+val_001318,Left
+val_001319,Floor
+val_001320,box
+val_001321,A leather armchair.
+val_001322,No
+val_001323,Chair
+val_001324,Bathtub
+val_001325,"No, the bed is farther from the camera."
+val_001326,Yes
+val_001327,No
+val_001328,Sofa
+val_001329,chair
+val_001330,chair
+val_001331,Left
+val_001332,Sofa
+val_001333,Left side
+val_001334,No
+val_001335,microwave
+val_001336,trash bins
+val_001337,right
+val_001338,chair
+val_001339,Yes
+val_001340,The floor is farthest from the picture.
+val_001341,Chair
+val_001342,chair
+val_001343,Chair
+val_001344,No
+val_001345,Table
+val_001346,printer
+val_001347,table
+val_001348,No
+val_001349,No
+val_001350,Left
+val_001351,chair
+val_001352,No
+val_001353,box
+val_001354,No
+val_001355,No.
+val_001356,"No, the book is farther from the camera."
+val_001357,Bed.
+val_001358,chair
+val_001359,No
+val_001360,Flower
+val_001361,Left side
+val_001362,No
+val_001363,Door
+val_001364,table
+val_001365,board
+val_001366,Yes
+val_001367,Right
+val_001368,No
+val_001369,Right side
+val_001370,Printer
+val_001371,Desk
+val_001372,Yes
+val_001373,No
+val_001374,No
+val_001375,bed
+val_001376,Piano
+val_001377,Right
+val_001378,No.
+val_001379,TV
+val_001380,Cabinet
+val_001381,A person
+val_001382,Left
+val_001383,chair
+val_001384,No
+val_001385,desk
+val_001386,Left side
+val_001387,door
+val_001388,chair
+val_001389,No
+val_001390,right
+val_001391,table
+val_001392,desk
+val_001393,Left
+val_001394,Window
+val_001395,chair
+val_001396,Sofa
+val_001397,No
+val_001398,Right
+val_001399,bed
+val_001400,No
+val_001401,No
+val_001402,Right side
+val_001403,trash can
+val_001404,bed
+val_001405,No
+val_001406,No
+val_001407,Ottoman
+val_001408,table
+val_001409,Right
+val_001410,chair
+val_001411,No
+val_001412,Yes
+val_001413,desk
+val_001414,door
+val_001415,No
+val_001416,The object farthest away is the trash can.
+val_001417,Chair
+val_001418,No
+val_001419,Right
+val_001420,Left side
+val_001421,Right side
+val_001422,Left
+val_001423,Window
+val_001424,Right
+val_001425,right
+val_001426,right side
+val_001427,rug
+val_001428,Door
+val_001429,No
+val_001430,To the left
+val_001431,desk
+val_001432,No
+val_001433,Left
+val_001434,right
+val_001435,right side
+val_001436,No
+val_001437,No
+val_001438,No
+val_001439,Left side
+val_001440,The toilet is farthest away.
+val_001441,night stand
+val_001442,Right
+val_001443,Sofa
+val_001444,Chair.
+val_001445,pillow
+val_001446,book
+val_001447,box
+val_001448,The picture was taken from the floor.
+val_001449,The floor
+val_001450,The sofa
+val_001451,The pipe is farther from the camera.
+val_001452,No
+val_001453,The farthest object is the wall.
+val_001454,desk
+val_001455,Window
+val_001456,clothes
+val_001457,The farthest object is the table.
+val_001458,No
+val_001459,trash can
+val_001460,right
+val_001461,Right
+val_001462,Window
+val_001463,The picture was taken from the floor.
+val_001464,Door
+val_001465,Door
+val_001466,Bed.
+val_001467,Sofa
+val_001468,door
+val_001469,The toilet is farthest from the picture.
+val_001470,No
+val_001471,No
+val_001472,Right
+val_001473,counter
+val_001474,No
+val_001475,Sofa
+val_001476,table
+val_001477,A dresser.
+val_001478,lamp
+val_001479,Fridge
+val_001480,No
+val_001481,Right
+val_001482,Right side
+val_001483,Right
+val_001484,The paper is on the table.
+val_001485,The object closest to the camera is the monitor.
+val_001486,drawer
+val_001487,right
+val_001488,box
+val_001489,Monitor
+val_001490,No
+val_001491,Right
+val_001492,Yes
+val_001493,Coffee pot
+val_001494,Right
+val_001495,Cabinet
+val_001496,"No, the chalkboard is farther from the camera."
+val_001497,Bed.
+val_001498,Trash can
+val_001499,Sink
+val_001500,Right side.
+val_001501,chair
+val_001502,Left
+val_001503,table
+val_001504,right
+val_001505,Yes
+val_001506,No
+val_001507,Table
+val_001508,No
+val_001509,Towels
+val_001510,Printer
+val_001511,chair
+val_001512,Ottoman
+val_001513,No
+val_001514,Right.
+val_001515,Screen
+val_001516,Monitor is closer.
+val_001517,chair
+val_001518,Mattress
+val_001519,table
+val_001520,Yes
+val_001521,bed
+val_001522,mirror
+val_001523,window
+val_001524,table
+val_001525,No
+val_001526,right
+val_001527,No
+val_001528,door
+val_001529,No
+val_001530,chair
+val_001531,Chair
+val_001532,poster
+val_001533,Chair
+val_001534,table
+val_001535,Window
+val_001536,curtain
+val_001537,bed
+val_001538,No
+val_001539,desk
+val_001540,mirror
+val_001541,trash can
+val_001542,Yes
+val_001543,chair
+val_001544,"No, the bed is closer to the camera."
+val_001545,The chair.
+val_001546,Sink
+val_001547,Left
+val_001548,"No, the box is farther from the camera."
+val_001549,bed
+val_001550,No
+val_001551,No
+val_001552,No
+val_001553,No box is visible in the image.
+val_001554,desk
+val_001555,table
+val_001556,A chair.
+val_001557,printer
+val_001558,Right side.
+val_001559,chair
+val_001560,computer keyboard
+val_001561,chair
+val_001562,No
+val_001563,Yes
+val_001564,chair
+val_001565,No
+val_001566,No
+val_001567,mirror
+val_001568,Right
+val_001569,The picture was taken from the floor.
+val_001570,Bed
+val_001571,desk
+val_001572,door
+val_001573,chair
+val_001574,No
+val_001575,Phone
+val_001576,The speaker
+val_001577,No.
+val_001578,Cabinet
+val_001579,To the right
+val_001580,Chair
+val_001581,No
+val_001582,Paper
+val_001583,The object farthest away is the TV.
+val_001584,No
+val_001585,No
+val_001586,Table
+val_001587,bed
+val_001588,chair
+val_001589,Right
+val_001590,Curtain
+val_001591,No
+val_001592,No
+val_001593,box
+val_001594,TV
+val_001595,chair
+val_001596,No
+val_001597,Bed
+val_001598,No
+val_001599,window
+val_001600,chair
+val_001601,"No, the desk is on the right side of the table."
+val_001602,chair
+val_001603,right
+val_001604,chair
+val_001605,bed
+val_001606,No
+val_001607,Computer
+val_001608,No
+val_001609,Door
+val_001610,Window
+val_001611,Mirror
+val_001612,table
+val_001613,Toilet
+val_001614,Right
+val_001615,bed
+val_001616,right
+val_001617,No
+val_001618,bedside table
+val_001619,No.
+val_001620,Left
+val_001621,No
+val_001622,A chair.
+val_001623,No
+val_001624,mirror
+val_001625,Right
+val_001626,door
+val_001627,chair
+val_001628,No
+val_001629,chair
+val_001630,No.
+val_001631,chair
+val_001632,window
+val_001633,Right side
+val_001634,No
+val_001635,The picture was taken from the floor.
+val_001636,window
+val_001637,chair
+val_001638,Right
+val_001639,Printer
+val_001640,chair
+val_001641,No
+val_001642,Left
+val_001643,cup
+val_001644,No
+val_001645,No chair is closer to the camera than the box.
+val_001646,Desk
+val_001647,bed
+val_001648,Desk
+val_001649,Yes
+val_001650,sign
+val_001651,The picture was taken from the kitchen counter.
+val_001652,table
+val_001653,No
+val_001654,chair
+val_001655,Yes
+val_001656,book
+val_001657,Yes.
+val_001658,Chair
+val_001659,right
+val_001660,Desk
+val_001661,Right
+val_001662,Yes
+val_001663,Chair
+val_001664,bed
+val_001665,Cabinet
+val_001666,No
+val_001667,cabinet
+val_001668,table
+val_001669,Towel
+val_001670,sink
+val_001671,Table
+val_001672,No
+val_001673,Left
+val_001674,No
+val_001675,Window
+val_001676,No
+val_001677,No
+val_001678,Right
+val_001679,No
+val_001680,Chair
+val_001681,mirror
+val_001682,Chair
+val_001683,chair
+val_001684,Refrigerator
+val_001685,Printer
+val_001686,plant
+val_001687,Chair
+val_001688,A bag.
+val_001689,No
+val_001690,Right
+val_001691,Mirror
+val_001692,Printer
+val_001693,Cabinet
+val_001694,Yes
+val_001695,Yes
+val_001696,No
+val_001697,chair
+val_001698,shelf
+val_001699,Left
+val_001700,Right
+val_001701,chair
+val_001702,Chair
+val_001703,right
+val_001704,Mirror
+val_001705,bookshelf
+val_001706,paper
+val_001707,bed
+val_001708,bed
+val_001709,Desk
+val_001710,Chair
+val_001711,chair
+val_001712,paper
+val_001713,computer monitor
+val_001714,Right
+val_001715,No
+val_001716,No.
+val_001717,plant
+val_001718,computer monitor
+val_001719,Trash can

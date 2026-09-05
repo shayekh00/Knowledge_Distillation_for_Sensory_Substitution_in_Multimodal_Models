@@ -1,0 +1,19 @@
+{
+  "description": "Zero-shot RGB reference (B2)",
+  "distillation_mode": "none",
+  "epochs": null,
+  "learning_rate": null,
+  "lora_rank": null,
+  "modality": "rgb",
+  "model": "Qwen/Qwen3.5-0.8B",
+  "notes": "No target-task training. Clean-RGB capability reference; contrasts with B1 to show how much the same model loses when its visual input becomes depth.",
+  "pilot": true,
+  "prompt_style": "terse",
+  "recipe": "B2",
+  "recorded_utc": "2026-09-05T17:28:03+00:00",
+  "representation": "replicated",
+  "run_id": "20260905-none2qw08b-B2-s17-3d9bd6ab",
+  "seed": 17,
+  "split": "val",
+  "teacher": null
+}

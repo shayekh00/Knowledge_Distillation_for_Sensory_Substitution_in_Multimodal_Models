@@ -1,0 +1,14 @@
+{
+  "distillation_mode": "none",
+  "epochs": null,
+  "learning_rate": null,
+  "lora_rank": null,
+  "modality": "depth",
+  "model": "Qwen/Qwen3.5-0.8B",
+  "prompt_style": "terse",
+  "recipe": "B1",
+  "representation": "replicated",
+  "seed": 17,
+  "split": "val",
+  "teacher": null
+}

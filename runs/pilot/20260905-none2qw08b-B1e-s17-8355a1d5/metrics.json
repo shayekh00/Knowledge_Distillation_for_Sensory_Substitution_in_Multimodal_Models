@@ -1,0 +1,92 @@
+{
+  "split": "val",
+  "seed": 42,
+  "constrained": false,
+  "baselines": {
+    "chance": {
+      "existence": 0.5,
+      "identify_superlative": 0.007092198581560229,
+      "left_right": 0.5,
+      "nearest_object": 0.007092198581560228,
+      "relative_depth": 0.5
+    },
+    "random": {
+      "existence": 0.48295454545454547,
+      "identify_superlative": 0.008797653958944282,
+      "left_right": 0.4823529411764706,
+      "nearest_object": 0.0029154518950437317,
+      "relative_depth": 0.5203488372093024
+    },
+    "majority": {
+      "existence": 0.5,
+      "identify_superlative": 0.07624633431085044,
+      "left_right": 0.5,
+      "nearest_object": 0.0728862973760933,
+      "relative_depth": 0.5261627906976745
+    },
+    "question_only": {
+      "existence": 0.5255681818181818,
+      "identify_superlative": 0.08797653958944282,
+      "left_right": 0.5117647058823529,
+      "nearest_object": 0.119533527696793,
+      "relative_depth": 0.4563953488372093
+    }
+  },
+  "split_majority_share_oracle": {
+    "existence": 0.5,
+    "identify_superlative": 0.08211143695014662,
+    "left_right": 0.5,
+    "nearest_object": 0.0728862973760933,
+    "relative_depth": 0.5261627906976745
+  },
+  "prediction_ids": {
+    "n_gold_items": 1720,
+    "n_prediction_rows": 1720,
+    "n_missing": 0,
+    "n_unexpected": 0,
+    "unexpected_examples": []
+  },
+  "per_type": [
+    {
+      "question_type": "existence",
+      "n_items": 352,
+      "n_predicted": 352,
+      "n_invalid": 5,
+      "accuracy": 0.5681818181818182,
+      "macro_f1": 0.5212962624007029
+    },
+    {
+      "question_type": "identify_superlative",
+      "n_items": 341,
+      "n_predicted": 341,
+      "n_invalid": 341,
+      "accuracy": 0.0,
+      "macro_f1": null
+    },
+    {
+      "question_type": "left_right",
+      "n_items": 340,
+      "n_predicted": 340,
+      "n_invalid": 0,
+      "accuracy": 0.5647058823529412,
+      "macro_f1": 0.5591996916500228
+    },
+    {
+      "question_type": "nearest_object",
+      "n_items": 343,
+      "n_predicted": 343,
+      "n_invalid": 343,
+      "accuracy": 0.0,
+      "macro_f1": null
+    },
+    {
+      "question_type": "relative_depth",
+      "n_items": 344,
+      "n_predicted": 344,
+      "n_invalid": 337,
+      "accuracy": 0.01744186046511628,
+      "macro_f1": 0.03283552889004826
+    }
+  ],
+  "macro_accuracy": 0.23006591219997513
+}

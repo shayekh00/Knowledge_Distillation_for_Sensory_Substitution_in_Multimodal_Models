@@ -19,3 +19,20 @@ dataset/__MACOSX/
 data/index/
 data/candidates/
 session/*
+docs/NEW_SUBMISSION.md
+
+# Model environments. `.venv` runs the test suite; `.venv-models` carries a
+# current transformers for the Qwen3.5 portfolio (the pinned one cannot load it).
+.venv/
+.venv-models/
+
+# Run artifacts: the recorded run directories under runs/<run_id>/ ARE committed
+# — they are the paper's evidence. What is excluded is everything regenerable or
+# large:
+#   * loose staging CSVs written by the inference script, which record_run.py
+#     copies into the run directory as predictions.csv (keeping both invites the
+#     duplicate-file confusion documented in legacy_discrepancy_report.md);
+#   * trained adapters and checkpoints — weights do not belong in git.
+runs/pilot/*.csv
+runs/**/adapter/
+runs/**/*_train/
