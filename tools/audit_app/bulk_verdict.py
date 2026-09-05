@@ -40,10 +40,14 @@ MODEL_ANSWERS_CSV = AUDIT_DIR / "model_answers.csv"
 RESPONSES_DIR = AUDIT_DIR / "responses"
 
 
-def select_items(types: list, only_disagreements: bool) -> pd.DataFrame:
+def select_items(types: list, variants: list, only_disagreements: bool) -> pd.DataFrame:
     items = pd.read_csv(AUDIT_ITEMS_CSV)
     if types:
         items = items[items["question_type"].isin(types)]
+    if variants:
+        if "variant" not in items.columns:
+            raise SystemExit(f"{AUDIT_ITEMS_CSV} is missing required column 'variant'.")
+        items = items[items["variant"].fillna("").isin(variants)]
     if only_disagreements:
         if not MODEL_ANSWERS_CSV.is_file():
             raise SystemExit(f"{MODEL_ANSWERS_CSV} not found — run tools.audit_app.model_pass first.")
@@ -70,6 +74,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--annotator", default="solo")
     parser.add_argument("--types", default="", help="Comma-separated question_types.")
+    parser.add_argument("--variants", default="", help="Comma-separated variants within the selected types.")
     parser.add_argument("--verdict", default="correct", choices=VERDICTS)
     parser.add_argument("--only-disagreements", action="store_true",
                          help="Restrict to items where the model pass disagreed with gold.")
@@ -84,7 +89,8 @@ def main() -> None:
         return
 
     types = [t.strip() for t in args.types.split(",") if t.strip()]
-    selected = select_items(types, args.only_disagreements)
+    variants = [v.strip() for v in args.variants.split(",") if v.strip()]
+    selected = select_items(types, variants, args.only_disagreements)
     already_judged = load_responses(RESPONSES_DIR, args.annotator)
     pending = selected[~selected["question_id"].isin(already_judged)]
     skipped = len(selected) - len(pending)

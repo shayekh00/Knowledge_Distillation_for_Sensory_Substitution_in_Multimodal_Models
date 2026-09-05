@@ -1,10 +1,10 @@
 {
   "per_split": {
     "train": {
-      "total_items": 16304,
+      "total_items": 16309,
       "per_type_counts": {
         "existence": 4194,
-        "identify_superlative": 3758,
+        "identify_superlative": 3763,
         "relative_depth": 2457,
         "nearest_object": 2789,
         "left_right": 3106
@@ -21,13 +21,13 @@
       }
     },
     "test": {
-      "total_items": 14122,
+      "total_items": 14135,
       "per_type_counts": {
-        "existence": 2774,
-        "identify_superlative": 2856,
-        "relative_depth": 2823,
+        "existence": 2792,
+        "identify_superlative": 2854,
+        "relative_depth": 2822,
         "nearest_object": 2823,
-        "left_right": 2846
+        "left_right": 2844
       }
     }
   },
@@ -35,7 +35,7 @@
   "sanity_check_warnings": [
     "val/existence: sensor mix deviates 4.4% from the split overall (Rule 6.3 target: <=3%)",
     "val/nearest_object: sensor mix deviates 5.7% from the split overall (Rule 6.3 target: <=3%)",
-    "test/existence: sensor mix deviates 3.1% from the split overall (Rule 6.3 target: <=3%)",
+    "test/existence: sensor mix deviates 3.2% from the split overall (Rule 6.3 target: <=3%)",
     "test/nearest_object: sensor mix deviates 3.8% from the split overall (Rule 6.3 target: <=3%)"
   ]
 }

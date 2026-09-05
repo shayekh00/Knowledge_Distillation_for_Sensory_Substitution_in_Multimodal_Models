@@ -18,3 +18,4 @@ dataset/__MACOSX/
 # decisions) and release/ (the frozen deliverable) are kept.
 data/index/
 data/candidates/
+session/*

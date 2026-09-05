@@ -1,6 +1,6 @@
-Which object takes up the most space in the image?
-What is the largest object in this room?
-Which item occupies the biggest area in the picture?
-What object is the biggest one visible here?
-Which object covers the most of the image?
-What is the largest visible object in the scene?
+Not counting the walls, floor, or ceiling, which object takes up the most space in the image?
+Excluding the walls, floor, and ceiling, what is the largest object in this room?
+Among the furniture and items in the room, not the walls, floor, or ceiling, which occupies the biggest area?
+Ignoring the walls, floor, and ceiling, what object is the biggest one visible here?
+Not counting the room's walls, floor, or ceiling, which object covers the most of the image?
+Excluding the walls, floor, and ceiling, what is the largest visible object in the scene?

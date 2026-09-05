@@ -116,8 +116,16 @@ def ask_model(client: OpenAI, model: str, question: str, image_absolute_path: Pa
     queue can tell "the model disagreed" (worth a human look) apart from
     "the model produced nothing" (worth nothing).
     """
+    return ask_model_with_prompt(
+        client, model, f"{question} {ANSWER_FORMAT_INSTRUCTION}", image_absolute_path, retries
+    )
+
+
+def ask_model_with_prompt(client: OpenAI, model: str, prompt: str,
+                           image_absolute_path: Path, retries: int = 3) -> tuple:
+    """Same contract as ask_model, for callers that build their own prompt
+    (see adjudicate.py's second-opinion pass)."""
     encoded_image = base64.b64encode(image_absolute_path.read_bytes()).decode()
-    prompt = f"{question} {ANSWER_FORMAT_INSTRUCTION}"
     last_error = ""
     for attempt in range(retries):
         try:

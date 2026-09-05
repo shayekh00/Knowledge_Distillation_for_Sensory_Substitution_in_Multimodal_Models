@@ -1,6 +1,6 @@
-Which object is closest to the camera?
-What is the nearest object to the camera?
-Which item is closest to where the picture was taken from?
-What object is nearest the viewer?
-Which object is closest to us in this image?
-What is the closest visible object to the camera?
+Not counting the walls, floor, or ceiling, which object is closest to the camera?
+Excluding the walls, floor, and ceiling, what is the nearest object to the camera?
+Among the furniture and items in the room, not the walls, floor, or ceiling, which is closest to where the picture was taken from?
+Ignoring the walls, floor, and ceiling, what object is nearest the viewer?
+Not counting the room's walls, floor, or ceiling, which object is closest to us in this image?
+Excluding the walls, floor, and ceiling, what is the closest visible object to the camera?

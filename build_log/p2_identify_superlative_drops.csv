@@ -247,7 +247,6 @@ kv1/NYUdata/NYU0145,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU0146,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/NYUdata/NYU0147,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/NYUdata/NYU0147,identify_superlative,MARGIN_FAIL,farthest_camera
-kv1/NYUdata/NYU0148,identify_superlative,ANSWER_IN_QUESTION,largest
 kv1/NYUdata/NYU0148,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU0149,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/NYUdata/NYU0149,identify_superlative,MARGIN_FAIL,farthest_camera
@@ -263,7 +262,6 @@ kv1/NYUdata/NYU0155,identify_superlative,MARGIN_FAIL,largest
 kv1/NYUdata/NYU0155,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU0156,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/NYUdata/NYU0156,identify_superlative,MARGIN_FAIL,farthest_camera
-kv1/NYUdata/NYU0157,identify_superlative,ANSWER_IN_QUESTION,largest
 kv1/NYUdata/NYU0157,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/NYUdata/NYU0157,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU0158,identify_superlative,MARGIN_FAIL,closest_camera
@@ -509,7 +507,6 @@ kv1/NYUdata/NYU0303,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/NYUdata/NYU0303,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU0304,identify_superlative,MARGIN_FAIL,largest
 kv1/NYUdata/NYU0304,identify_superlative,MARGIN_FAIL,farthest_camera
-kv1/NYUdata/NYU0305,identify_superlative,ANSWER_IN_QUESTION,largest
 kv1/NYUdata/NYU0305,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/NYUdata/NYU0305,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU0306,identify_superlative,MARGIN_FAIL,farthest_camera
@@ -783,7 +780,6 @@ kv1/NYUdata/NYU0466,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU0467,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/NYUdata/NYU0467,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU0469,identify_superlative,MARGIN_FAIL,farthest_camera
-kv1/NYUdata/NYU0470,identify_superlative,ANSWER_IN_QUESTION,largest
 kv1/NYUdata/NYU0470,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU0471,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/NYUdata/NYU0471,identify_superlative,MARGIN_FAIL,farthest_camera
@@ -2343,7 +2339,6 @@ kv1/NYUdata/NYU1409,identify_superlative,MARGIN_FAIL,largest
 kv1/NYUdata/NYU1409,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU1410,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/NYUdata/NYU1412,identify_superlative,MARGIN_FAIL,closest_camera
-kv1/NYUdata/NYU1413,identify_superlative,ANSWER_IN_QUESTION,largest
 kv1/NYUdata/NYU1413,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU1414,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/NYUdata/NYU1415,identify_superlative,MARGIN_FAIL,farthest_camera
@@ -3208,7 +3203,6 @@ kv1/b3dodata/img_0829,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/b3dodata/img_0829,identify_superlative,MARGIN_FAIL,farthest_camera
 kv1/b3dodata/img_0830,identify_superlative,MARGIN_FAIL,closest_camera
 kv1/b3dodata/img_0830,identify_superlative,MARGIN_FAIL,farthest_camera
-kv1/b3dodata/img_0831,identify_superlative,ANSWER_IN_QUESTION,largest
 kv1/b3dodata/img_0832,identify_superlative,NO_ELIGIBLE_OBJECTS,closest_camera
 kv1/b3dodata/img_0832,identify_superlative,NO_ELIGIBLE_OBJECTS,farthest_camera
 kv1/b3dodata/img_0835,identify_superlative,MARGIN_FAIL,closest_camera
@@ -3715,7 +3709,6 @@ kv2/kinect2data/000102_2014-05-14_22-00-49_260595134347_rgbf000150-resize,identi
 kv2/kinect2data/000102_2014-05-14_22-00-49_260595134347_rgbf000150-resize,identify_superlative,MARGIN_FAIL,farthest_camera
 kv2/kinect2data/000103_2014-05-14_22-01-17_260595134347_rgbf000152-resize,identify_superlative,MARGIN_FAIL,closest_camera
 kv2/kinect2data/000104_2014-05-14_22-01-47_260595134347_rgbf000152-resize,identify_superlative,MARGIN_FAIL,closest_camera
-kv2/kinect2data/000106_2014-05-14_22-03-34_260595134347_rgbf000651-resize,identify_superlative,ANSWER_IN_QUESTION,largest
 kv2/kinect2data/000106_2014-05-14_22-03-34_260595134347_rgbf000651-resize,identify_superlative,MARGIN_FAIL,closest_camera
 kv2/kinect2data/000106_2014-05-14_22-03-34_260595134347_rgbf000651-resize,identify_superlative,MARGIN_FAIL,farthest_camera
 kv2/kinect2data/000108_2014-04-14_00-04-29_094959634447_rgbf000114-resize,identify_superlative,MARGIN_FAIL,closest_camera
@@ -4248,7 +4241,6 @@ kv2/kinect2data/000500_2014-06-08_23-01-57_260595134347_rgbf000097-resize,identi
 kv2/kinect2data/000500_2014-06-08_23-01-57_260595134347_rgbf000097-resize,identify_superlative,MARGIN_FAIL,closest_camera
 kv2/kinect2data/000501_2014-06-08_23-02-15_260595134347_rgbf000057-resize,identify_superlative,MARGIN_FAIL,closest_camera
 kv2/kinect2data/000501_2014-06-08_23-02-15_260595134347_rgbf000057-resize,identify_superlative,MARGIN_FAIL,farthest_camera
-kv2/kinect2data/000502_2014-06-08_23-02-32_260595134347_rgbf000063-resize,identify_superlative,ANSWER_IN_QUESTION,largest
 kv2/kinect2data/000502_2014-06-08_23-02-32_260595134347_rgbf000063-resize,identify_superlative,MARGIN_FAIL,closest_camera
 kv2/kinect2data/000502_2014-06-08_23-02-32_260595134347_rgbf000063-resize,identify_superlative,MARGIN_FAIL,farthest_camera
 kv2/kinect2data/000503_2014-06-08_23-02-45_260595134347_rgbf000085-resize,identify_superlative,MARGIN_FAIL,largest
@@ -4507,7 +4499,6 @@ kv2/kinect2data/000677_2014-06-08_23-10-32_260595134347_rgbf000158-resize,identi
 kv2/kinect2data/000678_2014-06-08_23-10-59_260595134347_rgbf000058-resize,identify_superlative,MARGIN_FAIL,closest_camera
 kv2/kinect2data/000678_2014-06-08_23-10-59_260595134347_rgbf000058-resize,identify_superlative,MARGIN_FAIL,farthest_camera
 kv2/kinect2data/000680_2014-06-08_23-13-22_260595134347_rgbf000031-resize,identify_superlative,MARGIN_FAIL,closest_camera
-kv2/kinect2data/000681_2014-06-08_23-13-42_260595134347_rgbf000064-resize,identify_superlative,ANSWER_IN_QUESTION,largest
 kv2/kinect2data/000681_2014-06-08_23-13-42_260595134347_rgbf000064-resize,identify_superlative,MARGIN_FAIL,closest_camera
 kv2/kinect2data/000681_2014-06-08_23-13-42_260595134347_rgbf000064-resize,identify_superlative,MARGIN_FAIL,farthest_camera
 kv2/kinect2data/000684_2014-06-08_23-18-37_260595134347_rgbf000038-resize,identify_superlative,MARGIN_FAIL,farthest_camera
@@ -5811,7 +5802,6 @@ kv2/kinect2data/001630_2014-06-20_11-41-26_260595134347_rgbf000059-resize,identi
 kv2/kinect2data/001631_2014-06-20_11-41-50_260595134347_rgbf000059-resize,identify_superlative,MARGIN_FAIL,closest_camera
 kv2/kinect2data/001633_2014-06-20_11-42-24_260595134347_rgbf000055-resize,identify_superlative,MARGIN_FAIL,closest_camera
 kv2/kinect2data/001634_2014-06-20_11-43-14_260595134347_rgbf000069-resize,identify_superlative,MARGIN_FAIL,closest_camera
-kv2/kinect2data/001635_2014-06-20_11-43-44_260595134347_rgbf000070-resize,identify_superlative,ANSWER_IN_QUESTION,largest
 kv2/kinect2data/001637_2014-06-20_11-44-48_260595134347_rgbf000051-resize,identify_superlative,MARGIN_FAIL,largest
 kv2/kinect2data/001637_2014-06-20_11-44-48_260595134347_rgbf000051-resize,identify_superlative,MARGIN_FAIL,closest_camera
 kv2/kinect2data/001637_2014-06-20_11-44-48_260595134347_rgbf000051-resize,identify_superlative,MARGIN_FAIL,farthest_camera
@@ -10124,7 +10114,6 @@ xtion/sun3ddata/harvard_c2/hv_c2_1/0001200-000040185684,identify_superlative,MAR
 xtion/sun3ddata/harvard_c2/hv_c2_1/0001521-000050944320,identify_superlative,MARGIN_FAIL,largest
 xtion/sun3ddata/harvard_c2/hv_c2_1/0001521-000050944320,identify_superlative,MARGIN_FAIL,closest_camera
 xtion/sun3ddata/harvard_c2/hv_c2_1/0001521-000050944320,identify_superlative,MARGIN_FAIL,farthest_camera
-xtion/sun3ddata/harvard_c2/hv_c2_1/0002055-000068841864,identify_superlative,ANSWER_IN_QUESTION,largest
 xtion/sun3ddata/harvard_c2/hv_c2_1/0002055-000068841864,identify_superlative,MARGIN_FAIL,closest_camera
 xtion/sun3ddata/harvard_c2/hv_c2_1/0002055-000068841864,identify_superlative,MARGIN_FAIL,farthest_camera
 xtion/sun3ddata/harvard_c2/hv_c2_1/0002330-000078058764,identify_superlative,MARGIN_FAIL,closest_camera
@@ -13393,7 +13382,6 @@ xtion/sun3ddata/mit_w85_basement/wg_big_lounge_1/0002178-000072997848,identify_s
 xtion/sun3ddata/mit_w85_basement/wg_big_lounge_1/0002322-000077824152,identify_superlative,NO_ELIGIBLE_OBJECTS,closest_camera
 xtion/sun3ddata/mit_w85_basement/wg_big_lounge_1/0002322-000077824152,identify_superlative,NO_ELIGIBLE_OBJECTS,farthest_camera
 xtion/sun3ddata/mit_w85_basement/wg_big_lounge_1/0002480-000083119680,identify_superlative,MARGIN_FAIL,farthest_camera
-xtion/sun3ddata/mit_w85_basement/wg_big_lounge_1/0002872-000096257952,identify_superlative,ANSWER_IN_QUESTION,largest
 xtion/sun3ddata/mit_w85_basement/wg_big_lounge_1/0003633-000121763628,identify_superlative,MARGIN_FAIL,largest
 xtion/sun3ddata/mit_w85_basement/wg_big_lounge_1/0003633-000121763628,identify_superlative,MARGIN_FAIL,farthest_camera
 xtion/sun3ddata/mit_w85_basement/wg_big_lounge_1/0004273-000143213868,identify_superlative,MARGIN_FAIL,closest_camera

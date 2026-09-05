@@ -1,6 +1,6 @@
-Which object is farthest from the camera?
-What is the most distant object from the camera?
-Which item is farthest from where the picture was taken?
-What object is farthest from the viewer?
-Which object is farthest away in this image?
-What is the most distant visible object in the scene?
+Not counting the walls, floor, or ceiling, which object is farthest from the camera?
+Excluding the walls, floor, and ceiling, what is the most distant object from the camera?
+Among the furniture and items in the room, not the walls, floor, or ceiling, which is farthest from where the picture was taken?
+Ignoring the walls, floor, and ceiling, what object is farthest from the viewer?
+Not counting the room's walls, floor, or ceiling, which object is farthest away in this image?
+Excluding the walls, floor, and ceiling, what is the most distant visible object in the scene?
