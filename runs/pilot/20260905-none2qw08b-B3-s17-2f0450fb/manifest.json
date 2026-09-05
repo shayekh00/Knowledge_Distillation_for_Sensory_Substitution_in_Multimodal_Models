@@ -1,0 +1,19 @@
+{
+  "description": "Depth CE LoRA fine-tune, 1 epoch (B3)",
+  "distillation_mode": "none",
+  "epochs": 1,
+  "learning_rate": 1e-05,
+  "lora_rank": 16,
+  "modality": "depth",
+  "model": "Qwen/Qwen3.5-0.8B",
+  "notes": "One-seed PILOT on 16GB. LoRA r16 on q/k/v/o_proj, lr 1e-5, effective batch 16, 954 optimizer steps, 101.9 min. The strong supervised comparator: per protocol section 4, a KD gain over a weak CE student proves nothing, so this must be tuned fairly before any KD claim rests on it.",
+  "pilot": true,
+  "prompt_style": "terse",
+  "recipe": "B3",
+  "recorded_utc": "2026-09-05T19:15:22+00:00",
+  "representation": "replicated",
+  "run_id": "20260905-none2qw08b-B3-s17-2f0450fb",
+  "seed": 17,
+  "split": "val",
+  "teacher": null
+}

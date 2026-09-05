@@ -22,9 +22,17 @@ the two disagree, the run directory is right.
 | Zero-shot inference, Qwen3.5-0.8B bf16 | **1.80 GB** | 9.9 it/s |
 | LoRA training, r16, gradient checkpointing | **3.27 GB** | ~2 ex/s |
 
-A full training epoch over the 15,278 train rows projects to **~2 hours**. The
-card has roughly 4x headroom over what LoRA training actually uses, and inference
-and training were observed running *concurrently* without exhausting it.
+A full training epoch over the 15,278 train rows takes **101.9 minutes**, measured
+(B3, 0 rows skipped). The card has roughly 4x headroom over what LoRA training
+actually uses, and inference and training were observed running *concurrently*
+without exhausting it.
+
+**The bottleneck is the data path, not the GPU.** Utilisation sat at ~19% during
+training: depth decoding, the Prewitt pass, and image preprocessing all run inline
+and single-threaded. Moving them to a `DataLoader` with workers should give a
+3-5x speedup — plausibly 30 minutes per epoch rather than 100. That materially
+changes the cost of the confirmatory core and should be fixed before any large
+sweep, since the "weeks of wall-clock" estimate assumes the current throughput.
 
 The earlier assumption that Phases 6–12 were blocked on the 4090 was wrong. What
 actually binds is **wall-clock, not memory**: one-seed pilots are comfortable, the
@@ -114,7 +122,51 @@ Per type, B1 splits sharply: the binary types sit at 54–55%, barely above thei
 near the floor of their much larger answer spaces. Whatever the untrained model is
 doing, it is not metric-depth reasoning.
 
-## 4. Environment findings
+## 4. Supervised fine-tuning works, and fixes the format problem outright
+
+**B3** — depth CE, LoRA r16 on `q/k/v/o_proj`, lr 1e-5, effective batch 16, one
+epoch over all 15,278 train rows, 954 optimizer steps, 101.9 minutes, 0 rows
+skipped, peak 3.33 GB.
+
+| Type | B1 zero-shot | B3 fine-tuned | Δ |
+|---|---:|---:|---:|
+| existence | 54.5% | 56.0% | +1.5 |
+| identify_superlative | 11.4% | 16.4% | +5.0 |
+| left_right | 55.0% | 58.8% | +3.8 |
+| nearest_object | 6.4% | 12.5% | +6.1 |
+| relative_depth | 54.4% | **60.2%** | +5.8 |
+| **Macro** | **36.4%** | **40.8%** | **+4.4** |
+| **Invalid** | **12.4%** | **0.0%** | **−12.4** |
+
+Four things worth drawing out.
+
+**Every type improved**, and the largest gains are on the three depth-relation
+types — the ones that actually require metric depth rather than 2-D layout or a
+language prior.
+
+**`relative_depth` reaches 60.2%**, ten points clear of its 50% chance floor.
+That is the strongest evidence so far that the student is doing something with
+depth rather than with priors.
+
+**Invalid outputs fall to 0.0% on every type.** The model learns the answer
+format completely. This bears directly on §2 above: the §6.4 prompt crisis is a
+*zero-shot* problem. For trained rows the instruction wording matters far less,
+because the format is learned from the targets. The prompt still has to be fixed
+— B1/B2 are reported rows — but it is not a threat to the trained comparisons.
+
+**A fine-tuned depth student (40.8%) now sits within 2.2 points of a zero-shot
+RGB model (43.0%)**, which is a compact statement of what the paper is about.
+
+### What this row is not
+
+One epoch, one seed, one learning rate. §4 of the protocol requires the primary
+comparator to get a *fair tuning budget* — three learning rates, validation
+selection — before any KD result is measured against it. B3 as it stands is a
+first pass that establishes the pipeline works and roughly where CE lands. It is
+**not yet** the strong CE baseline the paper compares against, and no KD number
+should be placed beside it until it is.
+
+## 5. Environment findings
 
 **The pinned `transformers` cannot load the portfolio.** 4.49.0.dev0 has no
 `Qwen3_5ForConditionalGeneration`; Qwen3.5 requires **≥ 4.57**. Also missing

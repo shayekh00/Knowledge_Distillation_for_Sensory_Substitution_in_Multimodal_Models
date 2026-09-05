@@ -9,6 +9,7 @@ Every row links to a self-describing directory: what the run was, its prediction
 | [`20260905-none2qw08b-B1-s17-e20002c9`](pilot/20260905-none2qw08b-B1-s17-e20002c9/) | `B1` | PILOT | val | depth | none | 36.4% | 12.4% | Zero-shot depth reference (B1) |
 | [`20260905-none2qw08b-B1e-s17-8355a1d5`](pilot/20260905-none2qw08b-B1e-s17-8355a1d5/) | `B1e` | PILOT | val | depth | none | 23.0% | 59.7% | Zero-shot depth, section 6.4 enumerated prompt (B1e) |
 | [`20260905-none2qw08b-B2-s17-3d9bd6ab`](pilot/20260905-none2qw08b-B2-s17-3d9bd6ab/) | `B2` | PILOT | val | rgb | none | 43.0% | 15.3% | Zero-shot RGB reference (B2) |
+| [`20260905-none2qw08b-B3-s17-2f0450fb`](pilot/20260905-none2qw08b-B3-s17-2f0450fb/) | `B3` | PILOT | val | depth | none | 40.8% | 0.0% | Depth CE LoRA fine-tune, 1 epoch (B3) |
 
 ## Reading these numbers
 
