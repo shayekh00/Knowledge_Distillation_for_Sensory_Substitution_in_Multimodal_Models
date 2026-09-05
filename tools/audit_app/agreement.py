@@ -10,11 +10,14 @@ different answer must not get snapped onto a similar-looking canonical
 name just because the edit distance is small. Naive string comparison
 would flag hundreds of false disagreements and waste the reviewer's time;
 fuzzy matching would hide real ones.
+
+The implementation lives in `dataset/dataset_creation/v2/answer_form.py` so
+that `evaluate.py` scores predictions with exactly the function the audit
+tool triages with (§13.6). This module stays as the audit app's entry point.
 """
 from __future__ import annotations
 
 import os
-import re
 import sys
 
 _V2_DIR = os.path.join(
@@ -24,32 +27,10 @@ _V2_DIR = os.path.join(
 if _V2_DIR not in sys.path:
     sys.path.insert(0, _V2_DIR)
 
-from vocab import canonicalize  # noqa: E402  (dataset_creation/v2/vocab.py)
+from answer_form import (  # noqa: E402,F401  (re-exported for the audit app)
+    FIXED_ANSWER_TYPES,
+    answers_agree,
+    canonical_answer_form,
+)
 
-# Types whose answers are a small fixed set of literals, not object names —
-# these must not be run through the object vocabulary.
-FIXED_ANSWER_TYPES = {"existence", "left_right"}
-
-_LEADING_ARTICLE_RE = re.compile(r"^(the|a|an)\s+")
-_WHITESPACE_RE = re.compile(r"\s+")
-
-
-def canonical_answer_form(text: str, question_type: str,
-                           synonym_map: dict, canonical_vocab: dict) -> str:
-    """Comparable form of an answer string, for `question_type`."""
-    normalized = str(text or "").strip().lower().rstrip(".!?")
-    normalized = _WHITESPACE_RE.sub(" ", normalized).replace("_", " ")
-    normalized = _LEADING_ARTICLE_RE.sub("", normalized)  # "the bookshelf" -> "bookshelf"
-    if not normalized or question_type in FIXED_ANSWER_TYPES:
-        return normalized
-    resolved = canonicalize(normalized, synonym_map, canonical_vocab)
-    return resolved["display_name"].replace("_", " ")
-
-
-def answers_agree(model_answer: str, gold_answer: str, question_type: str,
-                   synonym_map: dict, canonical_vocab: dict) -> bool:
-    if not str(model_answer or "").strip():
-        return False
-    model_form = canonical_answer_form(model_answer, question_type, synonym_map, canonical_vocab)
-    gold_form = canonical_answer_form(gold_answer, question_type, synonym_map, canonical_vocab)
-    return model_form == gold_form
+__all__ = ["FIXED_ANSWER_TYPES", "answers_agree", "canonical_answer_form"]

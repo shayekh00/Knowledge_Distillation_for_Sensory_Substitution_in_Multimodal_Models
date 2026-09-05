@@ -1,0 +1,38 @@
+VQA-SUNRGBD-v2
+Copyright (c) 2026 Shayekh Mohiuddin Ahmed Navid
+
+This dataset is licensed under the Creative Commons Attribution-ShareAlike 4.0
+International License (CC BY-SA 4.0).
+
+    https://creativecommons.org/licenses/by-sa/4.0/
+    Full legal code: https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+You are free to share and adapt this material for any purpose, including
+commercially, provided that you give appropriate credit, indicate whether
+changes were made, and distribute any derivative work under this same license.
+
+SOURCE AND INHERITED TERMS
+
+This dataset consists of questions and answers derived from SUN RGB-D:
+
+    S. Song, S. Lichtenberg, and J. Xiao. "SUN RGB-D: A RGB-D Scene
+    Understanding Benchmark Suite." CVPR 2015.
+
+SUN RGB-D is distributed under CC BY-SA 4.0, and that license is inherited
+here. This release contains no RGB or depth imagery: every row references a
+SUN RGB-D frame by relative path, and users must obtain the imagery from the
+original distribution under its own terms. The question text, answers,
+canonical vocabulary, splits, and build code in this repository are the
+contribution licensed above.
+
+ATTRIBUTION
+
+Please cite both this benchmark and SUN RGB-D. The dataset's own metadata,
+including the frozen version identifier to cite, is in manifest.json.
+
+NO WARRANTY
+
+This dataset is provided "as is", without warranty of any kind. Known label
+defects measured at release time are documented in stats/report.md and in
+docs/DATASET_CREATION_PLAN.md; see in particular defect D17 (existence
+negatives) and D16 (out-of-frame referents).

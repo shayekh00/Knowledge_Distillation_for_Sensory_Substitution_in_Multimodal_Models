@@ -1,0 +1,109 @@
+{
+  "name": "VQA-SUNRGBD-v2",
+  "version": "v2.4",
+  "license": "CC BY-SA 4.0",
+  "source_dataset": "SUN RGB-D (Song et al., CVPR 2015)",
+  "frozen_at_utc": "2026-09-05T01:10:06.500159+00:00",
+  "freeze_manifest": "FROZEN_v2.4.json",
+  "question_types": [
+    "existence",
+    "identify_superlative",
+    "left_right",
+    "nearest_object",
+    "relative_depth"
+  ],
+  "splits": {
+    "train": {
+      "items": 15278,
+      "images": 4187,
+      "per_question_type": {
+        "existence": 4186,
+        "identify_superlative": 2615,
+        "left_right": 2995,
+        "nearest_object": 2758,
+        "relative_depth": 2724
+      },
+      "per_sensor": {
+        "kv1": 3545,
+        "kv2": 5923,
+        "realsense": 1485,
+        "xtion": 4325
+      }
+    },
+    "val": {
+      "items": 1720,
+      "images": 667,
+      "per_question_type": {
+        "existence": 352,
+        "identify_superlative": 341,
+        "left_right": 340,
+        "nearest_object": 343,
+        "relative_depth": 344
+      },
+      "per_sensor": {
+        "kv1": 451,
+        "kv2": 706,
+        "realsense": 155,
+        "xtion": 408
+      }
+    },
+    "test": {
+      "items": 12463,
+      "images": 4703,
+      "per_question_type": {
+        "existence": 2558,
+        "identify_superlative": 2490,
+        "left_right": 2470,
+        "nearest_object": 2474,
+        "relative_depth": 2471
+      },
+      "per_sensor": {
+        "kv1": 2504,
+        "kv2": 4451,
+        "realsense": 1256,
+        "xtion": 4252
+      }
+    }
+  },
+  "columns": [
+    "question_id",
+    "image_id",
+    "sequence_id",
+    "sensor",
+    "scene_type",
+    "split",
+    "question_type",
+    "variant",
+    "template_id",
+    "question",
+    "question_paraphrased",
+    "answer",
+    "answer_type",
+    "answer_space",
+    "image_path",
+    "depth_path",
+    "source",
+    "evidence"
+  ],
+  "evaluation": {
+    "script": "evaluate.py",
+    "prompt_suffix": "Answer with a single word or number.",
+    "decoding": {
+      "temperature": 0,
+      "do_sample": false,
+      "max_new_tokens": 16
+    },
+    "headline_metric": "macro accuracy over question types",
+    "mandatory_baselines": [
+      "random",
+      "majority",
+      "question_only"
+    ]
+  },
+  "known_limitations": [
+    "existence negatives are matched on canonical name only, so a scene annotated `desk`/`counter`/`coffeetable` can carry a gold `no` for `table` (defect D17; ~902 items release-wide, see DATASET_CREATION_PLAN.md \u00a713.22)",
+    "single-reviewer gold verification only; no inter-rater or kappa claim (\u00a78.3)",
+    "some items reference an object largely outside the frame; no filter for them could be validated (defect D16, \u00a713.17)",
+    "re-deriving the vocabulary from scratch yields 148 concepts rather than the shipped 151; use the committed file (\u00a713.18)"
+  ]
+}

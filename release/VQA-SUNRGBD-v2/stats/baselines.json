@@ -1,0 +1,30 @@
+{
+  "split": "test",
+  "seed": 42,
+  "constrained": false,
+  "baselines": {
+    "random": {
+      "existence": 0.4988272087568413,
+      "identify_superlative": 0.0,
+      "left_right": 0.5072874493927125,
+      "nearest_object": 0.0,
+      "relative_depth": 0.5062727640631324
+    },
+    "majority": {
+      "existence": 0.5,
+      "identify_superlative": 0.08032128514056225,
+      "left_right": 0.5,
+      "nearest_object": 0.07841552142279709,
+      "relative_depth": 0.4981788749494132
+    },
+    "question_only": {
+      "existence": 0.49960906958561374,
+      "identify_superlative": 0.10160642570281124,
+      "left_right": 0.5036437246963563,
+      "nearest_object": 0.11883589329021826,
+      "relative_depth": 0.5208417644678268
+    }
+  },
+  "per_type": null,
+  "macro_accuracy": null
+}

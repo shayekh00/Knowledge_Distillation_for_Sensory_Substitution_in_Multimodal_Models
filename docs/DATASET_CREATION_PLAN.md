@@ -297,6 +297,19 @@ Every scene/candidate rejected by a gate is logged to `build_log/drops.csv` with
 
 The dataset repository includes `evaluate.py`; papers using the benchmark are asked to use it.
 
+**Status: built.** `evaluate.py` scores a `question_id,prediction` CSV — it never loads a model, so it runs on CPU in seconds and its numbers reproduce from the repository alone. Gold and predictions share one canonicaliser (`dataset/dataset_creation/v2/answer_form.py`), which `tools/audit_app/agreement.py` also imports, so evaluation and audit triage cannot drift apart (§13.6). Unanswered items score as wrong rather than being dropped, since scoring only the rows a model chose to answer would reward abstention. Measured baselines on the v2.4 test split (`release/VQA-SUNRGBD-v2/stats/baselines.md`):
+
+| Type | Random | Majority | Question-only |
+|---|---:|---:|---:|
+| existence | 49.9% | 50.0% | 50.0% |
+| identify_superlative | 0.0% | 8.0% | 10.2% |
+| left_right | 50.7% | 50.0% | 50.4% |
+| nearest_object | 0.0% | 7.8% | 11.9% |
+| relative_depth | 50.6% | 49.8% | 52.1% |
+| **macro** | **30.2%** | **33.1%** | **34.9%** |
+
+The majority baseline is read off **train**, not off the evaluated split: a majority taken from the test set is an oracle and would understate what a real language prior buys. Model numbers are not filled in here — that needs GPU inference runs, which are the remaining part of P6.
+
 * **Prompt:** the question plus the fixed instruction `Answer with a single word or number.` (Rule Q5), identical for all models.
 * **Decoding:** greedy (`temperature = 0`, `do_sample = False`), `max_new_tokens = 16`. Stochastic decoding is not accepted for reported numbers.
 * **Canonicalisation:** lowercase, strip punctuation, number words → digits, `inflect` singularise, synonym table → canonical name. Same function for gold and prediction.
@@ -361,7 +374,7 @@ CSV columns (identical across files):
 | P3 Assembly | Balancer + stratified assigner + sanity checks + stats report. | §8.4 checks pass; test ≥1,500/type | ✅ Done — **v2.4: train 15,278 / val 1,720 / test 12,463**, zero blocking failures and zero warnings. Every test type has 2,470–2,558 rows. Question-only leakage is now a build failure, existence is balanced exactly per concept in all splits, and nearest-object answers are capped conditionally by anchor. v2.4 is frozen with per-file/input SHA-256. The v1-schema adapter is regenerated from v2.4. |
 | P4 Gold verification | Single-reviewer verification on a 150/type stratified test sample; regenerate failing types. | §8.3 acceptance | 🔶 **v2.4 reviewed 750/750; four of five types accepted.** existence fails at 82.0% (27/150 gold labels wrong), cause diagnosed as D17 (§13.22); the failing type is **not** regenerated in v2.4 — the release ships with the defect disclosed. identify_superlative 97.3%, left_right 95.3%, nearest_object 100%, relative_depth 100%. Prior rounds preserved under `audit/v2.3_archive/`, `audit/v2.1_archive/`, `audit/v2.0_archive/`. The declared method is single-reviewer gold verification and makes no inter-rater or κ claim. |
 | P5 LLM set | Deepseek generation with evidence validation, cache, audit. | Validator pass-rate reported; ≥ 95 % audit accuracy | Not started |
-| P6 Release | Datasheet, HF upload, `evaluate.py`, baseline numbers (random / majority / question-only / OneVision-0.5B RGB / 7B RGB). | Numbers reproducible from repo | Not started |
+| P6 Release | Datasheet, HF upload, `evaluate.py`, baseline numbers (random / majority / question-only / OneVision-0.5B RGB / 7B RGB). | Numbers reproducible from repo | 🔶 Mostly done. Built: `evaluate.py` (§9), `DATASHEET.md`, `LICENSE`, `manifest.json`, `stats/{report.md,baselines.md,baselines.json,drops.csv,answer_histograms.png}` via `build_release_artifacts.py`. Random/majority/question-only baselines are measured (macro 30.2 / 33.1 / 34.9%). **Remaining: the two OneVision model runs (GPU) and the HuggingFace upload.** |
 
 Everything in P0–P3 is deterministic and cheap (CPU, minutes). P4 is the only step with a human in the loop. P5 is the only step with cost.
 
