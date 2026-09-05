@@ -125,3 +125,19 @@ def test_snapping_prefers_the_option_mentioned_first(vocab_tables):
                                 "relative_depth", synonyms, vocabulary) == "chair"
     assert snap_to_answer_space("the table is closer than the chair", "chair|table",
                                 "relative_depth", synonyms, vocabulary) == "table"
+
+
+def test_open_vocabulary_predictions_are_not_snapped(vocab_tables):
+    synonyms, vocabulary = vocab_tables
+    # Open types declare no answer_space; NaN must not be read as an option.
+    for empty in (None, float("nan"), ""):
+        assert snap_to_answer_space("bookshelf", empty, "nearest_object",
+                                    synonyms, vocabulary) == "bookshelf"
+
+
+def test_constrained_scoring_leaves_open_types_intact(vocab_tables):
+    synonyms, vocabulary = vocab_tables
+    gold = gold_frame([("q1", "nearest_object", "chair", float("nan"), "?")])
+    predictions = predictions_frame([("q1", "chair")])
+    [score] = score_predictions(gold, predictions, synonyms, vocabulary, constrained=True)
+    assert score.accuracy == 1.0

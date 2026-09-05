@@ -94,8 +94,17 @@ def snap_to_answer_space(prediction: str, answer_space: str, question_type: str,
     Earliest-mention rather than first-listed matters for `relative_depth`,
     where both options appear in the question and a verbose answer may repeat
     both ("the chair is closer than the table").
+
+    Open-vocabulary types declare no `answer_space` and are returned untouched.
+    Constraining them would mean snapping onto the 151-concept vocabulary, and
+    the fallback — commit to *some* legal concept — has no meaning when the
+    options are not the two the question named; it would just award or destroy
+    accuracy at random. Constrained decoding is therefore reported for the
+    closed types only, which is where R1 asked for it.
     """
-    options = [option for option in str(answer_space or "").split("|") if option]
+    if answer_space is None or (isinstance(answer_space, float) and answer_space != answer_space):
+        return prediction  # NaN: no declared answer space
+    options = [option for option in str(answer_space).split("|") if option and option != "nan"]
     if not options:
         return prediction
     for option in options:
