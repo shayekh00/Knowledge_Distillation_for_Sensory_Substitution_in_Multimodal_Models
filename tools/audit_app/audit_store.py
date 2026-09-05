@@ -1,6 +1,6 @@
-"""Persistence and scoring for the two-annotator audit (§8.3).
+"""Persistence and scoring for single-reviewer gold verification (§8.3).
 
-Each annotator's verdicts live in their own append-only JSONL file under
+The reviewer's verdicts live in an append-only JSONL file under
 ``audit/responses/<annotator_id>.jsonl`` — one line per submission. Re-judging
 an item just appends another line; readers keep only the last line per
 question_id, so the file is both the log and, read back, the current state.
@@ -11,8 +11,6 @@ import json
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
-
-from sklearn.metrics import cohen_kappa_score
 
 from tools.audit_app.audit_items import AuditItem, canonicalize_answer
 
@@ -109,16 +107,15 @@ class TypeStats:
     gold_accuracy: float | None
     human_accuracy_vs_gold: float | None
     ambiguous_share: float | None
-    cohen_kappa: float | None
-    kappa_note: str | None
     meets_acceptance: bool | None
 
 
 def compute_stats(items: list[AuditItem], responses_by_annotator: dict[str, dict[str, AuditResponse]]) -> list[TypeStats]:
-    """One row per question_type, pooling verdicts/answers across every
-    annotator who has reviewed that item. Cohen's kappa is computed only when
-    exactly two annotators have submitted files (the audit protocol calls for
-    two); with any other count it is reported as None with an explanation.
+    """Return one verification row per question type.
+
+    The declared protocol uses exactly one reviewer. Multiple response files
+    are rejected so the report cannot silently pool non-independent verdicts
+    while describing them as a single-reviewer verification.
 
     `human_accuracy_vs_gold` (`own_answer` vs. gold) is scoped to responses
     that actually carry an `own_answer`: the UI only asks for one when the
@@ -128,57 +125,45 @@ def compute_stats(items: list[AuditItem], responses_by_annotator: dict[str, dict
     independent-agreement metric this field measured before the reveal-gold
     workflow changed (see docs/DATASET_CREATION_PLAN.md §8.3 discussion).
     """
-    annotator_ids = sorted(responses_by_annotator)
+    reviewer_ids = sorted(responses_by_annotator)
+    if len(reviewer_ids) > 1:
+        raise ValueError(
+            "Single-reviewer gold verification requires exactly one reviewer; "
+            f"found {len(reviewer_ids)}"
+        )
+    reviewer_responses = responses_by_annotator.get(reviewer_ids[0], {}) if reviewer_ids else {}
     items_by_type: dict[str, list[AuditItem]] = {}
     for item in items:
         items_by_type.setdefault(item.question_type, []).append(item)
-
-    kappa_note = None
-    if len(annotator_ids) != 2:
-        kappa_note = f"needs exactly 2 annotators, found {len(annotator_ids)}"
 
     results: list[TypeStats] = []
     for question_type, type_items in items_by_type.items():
         verdicts: list[str] = []
         correct_answers = 0
         answer_judgements = 0
-        paired_a: list[str] = []
-        paired_b: list[str] = []
 
         for item in type_items:
-            item_verdicts = {}
-            for annotator_id, responses in responses_by_annotator.items():
-                response = responses.get(item.question_id)
-                if response is None:
-                    continue
-                verdicts.append(response.verdict)
-                item_verdicts[annotator_id] = response.verdict
-                if response.own_answer.strip():
-                    answer_judgements += 1
-                    if canonicalize_answer(response.own_answer) == canonicalize_answer(item.answer):
-                        correct_answers += 1
-            if kappa_note is None and all(aid in item_verdicts for aid in annotator_ids):
-                paired_a.append(item_verdicts[annotator_ids[0]])
-                paired_b.append(item_verdicts[annotator_ids[1]])
+            response = reviewer_responses.get(item.question_id)
+            if response is None:
+                continue
+            verdicts.append(response.verdict)
+            if response.own_answer.strip():
+                answer_judgements += 1
+                if canonicalize_answer(response.own_answer) == canonicalize_answer(item.answer):
+                    correct_answers += 1
 
         n_verdicts = len(verdicts)
         gold_accuracy = verdicts.count("correct") / n_verdicts if n_verdicts else None
         ambiguous_share = verdicts.count("ambiguous") / n_verdicts if n_verdicts else None
         human_accuracy = correct_answers / answer_judgements if answer_judgements else None
 
-        kappa, note = None, kappa_note
-        if kappa_note is None:
-            if len(paired_a) < 2:
-                note = "fewer than 2 items reviewed by both annotators"
-            elif len(set(paired_a) | set(paired_b)) < 2:
-                note = "both annotators agreed on every paired item (kappa undefined)"
-            else:
-                kappa = float(cohen_kappa_score(paired_a, paired_b, labels=list(VERDICTS)))
-
-        meets_acceptance = (
-            gold_accuracy is not None and ambiguous_share is not None
-            and gold_accuracy >= MIN_GOLD_ACCURACY and ambiguous_share <= MAX_AMBIGUOUS_SHARE
-        )
+        meets_acceptance = None
+        if n_verdicts == len(type_items):
+            meets_acceptance = (
+                gold_accuracy is not None and ambiguous_share is not None
+                and gold_accuracy >= MIN_GOLD_ACCURACY
+                and ambiguous_share <= MAX_AMBIGUOUS_SHARE
+            )
 
         results.append(TypeStats(
             question_type=question_type,
@@ -187,23 +172,19 @@ def compute_stats(items: list[AuditItem], responses_by_annotator: dict[str, dict
             gold_accuracy=gold_accuracy,
             human_accuracy_vs_gold=human_accuracy,
             ambiguous_share=ambiguous_share,
-            cohen_kappa=kappa,
-            kappa_note=note,
-            meets_acceptance=meets_acceptance if n_verdicts else None,
+            meets_acceptance=meets_acceptance,
         ))
     return sorted(results, key=lambda row: row.question_type)
 
 
 def anonymize_annotator_ids(responses_by_annotator: dict[str, dict[str, AuditResponse]]) -> dict[str, str]:
-    """Maps each real annotator id to `A1`, `A2`, ... ordered by that
-    annotator's earliest submission timestamp, for the committed report
-    (§8.3: "annotator IDs anonymised")."""
+    """Map the reviewer id to an anonymised label for the committed report."""
     def earliest_timestamp(annotator_id: str) -> str:
         responses = responses_by_annotator[annotator_id]
         return min((r.answered_at_utc for r in responses.values()), default="")
 
     ordered = sorted(responses_by_annotator, key=earliest_timestamp)
-    return {annotator_id: f"A{i + 1}" for i, annotator_id in enumerate(ordered)}
+    return {annotator_id: f"R{i + 1}" for i, annotator_id in enumerate(ordered)}
 
 
 def _format_pct(value: float | None) -> str:
@@ -212,21 +193,22 @@ def _format_pct(value: float | None) -> str:
 
 def render_report_markdown(stats: list[TypeStats], annotator_alias: dict[str, str]) -> str:
     lines = [
-        "# VQA-SUNRGBD-v2 — human audit report",
+        "# VQA-SUNRGBD-v2 — single-reviewer gold verification report",
         "",
-        f"Annotators: {', '.join(sorted(annotator_alias.values())) or '(none yet)'}",
+        f"Reviewer: {', '.join(sorted(annotator_alias.values())) or '(none yet)'}",
+        "Protocol: one reviewer inspects the RGB image, evidence overlay, question, and gold answer, then records correct, incorrect, or ambiguous.",
+        "This verifies sampled gold labels; it does not measure inter-rater reliability.",
         f"Acceptance rule (§8.3): gold accuracy ≥ {MIN_GOLD_ACCURACY:.0%} and ambiguous share ≤ {MAX_AMBIGUOUS_SHARE:.0%}.",
         "",
-        "| Type | Sampled | Verdicts | Gold accuracy | Corrections matching gold | Ambiguous | Cohen's κ | Meets acceptance |",
-        "|---|---|---|---|---|---|---|---|",
+        "| Type | Sampled | Reviewed | Gold accuracy | Corrections matching gold | Ambiguous | Meets acceptance |",
+        "|---|---|---|---|---|---|---|",
     ]
     for row in stats:
-        kappa_cell = f"{row.cohen_kappa:.3f}" if row.cohen_kappa is not None else (row.kappa_note or "—")
         acceptance_cell = "yes" if row.meets_acceptance else ("no" if row.meets_acceptance is False else "—")
         lines.append(
             f"| {row.question_type} | {row.n_sampled} | {row.n_verdicts} | "
             f"{_format_pct(row.gold_accuracy)} | {_format_pct(row.human_accuracy_vs_gold)} | "
-            f"{_format_pct(row.ambiguous_share)} | {kappa_cell} | {acceptance_cell} |"
+            f"{_format_pct(row.ambiguous_share)} | {acceptance_cell} |"
         )
     lines.append("")
     return "\n".join(lines)

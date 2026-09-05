@@ -1,1 +1,1 @@
-"""Human audit tool for VQA-SUNRGBD-v2 (see docs/DATASET_CREATION_PLAN.md §8.3)."""
+"""Single-reviewer gold-verification tool for VQA-SUNRGBD-v2 (§8.3)."""

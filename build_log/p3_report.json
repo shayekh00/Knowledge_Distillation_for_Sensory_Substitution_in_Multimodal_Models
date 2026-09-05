@@ -1,41 +1,88 @@
 {
   "per_split": {
     "train": {
-      "total_items": 16309,
+      "total_items": 15278,
       "per_type_counts": {
-        "existence": 4194,
-        "identify_superlative": 3763,
-        "relative_depth": 2457,
-        "nearest_object": 2789,
-        "left_right": 3106
+        "existence": 4186,
+        "identify_superlative": 2615,
+        "relative_depth": 2724,
+        "nearest_object": 2758,
+        "left_right": 2995
       }
     },
     "val": {
-      "total_items": 2021,
+      "total_items": 1720,
       "per_type_counts": {
-        "existence": 396,
-        "identify_superlative": 409,
-        "relative_depth": 399,
-        "nearest_object": 411,
-        "left_right": 406
+        "existence": 352,
+        "identify_superlative": 341,
+        "relative_depth": 344,
+        "nearest_object": 343,
+        "left_right": 340
       }
     },
     "test": {
-      "total_items": 14135,
+      "total_items": 12463,
       "per_type_counts": {
-        "existence": 2792,
-        "identify_superlative": 2854,
-        "relative_depth": 2822,
-        "nearest_object": 2823,
-        "left_right": 2844
+        "existence": 2558,
+        "identify_superlative": 2490,
+        "relative_depth": 2471,
+        "nearest_object": 2474,
+        "left_right": 2470
       }
     }
   },
   "sanity_check_failures": [],
-  "sanity_check_warnings": [
-    "val/existence: sensor mix deviates 4.4% from the split overall (Rule 6.3 target: <=3%)",
-    "val/nearest_object: sensor mix deviates 5.7% from the split overall (Rule 6.3 target: <=3%)",
-    "test/existence: sensor mix deviates 3.2% from the split overall (Rule 6.3 target: <=3%)",
-    "test/nearest_object: sensor mix deviates 3.8% from the split overall (Rule 6.3 target: <=3%)"
-  ]
+  "sanity_check_warnings": [],
+  "question_only_baselines": {
+    "existence": {
+      "question_type": "existence",
+      "accuracy": 0.5255681818181818,
+      "majority_baseline": 0.5,
+      "excess_over_majority": 0.025568181818181768,
+      "threshold": 0.05,
+      "passes": true,
+      "train_items": 4186,
+      "evaluation_items": 352
+    },
+    "identify_superlative": {
+      "question_type": "identify_superlative",
+      "accuracy": 0.08797653958944282,
+      "majority_baseline": 0.08211143695014662,
+      "excess_over_majority": 0.005865102639296196,
+      "threshold": 0.05,
+      "passes": true,
+      "train_items": 2615,
+      "evaluation_items": 341
+    },
+    "relative_depth": {
+      "question_type": "relative_depth",
+      "accuracy": 0.4563953488372093,
+      "majority_baseline": 0.5261627906976745,
+      "excess_over_majority": -0.06976744186046518,
+      "threshold": 0.05,
+      "passes": true,
+      "train_items": 2724,
+      "evaluation_items": 344
+    },
+    "nearest_object": {
+      "question_type": "nearest_object",
+      "accuracy": 0.119533527696793,
+      "majority_baseline": 0.0728862973760933,
+      "excess_over_majority": 0.0466472303206997,
+      "threshold": 0.05,
+      "passes": true,
+      "train_items": 2758,
+      "evaluation_items": 343
+    },
+    "left_right": {
+      "question_type": "left_right",
+      "accuracy": 0.5117647058823529,
+      "majority_baseline": 0.5,
+      "excess_over_majority": 0.0117647058823529,
+      "threshold": 0.05,
+      "passes": true,
+      "train_items": 2995,
+      "evaluation_items": 340
+    }
+  }
 }

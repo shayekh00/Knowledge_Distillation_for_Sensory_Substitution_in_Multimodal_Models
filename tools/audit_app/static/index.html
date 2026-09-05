@@ -10,8 +10,8 @@
 <header id="top-bar">
   <h1>VQA-SUNRGBD-v2 audit</h1>
   <div id="annotator-box">
-    <label for="annotator-input">Annotator ID</label>
-    <input id="annotator-input" type="text" placeholder="e.g. navid" autocomplete="off">
+    <label for="annotator-input">Reviewer ID</label>
+    <input id="annotator-input" type="text" placeholder="solo" autocomplete="off">
   </div>
   <div id="progress-box">
     <span id="progress-text">— / —</span>
@@ -97,13 +97,13 @@
 <div id="stats-panel" class="hidden">
   <div id="stats-panel-inner">
     <button id="stats-close" class="secondary">Close</button>
-    <h2>Audit stats</h2>
+    <h2>Gold verification stats</h2>
     <p class="hint">Acceptance rule (§8.3): gold accuracy ≥ 95% and ambiguous share ≤ 3%, per type.</p>
     <table id="stats-table">
       <thead>
         <tr>
           <th>Type</th><th>Sampled</th><th>Verdicts</th><th>Gold acc.</th>
-          <th>Corrections match gold</th><th>Ambiguous</th><th>Cohen's κ</th><th>Meets §8.3</th>
+          <th>Corrections match gold</th><th>Ambiguous</th><th>Meets §8.3</th>
         </tr>
       </thead>
       <tbody></tbody>

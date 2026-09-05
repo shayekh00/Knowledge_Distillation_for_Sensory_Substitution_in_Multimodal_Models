@@ -34,7 +34,7 @@ import pandas as pd
 import scipy.io
 import yaml
 from PIL import Image
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, box
 from sklearn.model_selection import GroupShuffleSplit
 from tqdm import tqdm
 
@@ -146,8 +146,10 @@ def rasterize_polygon_mask(polygon: Polygon, image_height: int, image_width: int
     from PIL import ImageDraw
 
     mask_image = Image.new("L", (image_width, image_height), 0)
-    exterior_coords = [(x, y) for x, y in polygon.exterior.coords]
-    ImageDraw.Draw(mask_image).polygon(exterior_coords, outline=1, fill=1)
+    polygon_parts = [polygon] if polygon.geom_type == "Polygon" else list(polygon.geoms)
+    for polygon_part in polygon_parts:
+        exterior_coords = [(x, y) for x, y in polygon_part.exterior.coords]
+        ImageDraw.Draw(mask_image).polygon(exterior_coords, outline=1, fill=1)
     return np.array(mask_image, dtype=bool)
 
 
@@ -217,6 +219,27 @@ def build_polygon_records(annotation_data: dict, image_width: int, image_height:
         union_polygon = shapely_polygons[0]
         for extra_polygon in shapely_polygons[1:]:
             union_polygon = union_polygon.union(extra_polygon)
+
+        # Geometry-derived labels must describe only visible pixels. Some
+        # SUNRGBD annotations extend beyond the RGB frame; using them as-is
+        # can produce area fractions above one and off-image centroids.
+        union_polygon = union_polygon.intersection(box(0, 0, image_width, image_height))
+        if union_polygon.is_empty or union_polygon.area <= 0:
+            drop_rows.append({
+                "image_id": image_id, "object_index": object_index,
+                "raw_name": raw_name, "reason_code": DROP_REASON["INVALID_POLYGON"],
+                "detail": "polygon has no positive-area intersection with the image frame",
+            })
+            object_records.append({
+                "object_index": object_index,
+                "raw_name": raw_name,
+                "is_valid_polygon": False,
+                "area_px": None, "area_frac": None,
+                "centroid_x": None, "centroid_y": None,
+                "depth_median_m": None, "depth_valid_frac": None,
+                "touches_border": False,
+            })
+            continue
 
         centroid = union_polygon.centroid
         area_px = union_polygon.area

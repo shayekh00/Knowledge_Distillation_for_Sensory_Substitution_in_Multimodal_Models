@@ -1,6 +1,6 @@
 """Manual test-set audit tool — FastAPI backend.
 
-Implements the human side of DATASET_CREATION_PLAN.md §8.3: an annotator sees
+Implements the single-reviewer gold verification in DATASET_CREATION_PLAN.md §8.3: the reviewer sees
 the RGB image with the question's evidence objects outlined, the question,
 and the gold answer, all at once, then marks it correct / incorrect /
 ambiguous. Marking "incorrect" opens a text box for what the annotator
@@ -23,11 +23,10 @@ Usage::
         --test-csv release/VQA-SUNRGBD-v2/rule_based/test.csv \
         --out audit/audit_items.csv
 
-    # 2. Run the app (repeat per annotator, each picks their own annotator id
-    #    in the UI — no separate server instance needed):
+    # 2. Run the app; the reviewer ID defaults to "solo":
     python -m uvicorn tools.audit_app.main:app --port 8002 --reload
 
-    # 3. Once both annotators are done, render the committed report:
+    # 3. Once the reviewer is done, render the committed report:
     python -m tools.audit_app.report
 """
 from __future__ import annotations

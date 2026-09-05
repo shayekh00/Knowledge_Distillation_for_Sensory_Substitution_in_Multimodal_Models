@@ -1,10 +1,10 @@
 """
 P2 generator for the `existence` question type (plan §4.1).
 
-For each scene, emits up to two raw candidates — one positive, one hard
-negative — and leaves final 50/50 + per-object-parity balancing to P3
-(plan §6.4: P2 produces gated candidates, P3 balances/selects). Producing
-both polarities per scene, where possible, gives P3 more to balance from.
+For each scene, emits one positive per present concept and every plausible
+hard-negative candidate, then leaves final 50/50 + per-object-parity balancing to P3
+(plan §6.4: P2 produces gated candidates, P3 balances/selects). Retaining
+the full plausible-negative pool lets P3 pair yes/no examples per concept.
 
 Hard-negative rule: the sampled absent object must (a) not appear in the
 scene under any raw name (Rule V4 — even out-of-vocab/too-small counts as
@@ -95,7 +95,7 @@ def _build_scene_type_stats():
             _all_concepts_by_category[entry["category"]].add(concept)
 
 
-def _pick_hard_negative(rng, scene_type, present_concepts, present_categories, canonical_vocab):
+def _hard_negative_concepts(scene_type, present_concepts, present_categories, canonical_vocab):
     _build_scene_type_stats()
     scene_type_frequent = {
         concept for concept, fraction in _scene_type_presence_fraction.get(scene_type, {}).items()
@@ -107,9 +107,15 @@ def _pick_hard_negative(rng, scene_type, present_concepts, present_categories, c
 
     plausible = (scene_type_frequent | category_matched) - present_concepts
     plausible = {c for c in plausible if not canonical_vocab[c]["is_structural"]}
-    if not plausible:
-        return None
-    return rng.choice(sorted(plausible))
+    return sorted(plausible)
+
+
+def _pick_hard_negative(rng, scene_type, present_concepts, present_categories, canonical_vocab):
+    """Return one plausible negative for backward-compatible callers."""
+    plausible = _hard_negative_concepts(
+        scene_type, present_concepts, present_categories, canonical_vocab
+    )
+    return rng.choice(plausible) if plausible else None
 
 
 def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_logger):
@@ -120,23 +126,36 @@ def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_log
 
     candidates = []
 
-    positive_object = rng.choice(eligible)
-    template_id, question = render_question(TEMPLATES, rng, object=positive_object["display_name"].replace("_", " "))
-    candidates.append({
-        "variant": "positive", "template_id": template_id, "question": question,
-        "answer": "yes", "answer_type": "yes_no", "answer_space": "yes|no",
-        "evidence": {"concept": positive_object["concept"], "object_index": positive_object["object_index"],
-                     "area_frac": positive_object["area_frac"]},
-    })
+    eligible_by_concept = defaultdict(list)
+    for eligible_object in eligible:
+        eligible_by_concept[eligible_object["concept"]].append(eligible_object)
+    for concept in sorted(eligible_by_concept):
+        positive_object = rng.choice(eligible_by_concept[concept])
+        template_id, question = render_question(
+            TEMPLATES,
+            rng,
+            object=positive_object["display_name"].replace("_", " "),
+        )
+        candidates.append({
+            "variant": "positive", "template_id": template_id, "question": question,
+            "answer": "yes", "answer_type": "yes_no", "answer_space": "yes|no",
+            "evidence": {
+                "concept": positive_object["concept"],
+                "object_index": positive_object["object_index"],
+                "area_frac": positive_object["area_frac"],
+            },
+        })
 
     present_concepts = present_concepts_any(resolved_objects)
     present_categories = {obj["category"] for obj in eligible}
     canonical_vocab = _get_canonical_vocab()
-    negative_concept = _pick_hard_negative(rng, scene["scene_type"], present_concepts, present_categories, canonical_vocab)
+    negative_concepts = _hard_negative_concepts(
+        scene["scene_type"], present_concepts, present_categories, canonical_vocab
+    )
 
-    if negative_concept is None:
+    if not negative_concepts:
         drop_logger.log(scene["image_id"], "NO_HARD_NEGATIVE", f"scene_type={scene['scene_type']}")
-    else:
+    for negative_concept in negative_concepts:
         display_name = canonical_vocab[negative_concept]["display_name"].replace("_", " ")
         template_id, question = render_question(TEMPLATES, rng, object=display_name)
         candidates.append({

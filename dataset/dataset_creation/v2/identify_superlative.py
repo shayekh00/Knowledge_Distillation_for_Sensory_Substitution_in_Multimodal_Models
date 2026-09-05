@@ -1,16 +1,14 @@
 """
 P2 generator for the `identify_superlative` question type (plan §4.3).
 
-Replaces v1's unverifiable "most prominent object" heuristic with three
-superlatives, each gated by a margin so the answer is unambiguous even to
-a human glancing at the image:
-  - largest:         argmax area_frac; margin: winner >= 1.3x runner-up
+Replaces v1's unverifiable visual-size heuristic with two depth-derived
+superlatives, each gated by a margin:
   - closest_camera:  argmin depth;     margin: winner <= runner-up / 1.2,
                                                 and winner >= 0.4 m
   - farthest_camera: argmax depth;     margin: winner >= 1.2x runner-up
 
-All three are computed independently per scene; a scene can contribute
-zero, one, two, or three candidates depending on which margins hold.
+Both are computed independently per scene; a scene can contribute zero,
+one, or two candidates depending on which margins hold.
 Per-answer capping (no class > 8% of a split) is P3's job (plan §6.2).
 """
 from __future__ import annotations
@@ -22,24 +20,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generator_common import answer_appears_in_question, load_templates, render_question, run_generator  # noqa: E402
 
 TEMPLATES_BY_VARIANT = {
-    "largest": load_templates("identify_superlative_largest.txt"),
     "closest_camera": load_templates("identify_superlative_closest_camera.txt"),
     "farthest_camera": load_templates("identify_superlative_farthest_camera.txt"),
 }
 
-LARGEST_MARGIN = 1.3
 DEPTH_MARGIN = 1.2
 MIN_CLOSEST_DEPTH_M = 0.4
-
-
-def _largest_candidate(eligible):
-    ranked = sorted(eligible, key=lambda obj: obj["area_frac"], reverse=True)
-    if len(ranked) == 1:
-        return ranked[0], None
-    winner, runner_up = ranked[0], ranked[1]
-    if winner["area_frac"] >= LARGEST_MARGIN * runner_up["area_frac"]:
-        return winner, runner_up
-    return None, runner_up
 
 
 def _closest_candidate(with_depth):
@@ -67,13 +53,14 @@ def _farthest_candidate(with_depth):
 
 
 def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_logger):
-    eligible = [obj for obj in resolved_objects if obj["eligible"]]
-    with_depth = [obj for obj in eligible if obj["depth_median_m"] is not None]
+    with_depth = [
+        obj for obj in resolved_objects
+        if obj["eligible"] and obj["depth_median_m"] is not None
+    ]
 
     candidates = []
 
     for variant, winner_fn, pool in (
-        ("largest", _largest_candidate, eligible),
         ("closest_camera", _closest_candidate, with_depth),
         ("farthest_camera", _farthest_candidate, with_depth),
     ):

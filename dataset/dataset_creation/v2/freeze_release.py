@@ -1,8 +1,7 @@
 """
 Freezes the current release/VQA-SUNRGBD-v2/ into a versioned, checksummed
-snapshot (plan §8.1: "the builder writes manifest.json with the git commit,
-config hash, seed, toolbox checksum, and per-type row counts... Two runs on
-two machines must produce byte-identical CSVs").
+snapshot (plan §8.1). The manifest hashes the release plus every
+content-determining data, template, and source input so drift is detected.
 
 This is the point past which the released CSVs are locked: any future
 change to the pipeline (a generator, a balancing rule, the vocabulary) must
@@ -25,6 +24,7 @@ from datetime import datetime, timezone
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 DATA_DIR = os.path.join(REPO_ROOT, "data")
+PIPELINE_DIR = os.path.join(REPO_ROOT, "dataset", "dataset_creation", "v2")
 RELEASE_ROOT = os.path.join(REPO_ROOT, "release", "VQA-SUNRGBD-v2")
 RULE_BASED_DIR = os.path.join(RELEASE_ROOT, "rule_based")
 
@@ -40,6 +40,26 @@ TRACKED_INPUTS = [
     os.path.join(DATA_DIR, "splits", "val_images.txt"),
     os.path.join(DATA_DIR, "splits", "test_images.txt"),
     os.path.join(DATA_DIR, "index", "manifest.json"),
+    os.path.join(DATA_DIR, "index", "scene_index.jsonl"),
+    os.path.join(DATA_DIR, "templates", "existence.txt"),
+    os.path.join(DATA_DIR, "templates", "identify_superlative_closest_camera.txt"),
+    os.path.join(DATA_DIR, "templates", "identify_superlative_farthest_camera.txt"),
+    os.path.join(DATA_DIR, "templates", "relative_depth.txt"),
+    os.path.join(DATA_DIR, "templates", "nearest_object.txt"),
+    os.path.join(DATA_DIR, "templates", "left_right.txt"),
+    os.path.join(PIPELINE_DIR, "build_index.py"),
+    os.path.join(PIPELINE_DIR, "vocab.py"),
+    os.path.join(PIPELINE_DIR, "scene_objects.py"),
+    os.path.join(PIPELINE_DIR, "depth_utils.py"),
+    os.path.join(PIPELINE_DIR, "generator_common.py"),
+    os.path.join(PIPELINE_DIR, "existence.py"),
+    os.path.join(PIPELINE_DIR, "identify_superlative.py"),
+    os.path.join(PIPELINE_DIR, "relative_depth.py"),
+    os.path.join(PIPELINE_DIR, "nearest_object.py"),
+    os.path.join(PIPELINE_DIR, "left_right.py"),
+    os.path.join(PIPELINE_DIR, "balance.py"),
+    os.path.join(PIPELINE_DIR, "question_only.py"),
+    os.path.join(PIPELINE_DIR, "build_release.py"),
 ]
 RELEASE_FILES = ["train.csv", "val.csv", "test.csv"]
 

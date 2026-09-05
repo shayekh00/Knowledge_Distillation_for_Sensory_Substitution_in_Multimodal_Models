@@ -25,9 +25,7 @@ async function fetchJSON(url, options) {
 const DEFAULT_SOLO_ANNOTATOR_ID = "solo";
 
 async function init() {
-  // Defaults to a fixed id so a single-annotator audit needs no setup step;
-  // change it in the box any time (e.g. to run a real two-annotator §8.3
-  // audit) and it's remembered per-browser via localStorage.
+  // Defaults to the declared single reviewer id and is remembered per browser.
   state.annotatorId = localStorage.getItem("vqa_audit_annotator_id") || DEFAULT_SOLO_ANNOTATOR_ID;
   localStorage.setItem("vqa_audit_annotator_id", state.annotatorId);
   el("annotator-input").value = state.annotatorId;
@@ -442,11 +440,10 @@ async function openStats() {
   const pct = (value) => (value === null || value === undefined ? "—" : `${(value * 100).toFixed(1)}%`);
   for (const row of stats.types) {
     const tr = document.createElement("tr");
-    const kappaCell = row.cohen_kappa !== null ? row.cohen_kappa.toFixed(3) : (row.kappa_note || "—");
     const acceptCell = row.meets_acceptance === null ? "—" : (row.meets_acceptance ? "yes" : "no");
     tr.innerHTML = `<td>${row.question_type}</td><td>${row.n_sampled}</td><td>${row.n_verdicts}</td>
       <td>${pct(row.gold_accuracy)}</td><td>${pct(row.human_accuracy_vs_gold)}</td>
-      <td>${pct(row.ambiguous_share)}</td><td>${kappaCell}</td><td>${acceptCell}</td>`;
+      <td>${pct(row.ambiguous_share)}</td><td>${acceptCell}</td>`;
     tbody.appendChild(tr);
   }
   el("stats-panel").classList.remove("hidden");

@@ -1,5 +1,4 @@
-"""Renders the committed audit report (§8.3: results under `audit/`, annotator
-IDs anonymised).
+"""Render the committed single-reviewer gold-verification report (§8.3).
 
 Usage::
 
@@ -56,7 +55,7 @@ def main() -> None:
     print(f"Wrote {args.out_dir / 'report.md'}")
     for stat in stats:
         print(f"  {stat.question_type}: gold={stat.gold_accuracy} ambiguous={stat.ambiguous_share} "
-              f"kappa={stat.cohen_kappa} meets_acceptance={stat.meets_acceptance}")
+              f"meets_acceptance={stat.meets_acceptance}")
 
 
 if __name__ == "__main__":

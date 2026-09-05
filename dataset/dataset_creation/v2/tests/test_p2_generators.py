@@ -50,28 +50,6 @@ def test_normalize_raw_name_strips_trailing_digits_and_singularizes():
 
 # --------------------------------------------------- identify_superlative.py
 
-def test_largest_candidate_passes_when_margin_clears():
-    winner_obj = make_object("bed", area_frac=0.30)
-    loser_obj = make_object("chair", area_frac=0.15)  # exactly 2x, clears 1.3x
-    winner, runner_up = identify_superlative._largest_candidate([winner_obj, loser_obj])
-    assert winner is winner_obj
-    assert runner_up is loser_obj
-
-
-def test_largest_candidate_fails_when_too_close():
-    obj_a = make_object("bed", area_frac=0.20)
-    obj_b = make_object("chair", area_frac=0.18)  # ratio 1.11 < 1.3
-    winner, _ = identify_superlative._largest_candidate([obj_a, obj_b])
-    assert winner is None
-
-
-def test_largest_candidate_single_object_always_wins():
-    only_obj = make_object("bed", area_frac=0.05)
-    winner, runner_up = identify_superlative._largest_candidate([only_obj])
-    assert winner is only_obj
-    assert runner_up is None
-
-
 def test_closest_candidate_rejects_below_minimum_depth():
     too_close = make_object("chair", depth_median_m=0.2)
     far_enough = make_object("desk", depth_median_m=2.0)

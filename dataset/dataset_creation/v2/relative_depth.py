@@ -57,7 +57,10 @@ def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_log
         candidates.append({
             "variant": comparative, "template_id": template_id, "question": question,
             "answer": answer, "answer_type": "choice",
-            "answer_space": f"{mention_a['display_name']}|{mention_b['display_name']}",
+            "answer_space": "|".join(
+                mention["display_name"].replace("_", " ")
+                for mention in (mention_a, mention_b)
+            ),
             "evidence": {
                 "a_concept": obj_1["concept"], "a_depth_m": obj_1["depth_median_m"],
                 "b_concept": obj_2["concept"], "b_depth_m": obj_2["depth_median_m"],

@@ -1,4 +1,4 @@
-"""Draws the human-audit sample from the released test CSV.
+"""Draw the single-reviewer gold-verification sample from test.
 
 Implements DATASET_CREATION_PLAN.md §8.3: 150 test items per question_type,
 stratified by sensor so each type's audit sample mirrors that type's sensor
