@@ -85,18 +85,21 @@ of the Phase 3 evaluator repair, and it earned itself here on the first real run
 
 ### What must happen
 
-§6.4 requires **one** instruction for every model, so the wording cannot be
-chosen per model. `terse` rescues the 0.8B student, but it has not been checked on
-the 9B teacher, and a wording that helps a small student could plausibly hurt a
-large one. Before the prompt is frozen:
+§6.4 requires **one** instruction for every model, so the wording cannot be chosen
+per model. `terse` rescues the 0.8B student — and **§6 below confirms it is also
+the better wording for the 9B teacher**, so a single instruction serves both and
+the one-instruction rule is satisfiable.
 
-1. Run the same three-way comparison on the teacher.
+Remaining steps before the prompt is frozen:
+
+1. ~~Run the same three-way comparison on the teacher.~~ Done — see §6.
 2. Choose on validation, then freeze — §6.4 forbids retrofitting after test
    results are seen. Doing this now, pre-freeze, on `val`, is the legitimate
    moment.
 3. Consider whether constrained decoding (§6.3, `evaluation/candidate_scoring.py`)
    makes the choice less load-bearing. It should: a token trie makes an illegal
-   answer unreachable regardless of how the instruction is worded.
+   answer unreachable regardless of how the instruction is worded, which would
+   remove the size-dependence documented in §6 entirely.
 
 ## 3. Zero-shot references
 
