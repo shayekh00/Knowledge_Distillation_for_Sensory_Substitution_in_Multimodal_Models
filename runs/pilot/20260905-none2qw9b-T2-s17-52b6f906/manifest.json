@@ -1,0 +1,19 @@
+{
+  "description": "Teacher zero-shot RGB, NF4 (T2)",
+  "distillation_mode": "none",
+  "epochs": null,
+  "learning_rate": null,
+  "lora_rank": null,
+  "modality": "rgb",
+  "model": "Qwen/Qwen3.5-9B",
+  "notes": "NF4 quantized, thinking disabled. PILOT and quantization-specific. Section 10.3 teacher suitability.",
+  "pilot": true,
+  "prompt_style": "terse",
+  "recipe": "T2",
+  "recorded_utc": "2026-09-05T21:12:41+00:00",
+  "representation": "replicated",
+  "run_id": "20260905-none2qw9b-T2-s17-52b6f906",
+  "seed": 17,
+  "split": "val",
+  "teacher": null
+}

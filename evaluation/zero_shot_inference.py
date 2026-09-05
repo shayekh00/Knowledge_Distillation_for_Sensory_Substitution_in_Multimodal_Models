@@ -86,6 +86,10 @@ def main() -> None:
     parser.add_argument("--limit", type=int, help="Only the first N rows (smoke test).")
     parser.add_argument("--prompt-style", choices=sorted(PROMPT_STYLES), default="enumerated",
                         help="Instruction wording; frozen before the main runs (§6.4).")
+    parser.add_argument("--thinking", choices=["off", "on"], default="off",
+                        help="Qwen3.5 is a reasoning model whose chat template emits "
+                             "chain-of-thought by default. Left on, a 16-token budget "
+                             "captures truncated reasoning instead of an answer.")
     parser.add_argument("--adapter", help="LoRA adapter directory to load on top of "
                         "the base model. Without it this is a zero-shot run.")
     parser.add_argument("--quantize", choices=["none", "nf4", "int8"], default="none")
@@ -134,8 +138,9 @@ def main() -> None:
                 {"type": "image"},
                 {"type": "text", "text": (f"{row['question']}\n{suffix}" if suffix
                                           else row["question"])}]}]
+            template_kwargs = {} if args.thinking == "on" else {"enable_thinking": False}
             prompt = processor.apply_chat_template(messages, add_generation_prompt=True,
-                                                   tokenize=False)
+                                                   tokenize=False, **template_kwargs)
             inputs = processor(images=image, text=prompt, return_tensors="pt").to(model.device)
             with torch.inference_mode():
                 generated = model.generate(**inputs, max_new_tokens=MAX_NEW_TOKENS,

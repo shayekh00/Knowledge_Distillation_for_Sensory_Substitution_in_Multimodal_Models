@@ -166,7 +166,128 @@ first pass that establishes the pipeline works and roughly where CE lands. It is
 **not yet** the strong CE baseline the paper compares against, and no KD number
 should be placed beside it until it is.
 
-## 5. Environment findings
+## 5. Teacher suitability: the KD premise holds
+
+§10.3 flags a precondition of the entire study — *"A large RGB teacher may be
+weaker than a depth student on measured depth relations."* If that were true here,
+the premise would need revisiting before any pipeline was built. **It is not true.**
+
+All runs below: val split, PILOT. Cells are accuracy / invalid-output rate.
+
+| Run | Macro | Invalid | existence | left_right | relative_depth | identify_sup | nearest_obj |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| B1 student depth 0-shot | 36.4% | 12.4% | 54.5% | 55.0% | 54.4% /11% | 11.4% /40% | 6.4% /11% |
+| B2 student RGB 0-shot | 43.0% | 15.3% | 73.0% | 47.6% /24% | 57.6% /15% | 22.0% /25% | 14.6% /13% |
+| **B3 student depth fine-tuned** | **40.8%** | **0.0%** | 56.0% | 58.8% | 60.2% | 16.4% | 12.5% |
+| **T1 teacher depth 0-shot** | **44.7%** | 3.7% | 59.4% | 61.2% | 70.1% | 17.6% /11% | 15.5% /8% |
+| **T2 teacher RGB 0-shot** | **62.2%** | 4.5% | **84.9%** | **89.7%** | **78.8%** | **29.3%** /12% | **28.3%** /10% |
+
+Teacher: Qwen3.5-9B, NF4, thinking disabled. Student: Qwen3.5-0.8B, bf16.
+
+### The teacher beats the fine-tuned depth student on every type
+
+| Type | B3 fine-tuned depth | T2 teacher RGB | Teacher advantage |
+|---|---:|---:|---:|
+| existence | 56.0% | 84.9% | **+28.9** |
+| left_right | 58.8% | 89.7% | **+30.9** |
+| relative_depth | 60.2% | 78.8% | **+18.6** |
+| identify_superlative | 16.4% | 29.3% | **+12.9** |
+| nearest_object | 12.5% | 28.3% | **+15.8** |
+
+Crucially the advantage holds on the **three depth-relation types**, which is
+exactly where §10.3 warned it might not. The teacher has substantial, transferable
+signal on the questions the paper is about. There is something to distil.
+
+### Two further readings
+
+**The teacher zero-shot on depth (44.7%) already beats the fine-tuned student
+(40.8%).** Scale alone, with no target-task training, exceeds a full epoch of
+supervised adaptation on a 0.8B model. The small student has a lot of headroom
+left, and B3's one-epoch/one-LR configuration is clearly not its ceiling.
+
+**Modality costs the teacher more than the student.** Switching RGB → depth costs
+the teacher 17.5 points (62.2 → 44.7) but the student only 6.6 (43.0 → 36.4) —
+because the teacher has far more RGB capability to lose. That gap *is* the
+sensory-substitution problem, stated quantitatively: 17.5 points of capability
+that currently evaporate when the sensor changes.
+
+`relative_depth` is the encouraging one: 78.8% for the teacher on RGB and 70.1%
+on depth, both far above the 50% floor. Metric-depth relations are learnable from
+this benchmark, not noise.
+
+### Caveats
+
+NF4 quantization and one seed. The teacher's numbers are quantization-specific; a
+bf16 teacher on the 4090 may differ, and these are PILOT rows either way.
+
+## 6. The prompt question is resolved: one wording serves both models
+
+§6.4 requires a single instruction for every model, so the `terse` fix could not
+be adopted on the student's evidence alone. Running the teacher both ways settles it:
+
+| Model | terse | enumerated (§6.4) | Δ macro | Δ invalid |
+|---|---:|---:|---:|---:|
+| Student 0.8B (B1 / B1e) | 36.4% | 23.0% | **−13.4** | 12.4% → **59.7%** |
+| Teacher 9B (T2 / T2e) | 62.2% | 58.5% | −3.7 | 4.5% → 9.4% |
+
+The enumerated wording hurts **both** models, so `terse` is the better instruction
+for the pair and no per-model tuning is needed — §6.4's one-instruction rule is
+satisfiable. The magnitude differs enormously, though: the 9B shrugs it off
+(−3.7 points), while the 0.8B collapses below chance with 60% invalid outputs.
+Prompt robustness is strongly size-dependent, which is worth a sentence in the
+paper: a wording validated only on a large model can be catastrophic for the
+small one that actually gets deployed.
+
+## 7. The teacher is a reasoning model, and its chat-template default differs from the student's
+
+A §8.1.1 compatibility-gate finding that would have silently corrupted every
+teacher cache.
+
+Qwen3.5's chat template supports `enable_thinking` and emits `<think>` blocks.
+Run with template defaults and a 16-token budget, the 9B teacher produces
+**truncated chain-of-thought instead of answers**:
+
+```
+val_000000 → "The user is asking a simple yes/no question about the presence of a lamp in"
+val_000001 → "The user wants to know which object is farther away: the picture frame or the"
+```
+
+With `enable_thinking=False` the same model, inputs and decoding give:
+
+```
+val_000000 → "yes"          val_000003 → "left"
+val_000001 → "picture frame" val_000004 → "monitor"
+val_000002 → "light"         val_000005 → "bed"
+```
+
+**The two checkpoints default differently**, which is the part worth recording:
+
+| Model | Rendered assistant prefix (default) | Effect |
+|---|---|---|
+| Qwen3.5-0.8B | `<think>\n\n</think>\n\n` — **closed** empty block | thinking already off |
+| Qwen3.5-9B | `<think>\n` — **left open** | model generates reasoning |
+
+So the student was always effectively thinking-off, and **B1/B2/B3 are valid and
+matched as recorded** — they need no re-run. Setting `enable_thinking=False` on
+the teacher renders the *identical* prefix to the student's default, so the fix
+brings the pair into alignment rather than introducing a decoding mismatch under
+§9.3.
+
+### Why this matters beyond the pilot
+
+Had the teacher been cached without catching this, every cached target would have
+been a chain-of-thought token distribution rather than an answer distribution —
+and the KD runs would have distilled the teacher's *narration of the task*. The
+resulting numbers would have been low, plausible, and completely
+uninterpretable: exactly the failure mode §4.1 records for the historical
+all-zero KD tables.
+
+**Requirement.** The decoding contract (§6.4) must specify `enable_thinking=False`
+explicitly for every model, not rely on template defaults, and the compatibility
+gate must render and inspect the actual prompt string for each checkpoint rather
+than assuming family members agree.
+
+## 8. Environment findings
 
 **The pinned `transformers` cannot load the portfolio.** 4.49.0.dev0 has no
 `Qwen3_5ForConditionalGeneration`; Qwen3.5 requires **≥ 4.57**. Also missing
