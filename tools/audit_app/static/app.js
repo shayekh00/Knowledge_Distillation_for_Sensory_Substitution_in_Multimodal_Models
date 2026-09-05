@@ -110,15 +110,24 @@ async function loadAnnotatorState() {
 // last (nothing for a human to adjudicate in those).
 const MODEL_STATUS_PRIORITY = { disagrees: 0, agrees: 1, unavailable: 2 };
 
+// One select rather than independent controls, so no combination can ask for
+// an empty set (e.g. unanswered items whose verdict is "correct").
+function matchesShowFilter(item) {
+  const showFilter = el("answered-filter").value;
+  const response = state.responses[item.question_id];
+  if (showFilter === "unanswered") return !response;
+  if (showFilter === "answered") return Boolean(response);
+  if (showFilter.startsWith("verdict:")) {
+    return Boolean(response) && response.verdict === showFilter.slice("verdict:".length);
+  }
+  return true;
+}
+
 function applyFilters() {
   const typeFilter = el("type-filter").value;
-  const answeredFilter = el("answered-filter").value;
   const filtered = state.items.filter((item) => {
     if (typeFilter && item.question_type !== typeFilter) return false;
-    const isAnswered = Boolean(state.responses[item.question_id]);
-    if (answeredFilter === "unanswered" && isAnswered) return false;
-    if (answeredFilter === "answered" && !isAnswered) return false;
-    return true;
+    return matchesShowFilter(item);
   });
 
   if (el("sort-order").value === "disagreements") {
@@ -395,10 +404,10 @@ async function saveResponse(verdict, ownAnswer) {
   if (verdict === "incorrect") el("own-answer-input").value = result.saved.own_answer;
   await refreshProgress();
 
-  const removedFromView = el("answered-filter").value === "unanswered";
+  const stillInView = matchesShowFilter(item);
   setTimeout(() => {
-    if (removedFromView) applyFilters();
-    else moveTo(state.currentIndex + 1);
+    if (stillInView) moveTo(state.currentIndex + 1);
+    else applyFilters();
   }, 250);
 }
 

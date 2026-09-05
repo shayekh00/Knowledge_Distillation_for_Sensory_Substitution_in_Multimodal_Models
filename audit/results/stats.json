@@ -3,7 +3,7 @@
     "question_type": "existence",
     "n_sampled": 150,
     "n_verdicts": 150,
-    "gold_accuracy": 0.8266666666666667,
+    "gold_accuracy": 0.82,
     "human_accuracy_vs_gold": 0.0,
     "ambiguous_share": 0.0,
     "meets_acceptance": false
