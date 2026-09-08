@@ -462,6 +462,13 @@ def main() -> None:
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--predictions", help="CSV with columns question_id,prediction.")
     parser.add_argument("--split", default="test", choices=["train", "val", "test"])
+    parser.add_argument("--release-dir", default=RELEASE_DIR,
+                        help="Directory holding {train,val,test}.csv. Override only for "
+                        "a derived, non-frozen split (e.g. leave-one-source-out) — "
+                        "release/VQA-SUNRGBD-v2/rule_based itself must stay untouched (G1). "
+                        "Scoring against a subset here gives that subset's own gold, "
+                        "avoiding the 'missing rows count as wrong' trap "
+                        "`distillation/epoch_loop.py`'s score_val_macro documents.")
     parser.add_argument("--constrained", action="store_true",
                         help="Snap each prediction onto its row's answer space.")
     parser.add_argument("--baselines-only", action="store_true")
@@ -476,8 +483,8 @@ def main() -> None:
 
     synonym_map = load_synonyms(os.path.join(VOCAB_DIR, "synonyms.csv"))
     canonical_vocab = load_canonical_vocab(os.path.join(VOCAB_DIR, "canonical_objects.csv"))
-    gold = load_release_split(args.split)
-    train = load_release_split("train")
+    gold = load_release_split(args.split, args.release_dir)
+    train = load_release_split("train", args.release_dir)
 
     baselines = {
         "chance": theoretical_chance(gold, canonical_vocab),

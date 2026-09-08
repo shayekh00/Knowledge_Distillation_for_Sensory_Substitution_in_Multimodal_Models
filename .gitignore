@@ -1,6 +1,8 @@
 .env
 *.pyc
 dataset/SUNRGBD/*
+dataset/SUNRGBD.zip
+dataset/SUNRGBD.zip.aria2
 further_scripts/OpenAI_Eval/openai_results/*
 further_scripts/Panesar_Recreation/panesar_model_results/*
 further_scripts/.DS_Store
@@ -23,8 +25,14 @@ docs/NEW_SUBMISSION.md
 
 # Model environments. `.venv` runs the test suite; `.venv-models` carries a
 # current transformers for the Qwen3.5 portfolio (the pinned one cannot load it).
+.venv
 .venv/
 .venv-models/
+
+# Downloaded HF checkpoints (Qwen3.5-9B/0.8B, InternVL, SmolVLM2, Florence-2,
+# Gemma teachers/students) and any trained adapters — weights do not belong in
+# git; MAIN_ROOT_DATA_DIR (.env) points here.
+checkpoints_scratch/
 
 # Run artifacts: the recorded run directories under runs/<run_id>/ ARE committed
 # — they are the paper's evidence. What is excluded is everything regenerable or
@@ -34,5 +42,21 @@ docs/NEW_SUBMISSION.md
 #     duplicate-file confusion documented in legacy_discrepancy_report.md);
 #   * trained adapters and checkpoints — weights do not belong in git.
 runs/pilot/*.csv
+runs/*.csv
 runs/**/adapter/
 runs/**/*_train/
+docs/Previous_rejection_comments.md
+
+# Ad-hoc scratch/smoke-test run directories — not the timestamped
+# runs/<run_id>/ evidence convention above, and too large to keep in git.
+runs/kd/
+runs/kd_smoke/
+runs/b4/
+runs/b4v2/
+runs/_smoke/
+runs/confirmatory/
+runs/lr_search/
+runs/gemma_noqat/
+runs/gemma_qat/
+runs/teacher_bf16/
+runs/pilot/B3_depth_4090_profile/

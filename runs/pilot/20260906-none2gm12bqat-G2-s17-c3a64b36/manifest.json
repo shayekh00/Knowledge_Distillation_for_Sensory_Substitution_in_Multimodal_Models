@@ -1,0 +1,20 @@
+{
+  "description": "Gemma-4-12B QAT teacher screen, RGB, NF4 (decisive modality for a teacher)",
+  "distillation_mode": "none",
+  "epochs": null,
+  "learning_rate": null,
+  "lora_rank": null,
+  "modality": "rgb",
+  "model": "google/gemma-4-12B-it-qat-q4_0-unquantized",
+  "notes": "",
+  "pilot": true,
+  "precision": "nf4",
+  "prompt_style": "terse",
+  "recipe": "G2",
+  "recorded_utc": "2026-09-06T15:12:33+00:00",
+  "representation": "replicated",
+  "run_id": "20260906-none2gm12bqat-G2-s17-c3a64b36",
+  "seed": 17,
+  "split": "val",
+  "teacher": null
+}

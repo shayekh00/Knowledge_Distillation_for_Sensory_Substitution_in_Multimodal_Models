@@ -1,0 +1,15 @@
+{
+  "distillation_mode": "none",
+  "epochs": null,
+  "learning_rate": null,
+  "lora_rank": null,
+  "modality": "depth",
+  "model": "google/gemma-4-12B-it-qat-q4_0-unquantized",
+  "precision": "nf4",
+  "prompt_style": "terse",
+  "recipe": "G1",
+  "representation": "replicated",
+  "seed": 17,
+  "split": "val",
+  "teacher": null
+}

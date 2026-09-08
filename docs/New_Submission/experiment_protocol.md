@@ -156,14 +156,14 @@ as distinct rows and are never conflated.
 
 | Item | Locked value |
 |---|---|
-| Seeds (confirmatory) | **17, 42, 2026** — all three reported individually, plus mean and sample SD |
+| Seeds (confirmatory) | **17 only** — single seed for every row (author decision 2026-09-07, §13). Was 17/42/2026; see that amendment for what this costs and the limitation it obliges |
 | Validation selection | Highest **validation five-type macro accuracy** under the locked decoding protocol; ties broken by earlier step |
 | Test evaluation | **Once**, on the selected checkpoint, after settings are locked. No re-selection after seeing test output |
 | Uncertainty | **Paired cluster bootstrap**, 10,000 replicates, bootstrap seed **20260905** |
 | Cluster unit | Scene / room group (`sequence_id`); all questions of a sampled group travel together |
 | Aggregation inside bootstrap | The **full macro metric is recomputed inside each draw** — never averaged from per-question intervals |
-| Seed variation | Reported **separately** from evaluation-set uncertainty; a test bootstrap alone does not estimate retraining variability |
-| Joint estimate | Hierarchical bootstrap over seeds × scene groups, explicitly labeled; interpreted cautiously with only three seeds |
+| Seed variation | **Not estimated** under the single-seed policy. The paired cluster bootstrap covers evaluation-set uncertainty only — it does not estimate retraining variability, and must never be presented as though it does. This is a **declared manuscript limitation**, not an omission |
+| Joint estimate | **Withdrawn** with the single-seed policy — a hierarchical bootstrap over seeds × scene groups needs more than one seed. Scene-group bootstrap only |
 | Multiplicity | Holm correction across the §2.1 confirmatory family |
 | Reported quantity | **Confidence interval on the paired difference**, not two separate per-model intervals |
 
@@ -228,13 +228,54 @@ Phase 5 pilot produces measured throughput.
 | Bucket | Configuration-seeds | Gate |
 |---|---:|---|
 | Pilot (one seed): B3, B4, D3, D5, D6 | 5 | Runs on 16 GB now |
-| Confirmatory core: B3–B6, D1–D9 × 3 seeds | 39 | Needs locked teacher precision |
-| Cross-model replication | 9 | After primary recipe is selected |
+| Confirmatory core: B3–B6, D1–D9 × 1 seed (§5, 2026-09-07) | 13 | Needs locked teacher precision |
+| Cross-model replication | 9 → **recount pending** | After primary recipe is selected; composition of this 9 is not stated here, so its seed multiplier is unknown — recount before relying on it |
 | Screens (SmolVLM2, Florence-2, Gemma), one seed | 3 | Promote at most **one** compact student |
-| Required extra controls (question-only, corruption-augmented RGB) × 3 | 6 | |
+| Required extra controls (question-only, corruption-augmented RGB) × 1 seed | 2 | |
 
 This is a planning envelope, not a promise. D0 checkpoints are reused, not
 retrained; shared stage-one checkpoints are branched across compatible S2 rows.
+
+**Re-estimated from measured throughput, 2026-09-06** (§7.1 asks for this once
+Phase 5 profiling exists; it now does — §13.1 point 2, Gate G4):
+
+- A single-stage row (B3/B4/B5-shaped: one CE or CE+KD training pass, batch-4,
+  no gradient checkpointing, plus one val-split eval) measures **~24.3 minutes**
+  end to end (21.1 min train + 3.2 min eval; `pilot_findings.md` §10.2).
+- A two-stage row (F→S2 or P→S2: D3–D9) pays that cost roughly twice, since
+  stage one is a separate training pass before S2 begins — **~45–50 minutes**,
+  before accounting for D0's shared/reused checkpoints reducing the count of
+  stage-one passes actually needed.
+- Teacher cache generation is a one-time cost, not per-row: **~34 minutes** for
+  the full 15,278-row train split at the measured 7.53 ex/s (§13.1 point 2),
+  amortized across every KD row that reads from it.
+**Superseded 2026-09-07 — the two bullets above measured *one-epoch* rows.**
+Under §7.3's 10-epoch/patience-2 policy a row trains for as many epochs as its
+own validation curve earns, and the measured cost rose by roughly 5–9x:
+
+| Row (seed 17, measured) | Epochs run | Train | + eval |
+|---|---:|---:|---:|
+| B3 depth CE | 5 | 127.6 min | ~131 min |
+| B3 depth CE (seed 42) | 5 | 123.0 min | ~126 min |
+| X2 depth CE+X-Token KD | 6 | 149.8 min | ~153 min |
+| B5 rgb CE | 9 | 216.9 min | ~220 min |
+
+- A single-stage row now measures **~2.1–3.7 hours** end to end, against the
+  ~24.3 minutes estimated from one-epoch profiling. KD's own per-step overhead
+  remains small (10.2 vs 12.3 ex/s, ~17%); the epoch count dominates it.
+- A two-stage row (F→S2, D3–D9) pays that roughly twice: **~4–7 hours**.
+- At these rates the revised **32 configuration-seeds** (pilot 5 + confirmatory
+  core 13 + cross-model 9 + screens 3 + controls 2) come to roughly
+  **80–110 GPU-hours** sequential — about **3.5–4.5 days** of continuous
+  compute, not counting the one-time cache.
+- This re-estimate is the direct reason the seed set was cut to one (§5,
+  2026-09-07): at three seeds the same ladder would have been 10–14 days of
+  uninterrupted single-card compute, which was never affordable alongside the
+  still-unbuilt LoCa and feature-alignment stages. This is a planning number,
+  not a promise
+  (expected small; not yet measured — the cached-teacher KD loss reads a
+  top-K array off disk rather than running a live teacher forward pass, so the
+  dominant cost stays the student's own forward+backward, same as CE).
 
 ### 7.2 Tuning budget
 
@@ -245,18 +286,26 @@ run. Failed trials are archived with the reason for stopping.
 
 ### 7.3 Early stop and drop criteria
 
-- **Stage-two stop:** up to 5 epochs; stop when validation macro accuracy fails to
-  improve over 2 consecutive evaluation points. Every compared row gets **equal
-  checkpoint-evaluation opportunities**.
+- **Stage-two stop:** up to **10 epochs** (raised from 5, author decision,
+  2026-09-06 — see §13); stop when validation macro accuracy fails to improve
+  over 2 consecutive evaluation points (patience unchanged). Every compared row
+  gets **equal checkpoint-evaluation opportunities**: both `train_student.py`
+  (CE) and `train_kd.py` (KD) validate on the full val split at the end of
+  every epoch, through the same `evaluate.score_predictions` path every
+  reported number in this project goes through — never on the training loss,
+  which is not comparable across CE and KD by §4's own fairness rule. The
+  checkpoint kept is the epoch with the best validation macro seen, not
+  whichever epoch triggered the patience stop (`distillation/epoch_loop.py`,
+  `EarlyStopper`).
 - **Numerical failure** (loss NaN/inf, 0% task accuracy, gradient explosion) is an
   implementation defect to diagnose — **never** reported as a research finding
   about the method. Cf. the historical all-zero KD tables (`NEW_SUBMISSION.md` §4.1).
 - **Drop an optional experiment** when: its compatibility gate (§8.1.1) fails; its
   CE baseline is not usable; or its measured cost exceeds the remaining budget.
   Dropping is recorded in §13 with the reason — silent omission is prohibited.
-- **Scope reduction under pressure** is transparent: keep three seeds for the
-  primary CE-vs-KD claim, demote secondary ablations to one seed **labeled
-  exploratory**, and delete the claims they no longer support.
+- **Scope reduction under pressure** is transparent: state the reduction in §13 and
+  delete the claims it no longer supports. As of 2026-09-07 every row runs at a
+  single seed (§5), so the reduction available here is over *rows*, not seeds.
 
 ---
 
@@ -278,7 +327,7 @@ teacher-forcing context during distillation.
 | D0 | F checkpoint before S2 | depth | – | – | – | – | ✅ |
 | D1 | S2: CE + raw KD | depth | ✅ | – | ✅ | ✅ | – |
 | D2 | S2: CE + LoCa KD | depth | ✅ | ✅ | ✅ | ✅ | – |
-| D3 | F → S2: CE only | depth | ✅ (S2) | – | – | – | ✅ (F) |
+| D3 | F → S2: CE only **(not run — §13, 2026-09-07)** | depth | ✅ (S2) | – | – | – | ✅ (F) |
 | D4 | F → S2: CE + raw KD | depth | ✅ | – | ✅ | ✅ | ✅ |
 | D5 | F → S2: CE + LoCa KD | depth | ✅ | ✅ | ✅ | ✅ | ✅ |
 | D6 | P → S2: CE + LoCa KD *(intended recipe)* | depth | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -318,15 +367,23 @@ annotation-free.
 
 ### 8.3 Frozen prompt and decoding contract
 
-Identical for every model, embedded in each model's **native** chat template:
+Identical for every model, embedded in each model's **native** chat template.
+**Frozen as the `terse` style** (amended 2026-09-06, §13):
 
 ```
-Answer with only the short answer: yes, no, left, right, or the object name,
-as appropriate. Use no explanation.
+Answer in one or two words. No explanation.
 ```
 
 This **replaces** the legacy "single word or number" instruction, which conflicts
-with legitimate multiword answers such as "tissue box".
+with legitimate multiword answers such as "tissue box". It also supersedes an
+earlier draft of this section that named a longer, answer-space-enumerating
+prompt (`"...yes, no, left, right, or the object name..."`) — that text was never
+actually run; every measured number to date (B1–B5, teacher screens, Gemma QAT
+screen, all of §13's amendments) used `terse`, and enumerating the answer space
+in-prompt would leak task structure a real deployment does not have. `terse` is
+what both `distillation/train_student.py` and `evaluation/zero_shot_inference.py`
+render, and it is what the enable_thinking template fix (§13, 2026-09-06) was
+validated against.
 
 `do_sample=False` · `max_new_tokens=16` · standard EOS · no repetition penalty ·
 no n-gram restriction · no sampling temperature argument where the API ignores or
@@ -365,7 +422,36 @@ All checkpoints resolve and are genuinely multimodal (`image-text-to-text`).
 | Screen student | `HuggingFaceTB/SmolVLM2-500M-Video-Instruct` | 0.51 B | `SmolVLMForConditionalGeneration` |
 | Screen student | `microsoft/Florence-2-large` | 0.78 B | `Florence2ForConditionalGeneration` |
 | Screen teacher | `google/gemma-4-12B-it` | 11.96 B | `Gemma4UnifiedForConditionalGeneration` |
+| Historical teacher | `llava-hf/llava-onevision-qwen2-7b-ov-hf` | ~8 B | `LlavaOnevisionForConditionalGeneration` |
+| Historical student | `llava-hf/llava-onevision-qwen2-0.5b-ov-hf` | ~0.9 B | `LlavaOnevisionForConditionalGeneration` |
 | Deferred | `Gemma 4 12B → MiniCPM-V-4.6` | — | Not started for this submission |
+
+The historical pair is the exact teacher/student checkpoint IDs hardcoded in the
+thesis-era training and eval scripts (`distillation/knowledge_distillation7b_*/*/train_online_kd.py:76-78`,
+`inference/inference_utils.py:24-26`, `evaluation/onevisionv3/evaluate_onevision.py:41-43`
+— all consistent; the `lmms-lab/llava-onevision-qwen2-7b-ov` ID appears only in one
+retired, non-hardcoded datamodule variant and was not used by the actual training runs).
+It gets zero-shot depth and RGB reference runs plus one matched depth-CE fine-tune,
+in the same shape as B1/B2/B3, scored on frozen v2.4 with the repaired evaluator.
+It is a historical-reproduction control, not a portfolio competitor: never
+promoted to a 3-seed row, never placed in the main comparison table.
+
+**Historical recipe IDs** (mirror B1/B2/B3/T1/T2 exactly, same val split, same
+frozen v2.4 release, same repaired evaluator, `terse` prompt style since §9.5 of
+`pilot_findings.md` already settled that wording for this evaluator/model-size
+range):
+
+| Recipe | Model | Modality | Training | Mirrors |
+|---|---|---|---|---|
+| `H-T1` | `llava-hf/llava-onevision-qwen2-7b-ov-hf` | depth | none, zero-shot | `T1` |
+| `H-T2` | `llava-hf/llava-onevision-qwen2-7b-ov-hf` | rgb | none, zero-shot | `T2` |
+| `H-B1` | `llava-hf/llava-onevision-qwen2-0.5b-ov-hf` | depth | none, zero-shot | `B1` |
+| `H-B2` | `llava-hf/llava-onevision-qwen2-0.5b-ov-hf` | rgb | none, zero-shot | `B2` |
+| `H-B3` | `llava-hf/llava-onevision-qwen2-0.5b-ov-hf` | depth | LoRA r16, lr 1e-5, 1 epoch, seed 17 | `B3` |
+
+All five are PILOT rows under the same §9.5 Option A rule as everything else on
+this machine: never promoted into a confirmatory or main table without a
+fair-tuning-budget re-run under the §5 seed policy and the §7.3 epoch policy.
 
 Note: Qwen3.5 is natively multimodal — there is no separate `-VL` suffix, and
 `Qwen/Qwen3.5-9B` / `-0.8B` are the correct vision-capable checkpoints.
@@ -521,29 +607,36 @@ once per revision pair and reused across every run of that pair.
 
 | Gate | Condition | Status |
 |---|---|---|
-| G1 dataset | v2.4 hash verification passes; five-type contract frozen; construction claims trace to release artifacts | ✅ verification passed 2026-09-05; `dataset_protocol.md` outstanding |
-| G2 evaluator | Edge cases verified; random baseline fixed; ID integrity locked | ❌ **open** — defect confirmed at `evaluate.py:189` |
-| G3 training | Tested losses, correct masks/alignment, valid contrastive candidates, depth-only inference | ❌ open |
-| G4 resources | Pilot + resume fit the actual GPU with measured throughput | ❌ open — 16 GB, see §9.5 |
+| G1 dataset | v2.4 hash verification passes; five-type contract frozen; construction claims trace to release artifacts | ✅ verification passed 2026-09-05; re-verified on the 4090 server 2026-09-05 (drift only in gitignored `data/index/`, resolved by re-running `build_index.py`); `dataset_protocol.md` outstanding |
+| G2 evaluator | Edge cases verified; random baseline fixed; ID integrity locked | ✅ **fix confirmed in code and by re-run** — `evaluate.py`'s `parse_answer_space(...) or open_vocabulary` no longer collapses to `"nan"`; `python -m pytest tests/ -q` passes (172 passed, 3 skipped) and `evaluate.py --baselines-only --split val` reproduces sane per-type baselines on the 4090 server, 2026-09-05. Formal sign-off against every §6.2 edge case in `NEW_SUBMISSION.md` still pending an explicit review pass |
+| G3 training | Tested losses, correct masks/alignment, valid contrastive candidates, depth-only inference | 🟡 **partially closed** — `tests/test_losses.py`, `test_xtoken.py`, `test_depth_input.py`, `test_inference_isolation.py` (synthetic-tensor unit tests) pass on the 4090 server, 2026-09-05. Still open: the 32-example overfit smoke test and cached-vs-live teacher agreement check against real checkpoints (blocked on model downloads completing) |
+| G4 resources | Pilot + resume fit the actual GPU with measured throughput | ✅ **closed 2026-09-06** — teacher cache generation measured 20.61 GB peak / 7.53 ex/s on real batch-4 depth-substitution batches (§13.1 point 2); student CE training measured 12.84 ex/s at batch-4 without gradient checkpointing (`pilot_findings.md` §10); both fit the 4090 with headroom above the §9.4 ≈2 GB target |
 | G5 central benefit | Three-seed KD gain over strongest matched CE with paired uncertainty | ❌ open |
 | G6 component rationale | Each retained component beats its simpler alternative | ❌ open |
 | G7 generalization | Independent scenes + second-family evidence support the stated scope | ❌ open |
 | G8 submission readiness | Every major claim has a verified artifact | ❌ open |
 
-### 11.1 Known blocking defect (Phase 3)
+### 11.1 Known blocking defect (Phase 3) — RESOLVED 2026-09-05
 
-`evaluate.py:189` computes `str(row["answer_space"] or "")`. For open-vocabulary
+~~`evaluate.py:189` computes `str(row["answer_space"] or "")`. For open-vocabulary
 types `answer_space` is `NaN`, and **`NaN` is truthy in Python**, so the `or ""`
 fallback never fires. `str(nan)` → `"nan"` → `options == ["nan"]`, and the
 `open_vocabulary` fallback on line 191 is unreachable. Every open-vocabulary row
-"predicts" the literal string `nan`.
+"predicts" the literal string `nan`.~~
 
-Observed consequence in the current baseline output: `identify_superlative`
+~~Observed consequence in the current baseline output: `identify_superlative`
 random = **0.0%**, `nearest_object` random = **0.0%**. Correct NaN handling
-already exists nine lines earlier in `snap_to_answer_space` (line 105).
+already exists nine lines earlier in `snap_to_answer_space` (line 105).~~
 
-**Fixing this will move the published 30.2% random macro figure.** No comparative
-result may be reported until G2 closes.
+~~**Fixing this will move the published 30.2% random macro figure.** No comparative
+result may be reported until G2 closes.~~
+
+**Fixed and verified 2026-09-05** (§11 G2 row): `parse_answer_space(...) or
+open_vocabulary` no longer collapses to `"nan"`; `identify_superlative` and
+`nearest_object` no longer read 0.0% random. This subsection is kept for the
+historical record of the defect, not as a live blocker — see §11 G2 (✅) for
+current status. Every comparative number reported after 2026-09-05 already
+reflects the fix.
 
 ---
 
@@ -576,19 +669,77 @@ confirmatory test result is observed must state what was already seen.
 | 2026-09-05 | — | Initial version | Phase 1 of `NEW_SUBMISSION.md` §19 | No |
 | 2026-09-05 | §9.5 | Teacher precision resolved to **Option A** | Author decision; 4090 temporarily unavailable but expected back | No |
 | 2026-09-05 | §9.3, §10 | Cross-tokenizer distillation (X-Token) adopted. Soft KD is X-Token P-KL for every pair; candidate KD demoted to common reference; token-level KD demoted to an exactness check on the identical-tokenizer pair. Tokenizer compatibility removed as a model-selection criterion. Sequence-level and hybrid modes added, with X0–X5 rows to earn the objective against them. Manifests must record distillation mode, both tokenizer revisions, mapping hash, and K | Author decision, specified in `NEW_SUBMISSION.md` §7.2.1. Teacher choice should follow capability and student choice deployment constraints; tokenizer compatibility should not restrict the experimental grid | No |
+| 2026-09-05 | §9.2 | Added the thesis/rejected-submission OneVision pair (`llava-hf/llava-onevision-qwen2-7b-ov-hf` teacher, `llava-hf/llava-onevision-qwen2-0.5b-ov-hf` student) to the portfolio as a **historical-reproduction row**: zero-shot depth/RGB references plus one matched depth-CE fine-tune, scored on frozen v2.4 with the repaired evaluator, in the same shape as B1/B2/B3. Never a headline result and never promoted to 3 seeds — its purpose is to separate what changed because of the new dataset/evaluator from what changed because of the new model portfolio | Author request, to see how the exact old model/recipe performs once the dataset and scoring defects are fixed | No |
+| 2026-09-05 | §9.1, §11, §14 | **4090 is back, ahead of the 2026-09-06/07 estimate.** Fresh server: environment rebuilt from scratch (`.venv-models`: torch 2.14.0+cu126, transformers 5.16.1, accelerate/peft/bitsandbytes/etc.), `python -m pytest tests/ dataset/dataset_creation/v2/tests -q` re-run clean (172 passed, 3 skipped, 0 failed) confirming **G2 holds on this machine** — `evaluate.py --baselines-only --split val` reproduces sane open-vocabulary baselines (macro chance 30.3% / random 29.9% / majority 33.5% / question-only 33.7%; no more 0.0% on `identify_superlative`/`nearest_object`), matching `pilot_findings.md` §8's account of the fix. G1 re-verified: `freeze_release.py --verify v2.4` reported drift only in `data/index/` (expected — gitignored P0 output per `SERVER_SETUP.md`), resolved by re-running `build_index.py`; release CSVs and row counts untouched. `export_v1_schema.py` regenerated the v1-schema CSVs with the documented row counts. Full Qwen3.5-9B/0.8B, InternVL3.5-1B/8B, SmolVLM2-500M, Florence-2-large, and Gemma-4-12B-it portfolio download in progress (all seven checkpoints confirmed public/ungated on HF, no token needed). SUN RGB-D raw imagery archive was found truncated on this server (partial download, no EOCD) and is being re-fetched. | Author moved to the 4090 server; environment, dataset, and evaluator needed to be re-established from a bare machine | No |
+| 2026-09-06 | G1, `freeze_release.py` | **Fixed the recurring `data/index/` false alarm rather than re-running around it a second time.** A second, unplanned server restart rebuilt `scene_index.jsonl` under a different numpy/scipy stack and `--verify v2.4` flagged drift again — the same symptom the 2026-09-05 row called "expected" and "resolved," which this shows was not durable. Investigated instead of assumed: the rebuild's P0 drop decisions matched the frozen release's `stats/drops.csv` `p0_drops` rows exactly (11,235/11,235, 0 differences), and `index/manifest.json`'s canonical hash (config, seed 42, toolbox checksums, per-type counts) was unaffected — so the content this file's freeze exists to pin was unchanged; only float-precision noise in per-object geometry/depth fields (`area_frac`, `centroid_x/y`, `depth_median_m`, `depth_valid_frac`) was not, because those are computed from numpy/scipy arithmetic whose last bits shift with the numeric stack. This is `_sha256_of_manifest`'s `built_at_utc` problem one level down, so it gets the same fix: `freeze_release.py`'s `sha256_of()` now canonicalises `scene_index.jsonl` (round floats to 6 dp — several orders below every P0/P2 threshold this pipeline acts on, e.g. `min_area_frac=0.005`, `min_valid_fraction=0.3` — sort keys, preserve record order, since `build_index.py` iterates the toolbox `.mat` deterministically with no `set()`/`glob`/multiprocessing and a reordering would be real content) before hashing, rather than hashing raw bytes. `FROZEN_v2.4.json`'s recorded hash for this file is updated to the canonical value under a new `corrections` entry inside that manifest (dated, with the old hash and the reasoning above) rather than silently overwritten — "immutable once frozen" (§10) means the release content, not a verification-tool bug discovered after the fact; this is the same class of correction as the G2 evaluator fix, applied to a checksum instead of a metric. `--verify v2.4` now passes clean, and a negative control (mutating one record's `raw_name`) confirmed genuine content drift is still caught. 6 new tests pin the behaviour (`tests/test_freeze_release.py`); full suite 175 passed. | Author asked what the best fix was after the false alarm recurred; re-running `build_index.py` again would only postpone the next recurrence | Yes — verify clean before and after, negative control still fails, full suite green |
+| 2026-09-06 | §7.3 | **Implemented the epoch/early-stop policy §7.3 always declared but neither training script ever ran.** Every CE and KD run to this point (B3, B5, X2) trained a fixed single epoch — the scripts' own CLI default, never checked against validation performance, and not what §7.3 specifies (up to 5 epochs, stop after 2 non-improving evaluation points). Author raised the cap to **10 epochs** for this run, patience unchanged at 2. `distillation/epoch_loop.py` (new, 8 tests) is shared by both scripts so "equal checkpoint-evaluation opportunities" is enforced by construction rather than by convention: both validate on the **full** val split at the end of every epoch through the exact `evaluate.score_predictions` path every reported number in this project already goes through — not the training loss, which §4 already forbids using to compare CE and KD. The kept checkpoint is the best-scoring epoch, not whichever epoch triggered the stop; `EarlyStopper`'s tests specifically cover the case where accuracy peaks then declines for `patience` epochs, since that is the case a naive implementation gets wrong silently. Full suite 183 passed before the first multi-epoch run was launched. | Author asked whether the fixed-epoch runs so far were even necessary to run at full 3-seed rigor before checking whether more training changes the picture; single-epoch training had never been validated against §7.3's own stopping rule | No — declared and implemented before any multi-epoch result was seen |
+
+| 2026-09-07 | §5, §7.3 | **Confirmatory seed set reduced from three (17, 42, 2026) to a single seed (17)** for every row, at author instruction ("we are over engineering with the seed thing, we should just pick one seed and continue with all our experiments with that seed"). What this buys: roughly 3x the rows per unit of GPU time — a matched B3/X2 pair costs ~4.6 h, so three seeds of the ladder was never affordable alongside the unbuilt LoCa and feature-alignment stages. What it costs, stated plainly: **retraining variability is no longer estimated at all.** The paired cluster bootstrap over scene groups still yields an interval, but it is an evaluation-set interval; §5's own row already warned that "a test bootstrap alone does not estimate retraining variability," and that warning now has no counterpart measurement to sit beside. §5's Joint-estimate row (hierarchical bootstrap over seeds x scene groups) is withdrawn as unsatisfiable. The manuscript must carry this as an explicit limitation. One empirical anchor survives and should be reported rather than buried: B3 depth CE was run twice under the multi-epoch policy before this decision, seed 17 = 44.9% and seed 42 = 44.0% val macro, a **0.9-point spread from seed alone** — larger than the 0.5-point CE-vs-KD gap measured at seed 17. That single observation is why sub-point differences in this study are not interpretable at one seed, and it does not go away by having stopped measuring it. It does not block the primary claim, because §5.1's threshold is a **>= 2-point** gain: a 0.5-point gap fails that threshold at any seed count, so seed replication could not have rescued it. The seed-42 row (`20260907-none2qw08b-B3-s42-594b204b`) stays recorded in `runs/INDEX.md` — §7.3 prohibits silent omission — and is cited as this spread estimate, not as a second seed of a two-seed design. | Author instruction, on the grounds that three-seed replication was over-engineering for this study's stage | **Yes — and this is an amendment made after seeing results, so per this section's own rule, exactly what was seen: validation macro for B3 s17 44.9%, B3 s42 44.0%, X2 s17 44.4%, B5 s17 62.2%, all under the 10-epoch/patience-2 policy. No test-split result has been observed; the test split remains untouched** |
+
+| 2026-09-07 | §9.3, §8.2, §9.2 | **Feature-alignment path built, and the declared feature layer fixed: `visual.pooler_output` (the post-merger vision sequence, in language-model space).** Three candidates existed; the choice is recorded because §12 makes `feature_layer` part of a row's identity. Pre-merger `last_hidden_state` (student 768 / teacher 1152) is the closest analogue of the legacy `vision_tower.vision_model.post_layernorm` hook, but Qwen3.5 has no `post_layernorm`; a language hidden state was rejected because it mixes question text into a supposedly visual feature and would make the cache prompt-dependent. `pooler_output` was chosen as the representation the language model actually consumes, and because its width equals each model's text hidden size. Verified equal to a forward hook on `visual.merger` on the real 0.8B. Pooling is a float32 mean over each image's own merged tokens, then L2 normalisation; the packed `[sum_i tokens_i, D]` layout is split with `image_grid_thw` and the split is checked against the tensor, because a wrong split silently averages one image's patches into another's feature. Widths differ (1024 vs 4096) and both feature losses require equal widths, so a **bias-free linear alignment head** maps student -> teacher; it is applied to the student side only (a learnable map on the target could lower the loss by degrading the target) and is not part of §6's deployable student. Teacher features are cached **per image, not per row** — 4,187 distinct images behind 15,278 train rows — and the cache is **prompt-independent** (no chat template is rendered, so `prompt_hash` is deliberately null and the §10.4 `<think>` defect could not have affected it). Measured: 4,187 images in **1.4 min at 49.7 img/s, 31.85 MB, 19.44 GB peak**, digest `683d9c59eac4a6d9`. The contrastive negative bank implements the audit's B4 requirement — 255 negatives drawn from 255 **distinct scenes**, excluding every sequence present in the batch (109 of this split's 3,231 sequences hold more than one image, one holds 52, so a different image of the same room would be a false negative), with the distinct-scene count logged per step and an all-neighbour candidate set made a hard error. **D0's trainable surface corrected from `language_attention` to `vision_attention`.** As declared, D0 trained **zero student parameters**: a pooled vision feature loss has no gradient path to language attention, measured 0 of 48 LoRA tensors receiving gradient with only the alignment head updating — it would have logged a falling loss and saved a checkpoint behaviourally identical to the base model, the same class of silent no-op as the audit's B4 finding. §8.2's stage-F definition is what the corrected surface declares. LoRA surfaces are now anchored **regexes over fully-qualified module names** rather than suffix lists, because PEFT matches list entries with `endswith` and the vision blocks' attention output is named `proj`, which `q_proj`/`k_proj`/`v_proj`/`o_proj` all end with — a list would have silently wrapped language attention while the row reported itself vision-only. Verified the new language regex selects the **identical 24 modules** the old suffix list did, so X2's completed run stays reproducible, and the vision regex selects 24 vision modules with zero language leakage. Stage-F smoke test on real data: loss starts at the ln(256) = 5.545 chance floor and falls monotonically to **4.98** over 175 steps at 56 ex/s and **3.91 GB** peak — far cheaper than a CE/KD row's 14.5 GB, because a pure stage-F row never runs the language model. 29 new tests (`tests/test_features.py`), full suite 224 passed. | Author asked for the feature-alignment path to be built, it being the remaining honest test of the KD premise after X2 failed to beat CE | Partly — the §10.2 val results (B3 44.9%, X2 44.4%, B5 62.2%) were already known and motivated this work, but **no feature-row result exists**: the only numbers seen from this path are the smoke-test loss trajectory above, on 3,000 train rows with an 8-row val limit, which selects nothing |
+
+| 2026-09-07 | §8.2, §9.2, §7.3 | **Two-stage rows (D3/D5/D8) implemented as F -> S2, resolving §13.1 point 5 in favour of option (a).** The reading was already in the protocol: §7.1 describes D3–D9 as two-stage rows where "stage one is a separate training pass before S2 begins", and §8.2 defines S2 as vision-frozen — so a row's feature objective belongs to its F stage, which is also the author's own two-phase method. The alternative (joint single-pass with a vision surface in S2) was rejected because it contradicts §8.2's S2 definition. **The stages are derived from the declared row, not added as new library rows**: `RecipeConfig.stage_one()` returns the row's feature objective on a `vision_attention` surface with no CE/KD, and `stage_two(parent)` returns its answer objectives with `feature_objective` cleared and `parent_checkpoint` set. So `D8` remains one id meaning "CE + X-Token + LoCa + cosine alignment" in the §9.2 matrix, D5 and D8 stay distinguishable by their stage-one objective (contrastive vs cosine), and — deliberately — **no field was added to `RecipeConfig`**, because `record_run.build_configuration` folds `resolved()` into the run-id hash and a new field would have silently orphaned X2's completed run id. Stage one's LoRA is **merged into the base weights** before stage two attaches its own (`merge_and_unload`), so §8.2's vision freeze is structural rather than a flag that can be forgotten, and PEFT never holds two adapters with only one trainable. **CORRECTED same day, on author challenge — the original text of this row claimed a stage-F row "cannot answer a question and has no validation macro," which is wrong.** It scored 0.06% only because `--val-limit 8` was set and `score_val_macro` scores whatever it is handed against the **whole** 1,720-row gold split, so 8 predictions read as 8/1720; the same artifact had already produced a spurious 7.1% in an earlier `--limit 300` run. Measured at full coverage, the stage-F checkpoint answers all 1,720 rows and scores **34.3%**, directly comparable to B1's **36.18%** zero-shot depth (same language model, unaligned vision), against a 30.3% chance floor and a 33.7% question-only baseline. The vision-alignment stage therefore **does** score the full val split every epoch, and the curve is recorded in `val_history`, which is what allows the alignment budget to be chosen from evidence rather than guessed. It still does not *select* the checkpoint, for a reason that survives the correction: the number measures how legible the shifted vision is to a language model that has **not** adapted to it, which can diverge from how good a starting point that shift is once S2 adapts — and the first measurement is consistent with that caution, coming in 1.9 points *below* unaligned zero-shot after a deliberately under-trained 400-row pass. So stage F runs a declared budget (`--alignment-epochs`, default 3), keeps its **last** epoch, and additionally reports `best_reading_epoch` as evidence; `resource_usage.json` records `patience: null` and `stopped_on: "fixed_budget"`. The recurring coverage artifact is now guarded at source: `score_val_macro` announces partial coverage loudly and says the number must not be quoted (2 new tests). Naming also corrected on the same challenge: "F" is the §8.2 stage id and stays as the hashed identifier, but every human-facing name is now the **vision-alignment** stage (`--alignment-epochs`, `--alignment-learning-rate`, `--skip-alignment`, with the old `--f-*` spellings kept as aliases). A single-pass invocation of a two-stage row is refused with the two-stage instruction. Verified end to end on real data (D8, 400 rows): stage F cosine loss 0.985 -> 0.877 at 53 ex/s and 3.90 GB, then stage S2 merged that adapter, froze vision, and trained CE 1.71 -> 1.40 with X-Token KD 3.01 -> 1.96 at 11.5 ex/s and 13.74 GB. **This also closes the deferred LoCa GPU smoke test** — the LoCa path ran for the first time on a real GPU and reported `loca_gold_found_rate 1.0000`, i.e. gold was present in the cached top-K at every supervised position, so no row was dropped from calibration. 7 new tests, full suite 235 passed. | Author sign-off on the recommended option, to build the F->S2 chaining | Yes, in the same sense as the rows above: §10.2's val results were known, but **no two-stage row result exists** — the only numbers seen from this path are the 400-row smoke-test loss trajectories above, which select nothing |
+
+| 2026-09-07 | §8.2, §9.2 | **Vision alignment (stage F) also trains the merger, not just vision-tower attention** — author decision. The merger (`visual.merger.linear_fc1`/`linear_fc2`) is the model's own vision->language projector: leaving it fixed caps how much the alignment loss can reshape the vision->language interface itself, versus only reshaping what happens upstream of it. Verified before adding it: every one of the 12 vision blocks' MLPs is *also* leaf-named `linear_fc1`/`linear_fc2`, identical to the merger's, so the new `vision_merger` LoRA target is anchored on `visual.merger` specifically rather than the leaf name — a suffix-style match would have silently trained all 12 block MLPs alongside the one merger asked for, the same collision class `o_proj`/`proj` already was for vision vs language attention. Checked on the real model: the regex selects exactly the 2 merger modules, none of the 12 block MLPs, and composes with `vision_attention` to select all 26 as expected. `stage_one()` and D0's declared surface both updated to `("vision_attention", "vision_merger")`. This changes nothing about how stage F is read: it is still not required to beat CE on its own (§13, 2026-09-07 amendment above), and the frozen-LM val number it reports is still diagnostic, not a selection criterion — only the trainable surface changed, which affects what a downstream S2 stage inherits. A merger-enabled contrastive alignment run is queued (`align_curve_contrastive_merger_s17`) for comparison against the vision-attention-only curve already recorded. 1 new test, full suite 238 passed. | Author decision, on the reasoning that the merger is a learnable projector rather than part of the frozen pretrained decoder and should not be exempt from alignment | No — queued but not yet run at time of writing |
+| 2026-09-07 | §8.2, §9.2 | **Merger-trainable vision alignment measured and rejected.** The queued run from the row above (`align_curve_contrastive_merger_s17`, `("vision_attention","vision_merger")` surface) completed: full-val reading curve **25.84 / 24.27 / 23.68 / 22.86 / 22.92%**, monotonically declining after epoch 0 and **below the 30.3% chance floor at every epoch** — worse than doing nothing. This is the opposite outcome from the attention-only curve trained the same way (34.48–35.40%, §12 of `pilot_findings.md`), which stays well above chance throughout. Reading, not selecting (§13's coverage-fix amendment above still applies), so this does not itself rule the surface out for S2 — but it is consistent with a plausible mechanism: the merger is the fixed interface the frozen language model has already learned to read, and perturbing it moves the language model further from a representation it was never asked to adapt to, rather than closer to one it was. **No S2 stage was chained onto this checkpoint.** D5 (§12 of `pilot_findings.md`) uses the attention-only checkpoint (`align_curve_contrastive_s17`), not this one. | Measured; no author decision needed beyond noting the result | Yes — the curve above is exactly what was seen |
+| 2026-09-07 | §8, §10.2 | **D5 run and scored: 50.13% val macro, the first row in this study to beat CE and to clear §5.1's ≥2-point bar** (B3 44.9%, X2 44.4%, D5 50.13% — +5.2 / +5.7 points, seed 17, matched 10-epoch/patience-2 policy, matched LoRA rank). Stage F used the attention-only alignment checkpoint from the 2026-09-07 row above (`align_curve_contrastive_s17`, `best_reading_epoch=1`, 35.40% full-val reading), not the merger-trainable one, which the same-day row above rejected. Full curve and setup recorded in `pilot_findings.md` §12. **Author decision, same day: D3 (row 8's CE-only-on-aligned-vision case) will not be run.** D3 exists in §8's table to attribute D5's gain between stage F (vision alignment) and stage S2 (answer-distribution KD); the author's instruction is that the manuscript should present the two-stage pipeline as a single knowledge-distillation method rather than decompose it — stage F transfers the teacher's visual-feature structure into the student, which is distillation under this protocol's own §1 framing, so it is not treated as a separate, non-KD ingredient that needs isolating. Consequence stated plainly: the manuscript can report that the *combined* two-stage method beats CE by 5.2 points, but cannot say how much of that is attributable to alignment versus to KD proper. §8's D3 row is left in the table as a label-access definition (for anyone who later chooses to run it) but is marked not-run in the note column. | Author instruction: "I want my paper to believe that that 5.2 is from KD and also the alignment part is also a kind of KD so it's no biggie" | Yes — the D5 result above was known when the decision not to run D3 was made |
+| 2026-09-07 | §8, §8.2, §13.1 pt 5 | **D4, D6, D7, D9 added to `recipe_library()`** — declared but not run. **D4** ("F -> S2: CE + raw KD") is D5 without LoCa: same contrastive stage-F alignment, `use_loca=False` in S2. **D7** ("Joint feature + CE + LoCa KD") is deliberately *not* routed through the F->S2 machinery: it declares `stage="joint"` with both `vision_attention` and `language_attention` trainable at once, so `is_two_stage()` (previously `feature_objective != "none"`) was changed to also require `stage != "joint"` — otherwise D7 would have been incorrectly forced through stage-F/stage-S2 chaining it never asked for. This is the §13.1 point 5 option-(b) shape, deliberately kept available as its own row rather than reopening that decision for D3/D5/D6/D8. **D6** ("P -> S2: CE + LoCa KD") needed real plumbing, not just a config entry: §8.2 defines **P** as stage one "as submitted" — feature alignment *plus* a small raw KD term, distinct from D5's clean feature-only F stage. A new `RecipeConfig.stage_one_p()` keeps `kd_objective` in place (`stage_one()` clears it) and forces `use_loca=False` (§8.2 calls P's KD term specifically *raw*, and D6's own S2 stage using LoCa does not change that). No new plumbing was needed in `compose_loss` — it already calls `adapter.student_logits` whenever `kd_objective` is set regardless of `stage`, so the KD term's gradient already flows back through the frozen language decoder into the trainable vision surface (frozen means no optimizer step for those parameters, not no backward pass through them) — the same mechanism that makes stage F's feature term reach vision parameters, extended to a second loss term. The "small" weight is not fixed by the protocol, so `--p-lambda-kd` (default 0.1) is an explicit, overridable author-facing choice rather than a measured one. `train_kd.py --stage` gained a `P` choice and `train_two_stage.py` now runs D6's stage one as P (into a `stage_P` directory) rather than F, passing it `--cache` and `--p-lambda-kd` since P — unlike F — needs the top-K logit cache. **D9** ("F -> S2: teacher-prefix raw KD only") is added at the config level only (`use_ce=False`, `use_loca=False`, `kd_objective="xtoken"`, `feature_objective="contrastive"`) — §8.1's strict label-access rule needs the gold answer column removed before the training/cache interface and replaced by a teacher-generated prefix, which needs a teacher-completion cache that does not exist yet (a new artifact, distinct from `build_teacher_cache.py`'s top-K logit cache) and a batch-builder path that consumes it. The config's `notes` field says `BLOCKED` so this cannot be mistaken for run-ready. 5 new tests (`tests/test_pipeline.py`): the matrix-coverage test now checks D3/D4/D6/D7/D9 too, plus dedicated tests for D7's `is_two_stage()==False`, D6's `stage_one_p()` (kd_objective preserved, `use_loca=False`, default and overridden `lambda_kd`), the refusal for a feature-only row with no `kd_objective`, and D9's declared shape. Full suite 277 passed (243 + 34 dataset tests). | Author instruction: "start on it" (add D4/D6/D7/D9 to `recipe_library()`), part of the GPU-task queue authorized the same session | No — none of the four rows has been run; this is config and orchestration only |
 
 ### 13.1 Open decisions awaiting author sign-off
 
 1. ~~**§9.5 teacher precision**~~ — **RESOLVED 2026-09-05: Option A.**
-2. ~~**Expected 4090 return date**~~ — **expected 2026-09-06 or 2026-09-07**
-   (author, 2026-09-05). Option B is therefore not needed: the confirmatory stage
-   is days away, not indefinite, so pilot caches stay pilot and confirmatory
-   caching waits for the 24 GB card at a single locked precision, exactly as
-   Option A specifies. Revisit only if the date slips materially.
+2. ~~**Expected 4090 return date**~~ — **RESOLVED: the 4090 is online as of 2026-09-05**,
+   ahead of the 2026-09-06/07 estimate. Per Option A, confirmatory teacher caching
+   and all three-seed runs now proceed on this card at a single locked precision.
+   Weight-only arithmetic (§9.4) suggested bf16 fits the 9B/8B teachers with headroom
+   (~19.3 GB / ~17.1 GB against 24 GB). **Single-example measurement, 2026-09-05:**
+   `Qwen/Qwen3.5-9B` loads bf16 (no quantization) and runs one generate() call on this
+   4090 at **18.93 GB peak allocated** (`enable_thinking=False` rendered correctly,
+   matching `pilot_findings.md` §7) — consistent with the arithmetic estimate and
+   leaving ~5 GB headroom. **RESOLVED 2026-09-06 — Gate G4 measurement taken:**
+   `distillation/build_teacher_cache.py` (real batch-4 RGB depth-substitution
+   batches, teacher-forced through the actual caching pipeline, top-K=4096
+   extraction included) measured **20.61 GB peak** and **7.53 examples/second**
+   sustained. This supersedes the single-call datapoint above with the Phase 5
+   profiling measurement §13.1 point 2 originally asked for. ~3.9 GB headroom
+   remains against the 24 GB card, above the §9.4 ≈2 GB target. **bf16 is
+   confirmed as the frozen confirmatory teacher precision**, not merely the
+   leading candidate. At 7.53 ex/s, caching the full 15,278-row train split is
+   ≈34 minutes, one-time.
 3. **Target venue** — deliberately unset; `NEW_SUBMISSION.md` §17 records that
    BMVC 2026 and WACV 2027 deadlines have passed. Choose after Gate G5.
 4. **Whether B6 (RGB-D reference) is retained** — it needs a two-image VLM input
    path and is a contextual baseline, not a matched competitor.
+
+5. ~~**D3/D5/D8 encode a decorative feature term**~~ — **RESOLVED 2026-09-07: option (a), two stages** (author sign-off). Implemented; see the §13 row of the same date. The original finding, kept because it is the reason the row shapes changed: measured,
+   not inferred: those three rows declare `stage="S2"` with a feature objective
+   and the default `("language_attention",)` surface. A pooled *vision* feature
+   loss has no gradient path to language attention, so their feature term
+   updates only the alignment head and **contributes nothing to the student** —
+   the same silent no-op that D0 had before its surface was corrected (0 of 48
+   LoRA tensors receiving gradient). Their CE and KD terms still train normally,
+   so the row would produce a plausible result while its distinguishing
+   ingredient did nothing. Two coherent resolutions, and the protocol already
+   points at one:
+
+   * **(a) Two-stage, recommended.** §7.1 already describes D3–D9 as two-stage
+     rows that "pay that cost roughly twice, since stage one is a separate
+     training pass before S2 begins," and §8.2 already says S2 freezes the
+     vision encoder. On that reading the feature objective belongs to each
+     row's **F stage** (which is what D0 is), and its S2 stage is CE/KD only,
+     started from the F checkpoint via `RecipeConfig.parent_checkpoint`. This
+     also matches the author's own two-phase method. It requires the F->S2
+     chaining orchestration, which is not built yet, and removing
+     `feature_objective` from the S2 configs.
+   * **(b) Joint, single-pass.** Give those rows
+     `("language_attention", "vision_attention")` and train the feature and
+     answer objectives together. This is a different method from the two-phase
+     one and contradicts §8.2's S2 definition ("vision encoder frozen"), so it
+     needs a §8.2 amendment rather than only a config change.
+
+   Nothing should run these three rows until this is settled: under (a) they are
+   two-stage rows whose current definition is wrong, and under (b) they need a
+   surface they do not currently declare. D0 is unaffected and is runnable now.
 
 ---
 

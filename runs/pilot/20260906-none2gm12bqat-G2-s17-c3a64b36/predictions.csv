@@ -1,0 +1,1721 @@
+question_id,prediction
+val_000000,"Yes, there are."
+val_000001,The picture frame.
+val_000002,The table.
+val_000003,Left
+val_000004,Chair
+val_000005,Bed
+val_000006,There is no curtain in this image.
+val_000007,A cabinet.
+val_000008,Left
+val_000009,Chair
+val_000010,Recycling sign
+val_000011,Table
+val_000012,The desk
+val_000013,The shelf.
+val_000014,Bread sticks
+val_000015,No.
+val_000016,Office chair
+val_000017,Left side.
+val_000018,The chairs.
+val_000019,The cloth.
+val_000020,White sofa
+val_000021,Left side.
+val_000022,Yellow chair
+val_000023,Chair
+val_000024,Left
+val_000025,The oven.
+val_000026,The table.
+val_000027,"Yes, a door."
+val_000028,The shelf.
+val_000029,Table
+val_000030,No.
+val_000031,The carpet.
+val_000032,To the left.
+val_000033,The clock.
+val_000034,"Yes, there are."
+val_000035,The picture.
+val_000036,Bar stool
+val_000037,Table
+val_000038,To the left.
+val_000039,Right side
+val_000040,Shelf
+val_000041,The desk.
+val_000042,Window
+val_000043,The board.
+val_000044,"Yes, there is."
+val_000045,Sofa
+val_000046,The window.
+val_000047,Dishwasher
+val_000048,The clothes.
+val_000049,Left
+val_000050,The sofa.
+val_000051,Bed frame
+val_000052,The headboard.
+val_000053,The pot.
+val_000054,Stool
+val_000055,Wall
+val_000056,The mirror.
+val_000057,The bed
+val_000058,The table.
+val_000059,Lockers
+val_000060,Sofa
+val_000061,The cabinet.
+val_000062,No.
+val_000063,"Yes, there is."
+val_000064,The light.
+val_000065,Right side.
+val_000066,Left side
+val_000067,"Yes, there are."
+val_000068,The mirror.
+val_000069,The table.
+val_000070,No.
+val_000071,No printer.
+val_000072,"Yes, there is."
+val_000073,Plaid chair
+val_000074,Left
+val_000075,White chair
+val_000076,No.
+val_000077,The stairs.
+val_000078,The monitor.
+val_000079,Left side.
+val_000080,The fan.
+val_000081,The table.
+val_000082,Desk
+val_000083,The desk
+val_000084,Right side
+val_000085,No.
+val_000086,"Yes, there is."
+val_000087,Blue chair
+val_000088,No.
+val_000089,The monitor.
+val_000090,Right side.
+val_000091,The box.
+val_000092,A booth.
+val_000093,Desk
+val_000094,No.
+val_000095,The paper.
+val_000096,The window.
+val_000097,"Yes, it is."
+val_000098,The floor.
+val_000099,No.
+val_000100,Left
+val_000101,The table
+val_000102,Left
+val_000103,Printer
+val_000104,"Yes, clothes."
+val_000105,Whiteboard
+val_000106,The bin.
+val_000107,The file cabinet.
+val_000108,Left side
+val_000109,Right side.
+val_000110,Left
+val_000111,Left side
+val_000112,The drawer
+val_000113,Right
+val_000114,Bookshelf
+val_000115,The bed.
+val_000116,The chair.
+val_000117,The microwave.
+val_000118,The mattress
+val_000119,The chair.
+val_000120,"Yes, there are."
+val_000121,"Yes, there are."
+val_000122,The table.
+val_000123,No.
+val_000124,No.
+val_000125,A chair.
+val_000126,Bed
+val_000127,A desk.
+val_000128,The door.
+val_000129,Trash can
+val_000130,Doorway
+val_000131,Dishwasher
+val_000132,"Yes, there are."
+val_000133,Left side
+val_000134,Right side.
+val_000135,No.
+val_000136,Television
+val_000137,"Yes, there are."
+val_000138,The screen.
+val_000139,Left side
+val_000140,"Yes, it does."
+val_000141,The mirror.
+val_000142,Right
+val_000143,White bag
+val_000144,No.
+val_000145,White desk
+val_000146,A bottle
+val_000147,Display rack
+val_000148,Table
+val_000149,"Yes, a person."
+val_000150,Trash can
+val_000151,The shelf.
+val_000152,The board.
+val_000153,Door handle
+val_000154,Left side.
+val_000155,The curtain.
+val_000156,Left side
+val_000157,The door
+val_000158,Grab bar
+val_000159,Right
+val_000160,Papers
+val_000161,The shelf.
+val_000162,No.
+val_000163,Right
+val_000164,The wall.
+val_000165,the sofa
+val_000166,Right
+val_000167,A box.
+val_000168,Left side.
+val_000169,No.
+val_000170,No.
+val_000171,Back wall
+val_000172,Buildings
+val_000173,No printer.
+val_000174,Desk
+val_000175,No.
+val_000176,The whiteboard.
+val_000177,A printer
+val_000178,"Yes, there are."
+val_000179,Table
+val_000180,The door
+val_000181,The stove.
+val_000182,The pillow.
+val_000183,"Yes, there is."
+val_000184,The chair.
+val_000185,The poster.
+val_000186,Armchair
+val_000187,Left
+val_000188,The window.
+val_000189,The cabinet.
+val_000190,Left side.
+val_000191,No.
+val_000192,Ottoman
+val_000193,"Yes, there is."
+val_000194,The screen.
+val_000195,The sign.
+val_000196,The teacher.
+val_000197,Wall
+val_000198,Blue bin
+val_000199,No.
+val_000200,"Yes, there are."
+val_000201,The desk is the table.
+val_000202,The mirror.
+val_000203,No.
+val_000204,The blanket.
+val_000205,"Yes, there are."
+val_000206,"Yes, it does."
+val_000207,The table.
+val_000208,"Yes, there is."
+val_000209,Doorway
+val_000210,Right side.
+val_000211,The monitor.
+val_000212,"Yes, whiteboard."
+val_000213,No.
+val_000214,Stool
+val_000215,The chairs.
+val_000216,Right side.
+val_000217,"Yes, there is."
+val_000218,No.
+val_000219,Blinds
+val_000220,"Yes, there is."
+val_000221,Right side
+val_000222,Chair
+val_000223,"Yes, there is."
+val_000224,Mouse
+val_000225,Left
+val_000226,Left side.
+val_000227,"Yes, there is."
+val_000228,The chair.
+val_000229,The chair.
+val_000230,The door.
+val_000231,Left
+val_000232,Monitor
+val_000233,Right side
+val_000234,The chair.
+val_000235,The door.
+val_000236,White table
+val_000237,Left side.
+val_000238,"Yes, it does."
+val_000239,No.
+val_000240,Neither side.
+val_000241,"Yes, there are."
+val_000242,Plant
+val_000243,Digital piano
+val_000244,Coffee table
+val_000245,A couch
+val_000246,"Yes, there are."
+val_000247,The whiteboard.
+val_000248,The counter.
+val_000249,A desk
+val_000250,A wall.
+val_000251,The desk.
+val_000252,No.
+val_000253,The flower.
+val_000254,Desk
+val_000255,The stroller.
+val_000256,Floor
+val_000257,No.
+val_000258,Right
+val_000259,Left
+val_000260,The table.
+val_000261,Trash can
+val_000262,File cabinet
+val_000263,A chair.
+val_000264,A bottle
+val_000265,Mini fridge
+val_000266,Left side.
+val_000267,Right
+val_000268,A door.
+val_000269,Black table
+val_000270,A refrigerator.
+val_000271,The chair.
+val_000272,The whiteboard.
+val_000273,No.
+val_000274,Bed
+val_000275,The pillow.
+val_000276,"Yes, it does."
+val_000277,Whiteboard
+val_000278,No.
+val_000279,Wall
+val_000280,Desk
+val_000281,Electrical panel
+val_000282,The window.
+val_000283,The table.
+val_000284,The sofa.
+val_000285,Right side.
+val_000286,The window.
+val_000287,Left side.
+val_000288,Right side
+val_000289,No.
+val_000290,The toilet.
+val_000291,The chair.
+val_000292,Right
+val_000293,No.
+val_000294,Coffee table
+val_000295,Kitchen island
+val_000296,The door.
+val_000297,the photo
+val_000298,No.
+val_000299,The file cabinet.
+val_000300,"Yes, there is."
+val_000301,The desk.
+val_000302,To the right.
+val_000303,Right
+val_000304,A chair.
+val_000305,The picture.
+val_000306,Exit sign
+val_000307,A bench
+val_000308,Right side.
+val_000309,"Yes, a door."
+val_000310,Left side
+val_000311,Right
+val_000312,The whiteboard.
+val_000313,The mirror.
+val_000314,The sofa.
+val_000315,Front seat
+val_000316,Microwave
+val_000317,Left side
+val_000318,The mat.
+val_000319,Left
+val_000320,A chair.
+val_000321,The computer.
+val_000322,The price tag.
+val_000323,Chair
+val_000324,"Yes, books."
+val_000325,The keyboard.
+val_000326,Right.
+val_000327,Red toolbox
+val_000328,No.
+val_000329,The chair.
+val_000330,Left
+val_000331,The white shelf.
+val_000332,Coffee table
+val_000333,A lamp
+val_000334,The table.
+val_000335,A desk.
+val_000336,Table
+val_000337,Left
+val_000338,No.
+val_000339,No.
+val_000340,"Yes, there are."
+val_000341,Desk
+val_000342,A wall.
+val_000343,Left
+val_000344,Right side
+val_000345,Left
+val_000346,The back wall.
+val_000347,Right side.
+val_000348,"Yes, it does."
+val_000349,Refrigerator
+val_000350,Sofa
+val_000351,No.
+val_000352,Right
+val_000353,No.
+val_000354,The poster.
+val_000355,Toilet paper
+val_000356,Left
+val_000357,Whiteboard
+val_000358,"Yes, there is."
+val_000359,Left
+val_000360,White desk
+val_000361,A rug.
+val_000362,The chair.
+val_000363,"Yes, there is."
+val_000364,Right side.
+val_000365,The table.
+val_000366,Stool
+val_000367,Blue chair
+val_000368,Bed
+val_000369,To the right.
+val_000370,The mirror.
+val_000371,Shower curtain
+val_000372,Doorway
+val_000373,A backpack.
+val_000374,No.
+val_000375,No.
+val_000376,A table.
+val_000377,Right side
+val_000378,The door.
+val_000379,"Yes, there are."
+val_000380,Left side.
+val_000381,Left side
+val_000382,Right side.
+val_000383,The headboard.
+val_000384,"Yes, there is."
+val_000385,Whiteboard
+val_000386,A desk.
+val_000387,Chair
+val_000388,Glass table
+val_000389,The door.
+val_000390,The window.
+val_000391,No.
+val_000392,A lamp
+val_000393,the rug
+val_000394,The table
+val_000395,The heater.
+val_000396,The clock.
+val_000397,To the right.
+val_000398,The chair.
+val_000399,The chair.
+val_000400,The window.
+val_000401,Bench
+val_000402,The table.
+val_000403,Ottoman
+val_000404,Trash cans
+val_000405,A sink
+val_000406,"Yes, a book."
+val_000407,Right
+val_000408,"Yes, there is."
+val_000409,Left side
+val_000410,No.
+val_000411,Right side.
+val_000412,To the right.
+val_000413,Right side.
+val_000414,Sofa
+val_000415,"Yes, there is."
+val_000416,The desk.
+val_000417,Left
+val_000418,No.
+val_000419,Desk
+val_000420,The monitor.
+val_000421,The door.
+val_000422,White chair
+val_000423,"Yes, a mirror is present."
+val_000424,Table
+val_000425,Red chair
+val_000426,Clock
+val_000427,No.
+val_000428,The stuffed animal.
+val_000429,The stove.
+val_000430,The window.
+val_000431,No.
+val_000432,Keyboard
+val_000433,The counter.
+val_000434,Ottoman
+val_000435,To the left.
+val_000436,Desk
+val_000437,Left side
+val_000438,Bench
+val_000439,"Yes, there is."
+val_000440,Left
+val_000441,The white board.
+val_000442,Right
+val_000443,Right
+val_000444,The cpu
+val_000445,The sofa.
+val_000446,No.
+val_000447,No.
+val_000448,Curtains
+val_000449,"Yes, there is."
+val_000450,Right
+val_000451,The building.
+val_000452,The window.
+val_000453,The door.
+val_000454,Massage chair
+val_000455,No.
+val_000456,The bookshelf.
+val_000457,White table
+val_000458,The chair.
+val_000459,The mattress.
+val_000460,"Yes, it does."
+val_000461,Left side
+val_000462,Table
+val_000463,"Yes, a door."
+val_000464,The table.
+val_000465,Nightstand
+val_000466,"Yes, there is."
+val_000467,Ottoman
+val_000468,Left
+val_000469,The stairs.
+val_000470,The bed.
+val_000471,Chair
+val_000472,A window.
+val_000473,The table.
+val_000474,A chair.
+val_000475,No.
+val_000476,Left
+val_000477,Desk
+val_000478,Desk
+val_000479,The bag
+val_000480,The sofa.
+val_000481,No.
+val_000482,"Yes, door."
+val_000483,"Yes, there is."
+val_000484,A sofa.
+val_000485,A chair.
+val_000486,The mirror.
+val_000487,The monitors.
+val_000488,Left chair
+val_000489,No.
+val_000490,Black chair
+val_000491,The desk
+val_000492,The lamp.
+val_000493,The person.
+val_000494,The table.
+val_000495,A chair.
+val_000496,Black trash can
+val_000497,White chair
+val_000498,The table.
+val_000499,"Yes, there is."
+val_000500,The monitor.
+val_000501,The table.
+val_000502,Armchair
+val_000503,A computer.
+val_000504,Cart
+val_000505,Upper cabinets
+val_000506,Whiteboard
+val_000507,The chair.
+val_000508,Red chair
+val_000509,"Yes, blinds."
+val_000510,The chair.
+val_000511,The bed.
+val_000512,The table.
+val_000513,The chairs.
+val_000514,The curtain.
+val_000515,"Yes, it does."
+val_000516,The chair.
+val_000517,"Yes, there are."
+val_000518,The chair.
+val_000519,Left
+val_000520,The rug.
+val_000521,The laptop.
+val_000522,Right side
+val_000523,No.
+val_000524,The printer.
+val_000525,Door
+val_000526,Left side
+val_000527,Whiteboard
+val_000528,Left side.
+val_000529,The door
+val_000530,Bed
+val_000531,A chair.
+val_000532,The whiteboard.
+val_000533,"Yes, it does."
+val_000534,Both sides.
+val_000535,The curtain.
+val_000536,The table.
+val_000537,Left
+val_000538,Bed
+val_000539,The chair.
+val_000540,Refrigerator
+val_000541,"Yes, there are."
+val_000542,Flowers
+val_000543,Bed frame
+val_000544,No.
+val_000545,The window.
+val_000546,The window.
+val_000547,Yellow bench
+val_000548,Laptop
+val_000549,No.
+val_000550,Chair
+val_000551,The door.
+val_000552,"Yes, there are."
+val_000553,Left side.
+val_000554,Bed frame
+val_000555,Sink
+val_000556,"Yes, it does."
+val_000557,Rug
+val_000558,"Yes, there is."
+val_000559,The person.
+val_000560,Right
+val_000561,"Yes, machines."
+val_000562,"Yes, there are."
+val_000563,The chair.
+val_000564,Left side
+val_000565,The door.
+val_000566,"Yes, it does."
+val_000567,The door.
+val_000568,No.
+val_000569,Floor
+val_000570,"Yes, a book."
+val_000571,Left
+val_000572,Bed frame
+val_000573,The faucet.
+val_000574,The window.
+val_000575,To the right.
+val_000576,The chalkboard.
+val_000577,Right side
+val_000578,"Yes, there are."
+val_000579,The file cabinet.
+val_000580,A table.
+val_000581,The sofa.
+val_000582,No.
+val_000583,No.
+val_000584,The table
+val_000585,Desk
+val_000586,No.
+val_000587,Desk
+val_000588,Right.
+val_000589,Right
+val_000590,Left side.
+val_000591,Bed
+val_000592,A wall.
+val_000593,Door frame
+val_000594,Left
+val_000595,A cabinet.
+val_000596,The bin
+val_000597,Desk
+val_000598,"Yes, whiteboard."
+val_000599,Seat
+val_000600,The fan.
+val_000601,The shelf.
+val_000602,The bed.
+val_000603,The sign.
+val_000604,The shelf.
+val_000605,Bed frame
+val_000606,Left and right.
+val_000607,On the right.
+val_000608,The blind
+val_000609,A plant.
+val_000610,No.
+val_000611,Left
+val_000612,"Yes, there is."
+val_000613,Right.
+val_000614,Left
+val_000615,Left
+val_000616,Bottle
+val_000617,The chair.
+val_000618,No.
+val_000619,No.
+val_000620,"Yes, there is."
+val_000621,The floor.
+val_000622,Ceiling
+val_000623,Chair
+val_000624,The chair.
+val_000625,Right
+val_000626,Plants
+val_000627,Left side
+val_000628,Door
+val_000629,Television
+val_000630,Left
+val_000631,To the left.
+val_000632,The desk.
+val_000633,Left
+val_000634,Left
+val_000635,Countertop
+val_000636,Left side.
+val_000637,Left bed
+val_000638,Table
+val_000639,Blinds
+val_000640,Right side
+val_000641,The counter.
+val_000642,Nightstand
+val_000643,The carpet.
+val_000644,A suitcase.
+val_000645,The table.
+val_000646,Left
+val_000647,The chair.
+val_000648,The basket
+val_000649,Left
+val_000650,No.
+val_000651,No.
+val_000652,Neither.
+val_000653,"Yes, a plant."
+val_000654,Cardboard box
+val_000655,A bottle
+val_000656,White chair
+val_000657,Small table
+val_000658,Left side.
+val_000659,Cabinet
+val_000660,No.
+val_000661,"Yes, it does."
+val_000662,Left
+val_000663,"Yes, door."
+val_000664,A chair
+val_000665,The plant.
+val_000666,"Yes, there is."
+val_000667,Right side.
+val_000668,No.
+val_000669,"Yes, books."
+val_000670,Right side
+val_000671,Bed frame
+val_000672,"Yes, there is."
+val_000673,No.
+val_000674,The cabinet.
+val_000675,"Yes, machine."
+val_000676,"Yes, three."
+val_000677,The window.
+val_000678,The cabinet
+val_000679,No.
+val_000680,The window.
+val_000681,Coffee table
+val_000682,To the left.
+val_000683,Dresser
+val_000684,Left
+val_000685,Window
+val_000686,Right side.
+val_000687,No.
+val_000688,A chair.
+val_000689,Right
+val_000690,Refrigerator door
+val_000691,Wall
+val_000692,The shelf.
+val_000693,No.
+val_000694,Whiteboard
+val_000695,The chair.
+val_000696,The toilet.
+val_000697,"Yes, there is."
+val_000698,No.
+val_000699,Right side
+val_000700,White mug
+val_000701,No.
+val_000702,Left
+val_000703,No.
+val_000704,Keyboard
+val_000705,Table
+val_000706,The carpet.
+val_000707,Right side
+val_000708,Door
+val_000709,The table.
+val_000710,Nightstand
+val_000711,"Yes, a table is present."
+val_000712,Chair
+val_000713,The window.
+val_000714,Left side
+val_000715,Desk
+val_000716,The blind.
+val_000717,"Yes, paper."
+val_000718,The desk
+val_000719,Chair
+val_000720,Toilet seat
+val_000721,No.
+val_000722,White paper
+val_000723,Door
+val_000724,No door.
+val_000725,Left
+val_000726,Right side
+val_000727,The monitor.
+val_000728,The mirror.
+val_000729,To the left.
+val_000730,Glass table
+val_000731,The trash can.
+val_000732,Office chair
+val_000733,Toilet paper
+val_000734,No.
+val_000735,"Yes, there are."
+val_000736,Chair
+val_000737,The chair.
+val_000738,The shelf.
+val_000739,Left side
+val_000740,The television.
+val_000741,The TV.
+val_000742,To the left.
+val_000743,No.
+val_000744,The picture.
+val_000745,The refrigerator.
+val_000746,No.
+val_000747,The desk.
+val_000748,To the left.
+val_000749,The wall.
+val_000750,Computer tower
+val_000751,Right
+val_000752,The window.
+val_000753,"Yes, there are."
+val_000754,Printer
+val_000755,No.
+val_000756,The door.
+val_000757,the handle
+val_000758,Right side
+val_000759,The chalkboard.
+val_000760,The sofa.
+val_000761,Right side
+val_000762,the rack
+val_000763,No.
+val_000764,The chair.
+val_000765,To the right.
+val_000766,"Yes, it does."
+val_000767,Red chair
+val_000768,The kitchen.
+val_000769,Armoire
+val_000770,"Yes, paper."
+val_000771,Printer
+val_000772,The desk.
+val_000773,The monitor.
+val_000774,The white box.
+val_000775,Shower door
+val_000776,Lamp
+val_000777,Red chair
+val_000778,There is no whiteboard in the image.
+val_000779,The cabinet
+val_000780,Chair
+val_000781,Bed
+val_000782,Left
+val_000783,Chair
+val_000784,Right side.
+val_000785,Chair
+val_000786,Right
+val_000787,No.
+val_000788,"Yes, there are."
+val_000789,The floor.
+val_000790,Left
+val_000791,Right
+val_000792,Right side.
+val_000793,"Yes, it does."
+val_000794,Trash can
+val_000795,The chair.
+val_000796,The desk.
+val_000797,No.
+val_000798,The headboard.
+val_000799,A chair.
+val_000800,To the right.
+val_000801,"Yes, there is."
+val_000802,"Yes, there are."
+val_000803,Window
+val_000804,The chair.
+val_000805,Right
+val_000806,The table
+val_000807,Chair
+val_000808,Bookshelf
+val_000809,Black sofa
+val_000810,Left
+val_000811,The shelf.
+val_000812,No.
+val_000813,No.
+val_000814,The chair.
+val_000815,A wall.
+val_000816,A chair.
+val_000817,Chair
+val_000818,The window.
+val_000819,Right
+val_000820,A plant.
+val_000821,A chair.
+val_000822,"Yes, there is."
+val_000823,Right side.
+val_000824,The whiteboard.
+val_000825,Wall
+val_000826,The sink.
+val_000827,Desk
+val_000828,The curtain.
+val_000829,Left side.
+val_000830,Table
+val_000831,The desk.
+val_000832,Bulletin board
+val_000833,"Yes, there is."
+val_000834,Globe
+val_000835,Right side
+val_000836,No.
+val_000837,Left side
+val_000838,Right
+val_000839,Left
+val_000840,The stand.
+val_000841,Left
+val_000842,The light.
+val_000843,The table
+val_000844,The shelf.
+val_000845,Whiteboard
+val_000846,Left
+val_000847,Left side
+val_000848,"Yes, paper."
+val_000849,Left side
+val_000850,Left side
+val_000851,The television.
+val_000852,The shelf.
+val_000853,The chair.
+val_000854,The dresser.
+val_000855,Box
+val_000856,Right side.
+val_000857,Cars
+val_000858,The microwave.
+val_000859,A wall.
+val_000860,Left
+val_000861,No.
+val_000862,Cabinet
+val_000863,"Yes, it is."
+val_000864,Neither.
+val_000865,The chair.
+val_000866,The monitor.
+val_000867,Windows
+val_000868,Bedding
+val_000869,Desk
+val_000870,The bookshelf.
+val_000871,No.
+val_000872,The chair.
+val_000873,Left
+val_000874,Stove
+val_000875,The tag
+val_000876,A cup
+val_000877,Glass wall
+val_000878,The desk.
+val_000879,Mug
+val_000880,The window.
+val_000881,Left side
+val_000882,"Yes, it does."
+val_000883,"Yes, a desk."
+val_000884,Printer
+val_000885,Right side.
+val_000886,The window.
+val_000887,The desk.
+val_000888,A chair.
+val_000889,"Yes, a door."
+val_000890,The chair.
+val_000891,"Yes, two."
+val_000892,Desk
+val_000893,Right side.
+val_000894,White crib
+val_000895,No.
+val_000896,The whiteboard.
+val_000897,Blue bin
+val_000898,"Yes, there is."
+val_000899,The sink.
+val_000900,Right
+val_000901,The sink.
+val_000902,"Yes, there is."
+val_000903,The bag.
+val_000904,Wall
+val_000905,Recycling bin
+val_000906,Left
+val_000907,Right side.
+val_000908,Stool
+val_000909,Printer
+val_000910,Tripod
+val_000911,The monitor.
+val_000912,The wall.
+val_000913,No.
+val_000914,"Yes, there is."
+val_000915,Metal shelf
+val_000916,The desk.
+val_000917,"Yes, a dresser is present."
+val_000918,The chair
+val_000919,The door.
+val_000920,The window.
+val_000921,A chair
+val_000922,Right side
+val_000923,The clothes.
+val_000924,Left side
+val_000925,No.
+val_000926,To the left.
+val_000927,Left side
+val_000928,Chair
+val_000929,The table.
+val_000930,The dishwasher.
+val_000931,"Yes, there is."
+val_000932,A trash can
+val_000933,Trash can
+val_000934,The couch.
+val_000935,A whiteboard.
+val_000936,No.
+val_000937,"Yes, there is."
+val_000938,The blackboard.
+val_000939,The table.
+val_000940,"Yes, a door is present."
+val_000941,"Yes, there are."
+val_000942,Right
+val_000943,No.
+val_000944,The table.
+val_000945,Left
+val_000946,No.
+val_000947,No.
+val_000948,Chair
+val_000949,"Yes, there is."
+val_000950,The picture.
+val_000951,No.
+val_000952,Right side.
+val_000953,No.
+val_000954,No.
+val_000955,"Yes, one."
+val_000956,The chair.
+val_000957,The poster.
+val_000958,The sofa.
+val_000959,No.
+val_000960,The headboard.
+val_000961,Table
+val_000962,Chairs
+val_000963,Left side.
+val_000964,Dish rack
+val_000965,Left
+val_000966,Right side.
+val_000967,Keyboard
+val_000968,Floor tiles
+val_000969,The chandelier.
+val_000970,A podium
+val_000971,The floor mat.
+val_000972,The sofa.
+val_000973,No.
+val_000974,"Yes, it does."
+val_000975,Right side.
+val_000976,Left
+val_000977,The sofa.
+val_000978,Left side.
+val_000979,The door
+val_000980,The machine
+val_000981,"Yes, there is."
+val_000982,Right
+val_000983,No.
+val_000984,Right
+val_000985,Brown towel
+val_000986,Left
+val_000987,Right
+val_000988,Left
+val_000989,The table.
+val_000990,The window.
+val_000991,Dresser
+val_000992,Lectern
+val_000993,The mural.
+val_000994,A chair.
+val_000995,A plant.
+val_000996,"Yes, a person."
+val_000997,Curtains
+val_000998,The door.
+val_000999,Red chair
+val_001000,The mirror.
+val_001001,Left
+val_001002,"Yes, there are."
+val_001003,White chair
+val_001004,To the right.
+val_001005,Left side
+val_001006,Keyboard
+val_001007,Right
+val_001008,Left
+val_001009,"Yes, there is."
+val_001010,"Yes, it does."
+val_001011,The bed
+val_001012,The chair.
+val_001013,"Yes, it does."
+val_001014,The chair.
+val_001015,No.
+val_001016,Whiteboard
+val_001017,No.
+val_001018,Left side
+val_001019,The table.
+val_001020,The door.
+val_001021,No.
+val_001022,No.
+val_001023,The bed.
+val_001024,The chair
+val_001025,The cabinet.
+val_001026,Bedpost
+val_001027,No.
+val_001028,Table
+val_001029,Right side
+val_001030,Trash can
+val_001031,The mattress
+val_001032,Right
+val_001033,Right
+val_001034,Right side
+val_001035,Blue sofa
+val_001036,The counter
+val_001037,Right side.
+val_001038,Doorway
+val_001039,The hallway.
+val_001040,No.
+val_001041,The television.
+val_001042,To the left.
+val_001043,The red chair.
+val_001044,Left side
+val_001045,Mouse
+val_001046,Ottoman
+val_001047,The mirror.
+val_001048,Wall.
+val_001049,Left and right.
+val_001050,Table
+val_001051,The light
+val_001052,Left and right.
+val_001053,To the right.
+val_001054,The bed.
+val_001055,The shelf.
+val_001056,"Yes, people."
+val_001057,"Yes, it is."
+val_001058,Large table
+val_001059,The door.
+val_001060,Door
+val_001061,Chair
+val_001062,No.
+val_001063,Bed
+val_001064,No.
+val_001065,"Yes, books."
+val_001066,The bathtub.
+val_001067,Stove
+val_001068,Left
+val_001069,Front chair
+val_001070,No.
+val_001071,Right side.
+val_001072,A wall
+val_001073,Mouse
+val_001074,"Yes, there is."
+val_001075,The chair
+val_001076,The chair.
+val_001077,Right side.
+val_001078,No.
+val_001079,No.
+val_001080,No printer.
+val_001081,Left
+val_001082,No.
+val_001083,"Yes, it does."
+val_001084,Pumpkins
+val_001085,"Yes, there are."
+val_001086,Chair
+val_001087,The desk.
+val_001088,The sculpture.
+val_001089,To the left.
+val_001090,The carpet
+val_001091,The rug.
+val_001092,Chair
+val_001093,Bookshelf
+val_001094,The dresser.
+val_001095,Printer
+val_001096,Table
+val_001097,Red chair
+val_001098,Fire extinguisher
+val_001099,The mirror.
+val_001100,The microwave.
+val_001101,A cabinet
+val_001102,Left
+val_001103,No.
+val_001104,Whiteboard
+val_001105,Right
+val_001106,"Yes, books."
+val_001107,Dining table
+val_001108,White table
+val_001109,The table.
+val_001110,Mirror
+val_001111,The sofa.
+val_001112,The trash can.
+val_001113,The cabinet.
+val_001114,Chair
+val_001115,The chair.
+val_001116,"Yes, it does."
+val_001117,Dishwasher
+val_001118,"Yes, it does."
+val_001119,"Yes, there is."
+val_001120,Red chair
+val_001121,Wall
+val_001122,The trash can.
+val_001123,The curtain.
+val_001124,Lower cabinets
+val_001125,Wall
+val_001126,The keyboard.
+val_001127,Left
+val_001128,The mirror.
+val_001129,Papers
+val_001130,No.
+val_001131,The chair.
+val_001132,No.
+val_001133,White sofa
+val_001134,The mirror.
+val_001135,Soap dispenser
+val_001136,Left
+val_001137,Books
+val_001138,Chair
+val_001139,"Yes, there is."
+val_001140,Bar stool
+val_001141,No.
+val_001142,The shelf.
+val_001143,Left
+val_001144,Office chair
+val_001145,Right
+val_001146,To the left.
+val_001147,The door
+val_001148,Left
+val_001149,Left side.
+val_001150,White table
+val_001151,Table
+val_001152,Right
+val_001153,The refrigerator.
+val_001154,The wire.
+val_001155,Table
+val_001156,"Yes, dresser."
+val_001157,No.
+val_001158,"Yes, there are."
+val_001159,Keyboard
+val_001160,Left side
+val_001161,White table
+val_001162,Left side
+val_001163,The door.
+val_001164,The door.
+val_001165,Left side.
+val_001166,Door handle
+val_001167,Bedding
+val_001168,Chair
+val_001169,White bench
+val_001170,The keyboard.
+val_001171,To the right.
+val_001172,Left
+val_001173,A printer
+val_001174,To the left.
+val_001175,Toilet
+val_001176,The whiteboard.
+val_001177,The sink.
+val_001178,Red seats
+val_001179,The monitor.
+val_001180,Left side
+val_001181,Armchair
+val_001182,Bed
+val_001183,The chair.
+val_001184,To the left.
+val_001185,Right
+val_001186,The bottle.
+val_001187,Dishwasher
+val_001188,Toilet seat
+val_001189,The desk.
+val_001190,Left
+val_001191,White cylinder
+val_001192,The window.
+val_001193,The sofa.
+val_001194,The table.
+val_001195,Chair
+val_001196,Wall
+val_001197,The chair.
+val_001198,"Yes, there is."
+val_001199,No.
+val_001200,The picture frame.
+val_001201,"Yes, there is."
+val_001202,Left
+val_001203,The window.
+val_001204,A mug.
+val_001205,Armchair
+val_001206,Table
+val_001207,The projector screen.
+val_001208,"Yes, there are."
+val_001209,The board.
+val_001210,The window.
+val_001211,The desk.
+val_001212,No.
+val_001213,"Yes, it does."
+val_001214,The door.
+val_001215,Right
+val_001216,Mouse
+val_001217,"Yes, there is."
+val_001218,Right side.
+val_001219,"Yes, there are."
+val_001220,No.
+val_001221,To the right.
+val_001222,To the right.
+val_001223,Left
+val_001224,No.
+val_001225,The chairs.
+val_001226,Desk
+val_001227,The bed.
+val_001228,To the right.
+val_001229,floor mat
+val_001230,Doorway
+val_001231,No.
+val_001232,Chair
+val_001233,"Yes, there is."
+val_001234,Desk
+val_001235,No.
+val_001236,Red seat
+val_001237,No.
+val_001238,The floor mat.
+val_001239,The window.
+val_001240,Right
+val_001241,Left side
+val_001242,Rug
+val_001243,The chair.
+val_001244,"Yes, there is."
+val_001245,No.
+val_001246,Table
+val_001247,Left
+val_001248,The sink.
+val_001249,A chair.
+val_001250,Window
+val_001251,"Yes, it does."
+val_001252,Left
+val_001253,Window
+val_001254,Black chair
+val_001255,Right
+val_001256,To the right.
+val_001257,A red bowl.
+val_001258,The rug.
+val_001259,Left side
+val_001260,No.
+val_001261,Window blind
+val_001262,Sofa
+val_001263,"Yes, there is."
+val_001264,Lamp
+val_001265,The wire.
+val_001266,White shelf
+val_001267,"Yes, a table."
+val_001268,Right side
+val_001269,Wall
+val_001270,Left side
+val_001271,The chair.
+val_001272,The table.
+val_001273,Left side
+val_001274,Left side.
+val_001275,A chair.
+val_001276,Left
+val_001277,Right
+val_001278,"Yes, it does."
+val_001279,The table.
+val_001280,Left
+val_001281,Printer
+val_001282,Front seat
+val_001283,"Yes, a desk."
+val_001284,Wall
+val_001285,Door
+val_001286,Windows
+val_001287,Chair
+val_001288,To the right.
+val_001289,Trash can
+val_001290,"Yes, door."
+val_001291,"Yes, it does."
+val_001292,No.
+val_001293,Right side
+val_001294,Chair
+val_001295,"Yes, there is."
+val_001296,The picture.
+val_001297,No.
+val_001298,To the right.
+val_001299,Chair
+val_001300,Left
+val_001301,The chair.
+val_001302,"Yes, it does."
+val_001303,No.
+val_001304,Left side
+val_001305,No.
+val_001306,No.
+val_001307,White table
+val_001308,Nightstand
+val_001309,A lamp.
+val_001310,"Yes, there are."
+val_001311,A table.
+val_001312,White desk
+val_001313,Chair
+val_001314,Door
+val_001315,Left side.
+val_001316,Blue chair
+val_001317,The window.
+val_001318,Left side
+val_001319,Nightstand
+val_001320,Sink
+val_001321,Brown sofa
+val_001322,A wall.
+val_001323,The monitor.
+val_001324,The window.
+val_001325,The window.
+val_001326,"Yes, there is."
+val_001327,"Yes, there is."
+val_001328,No sofa.
+val_001329,Red table
+val_001330,Chair
+val_001331,Left
+val_001332,Crib
+val_001333,Left side.
+val_001334,"Yes, there is."
+val_001335,The door.
+val_001336,Trash bin
+val_001337,Left
+val_001338,A lamp
+val_001339,"Yes, there are."
+val_001340,The chair.
+val_001341,Front chair
+val_001342,Clock
+val_001343,Chair
+val_001344,No.
+val_001345,Table
+val_001346,The desk.
+val_001347,Round table
+val_001348,A sofa.
+val_001349,No.
+val_001350,Left side
+val_001351,The curtain.
+val_001352,"Yes, it does."
+val_001353,The couch.
+val_001354,Exit sign
+val_001355,No.
+val_001356,The book.
+val_001357,A plant.
+val_001358,Red chair
+val_001359,No.
+val_001360,The flower.
+val_001361,Under the table.
+val_001362,No.
+val_001363,The chair.
+val_001364,Table
+val_001365,Whiteboard
+val_001366,No.
+val_001367,Left
+val_001368,No.
+val_001369,Both sides.
+val_001370,Printer
+val_001371,The desk.
+val_001372,"Yes, there is."
+val_001373,"Yes, there is."
+val_001374,No.
+val_001375,Curtain
+val_001376,Piano
+val_001377,To the left.
+val_001378,No.
+val_001379,Television
+val_001380,The floor mat.
+val_001381,Ceiling lights
+val_001382,Left.
+val_001383,The table.
+val_001384,"Yes, there is."
+val_001385,Computer monitor
+val_001386,Left side.
+val_001387,Door
+val_001388,A chair.
+val_001389,Left side.
+val_001390,Left
+val_001391,A table.
+val_001392,Desk
+val_001393,Left side.
+val_001394,The window.
+val_001395,Chair
+val_001396,The sofa.
+val_001397,A printer.
+val_001398,Right
+val_001399,The bed.
+val_001400,No.
+val_001401,No.
+val_001402,Right side
+val_001403,The outlet.
+val_001404,Bedspread
+val_001405,No.
+val_001406,Left side
+val_001407,The rug.
+val_001408,The door.
+val_001409,To the right.
+val_001410,Chair
+val_001411,No.
+val_001412,"Yes, there is."
+val_001413,Desk
+val_001414,The wall.
+val_001415,"Yes, there is."
+val_001416,Trash can
+val_001417,Chair
+val_001418,Right
+val_001419,Left side
+val_001420,Left side.
+val_001421,Right side.
+val_001422,Left
+val_001423,The window
+val_001424,To the left.
+val_001425,Both sides.
+val_001426,Right side
+val_001427,Nightstand
+val_001428,Yellow door
+val_001429,No.
+val_001430,To the left.
+val_001431,The desk.
+val_001432,No.
+val_001433,Left side.
+val_001434,Left
+val_001435,Left side
+val_001436,No.
+val_001437,"Yes, there are."
+val_001438,Left
+val_001439,Left side
+val_001440,Toilet
+val_001441,The clothes.
+val_001442,Left
+val_001443,The sofa.
+val_001444,A chair.
+val_001445,A couch
+val_001446,A printer.
+val_001447,The box.
+val_001448,Blue sofa
+val_001449,The upper shelf.
+val_001450,The sofa.
+val_001451,The table.
+val_001452,No.
+val_001453,The chairs.
+val_001454,The desk.
+val_001455,The window.
+val_001456,The clothes.
+val_001457,Table (back)
+val_001458,No.
+val_001459,The trash can.
+val_001460,Right side
+val_001461,To the right.
+val_001462,The door.
+val_001463,Red sofa
+val_001464,Wall
+val_001465,The door.
+val_001466,A phone.
+val_001467,The sofa.
+val_001468,Chair
+val_001469,Toilet paper
+val_001470,No.
+val_001471,No.
+val_001472,Right
+val_001473,Countertop
+val_001474,No.
+val_001475,The dresser.
+val_001476,Monitor
+val_001477,Bedpost
+val_001478,Lamp
+val_001479,White cabinet
+val_001480,No.
+val_001481,Right side.
+val_001482,Left side
+val_001483,Right
+val_001484,Nightstand
+val_001485,The camera stand.
+val_001486,The drawer
+val_001487,Left and right.
+val_001488,The chair.
+val_001489,Keyboard
+val_001490,No.
+val_001491,Right
+val_001492,"Yes, two."
+val_001493,Bowl
+val_001494,Right side.
+val_001495,The door.
+val_001496,The chalkboard.
+val_001497,A dresser
+val_001498,A wall.
+val_001499,The sink
+val_001500,Right side
+val_001501,A chair.
+val_001502,Left
+val_001503,Grey plate
+val_001504,Right
+val_001505,"Yes, there is."
+val_001506,"Yes, blanket."
+val_001507,The table.
+val_001508,No.
+val_001509,Curtains
+val_001510,Printer
+val_001511,Wire chair
+val_001512,The ottoman.
+val_001513,The paper.
+val_001514,Left side.
+val_001515,The chair.
+val_001516,The monitor.
+val_001517,Sofa
+val_001518,The mattress.
+val_001519,Keyboard
+val_001520,"Yes, there is."
+val_001521,A blue folder.
+val_001522,Soap dispenser
+val_001523,The window.
+val_001524,Red chair
+val_001525,No.
+val_001526,Left
+val_001527,No.
+val_001528,Door handle
+val_001529,A table
+val_001530,Desk
+val_001531,The chair.
+val_001532,The poster.
+val_001533,The chair.
+val_001534,A chair.
+val_001535,The window.
+val_001536,There is no curtain in the image.
+val_001537,The door.
+val_001538,A chair.
+val_001539,Computer monitor
+val_001540,White towel
+val_001541,Countertop
+val_001542,"Yes, stools."
+val_001543,Shelves
+val_001544,The bed.
+val_001545,The chair.
+val_001546,A sink.
+val_001547,Left
+val_001548,The window.
+val_001549,Bed frame
+val_001550,No.
+val_001551,No.
+val_001552,"Yes, there is."
+val_001553,Wires
+val_001554,Desk
+val_001555,A table
+val_001556,The chairs.
+val_001557,The scanner.
+val_001558,Left side
+val_001559,Chair
+val_001560,White desk
+val_001561,The chair.
+val_001562,No.
+val_001563,"Yes, there is."
+val_001564,Chair
+val_001565,No.
+val_001566,No.
+val_001567,The desk.
+val_001568,Left
+val_001569,Chair
+val_001570,The bed.
+val_001571,Desk
+val_001572,A table
+val_001573,The cupboard.
+val_001574,Right side.
+val_001575,Telephone
+val_001576,Blinds
+val_001577,"Yes, there are."
+val_001578,Printer
+val_001579,To the left.
+val_001580,The chair.
+val_001581,"Yes, there is."
+val_001582,The chair
+val_001583,Lamps
+val_001584,No.
+val_001585,"Yes, it does."
+val_001586,The table.
+val_001587,There is no bed in this image.
+val_001588,Sofa
+val_001589,Right
+val_001590,The sofa.
+val_001591,The counter.
+val_001592,Left side.
+val_001593,A toy.
+val_001594,Television
+val_001595,Chair
+val_001596,No.
+val_001597,A bed.
+val_001598,No.
+val_001599,Mirror
+val_001600,The monitor.
+val_001601,Left side
+val_001602,Black chair
+val_001603,Right
+val_001604,Ottoman
+val_001605,Bed frame
+val_001606,No.
+val_001607,The computer.
+val_001608,"Yes, there is."
+val_001609,The wall.
+val_001610,The window.
+val_001611,The mirror.
+val_001612,The blackboard.
+val_001613,Shower curtain
+val_001614,Right.
+val_001615,Bed
+val_001616,Left side
+val_001617,"Yes, there is."
+val_001618,Nightstand
+val_001619,No.
+val_001620,To the left.
+val_001621,"Yes, machine."
+val_001622,The door.
+val_001623,"Yes, there is."
+val_001624,Sink
+val_001625,Left
+val_001626,The coat.
+val_001627,The door.
+val_001628,No.
+val_001629,Leather sofa
+val_001630,No.
+val_001631,Chair
+val_001632,Buildings
+val_001633,Right side
+val_001634,No.
+val_001635,The dresser.
+val_001636,The window.
+val_001637,Armchair
+val_001638,To the left.
+val_001639,A desk
+val_001640,White table
+val_001641,No.
+val_001642,Left side
+val_001643,The cup.
+val_001644,"Yes, there is."
+val_001645,The chair.
+val_001646,The desk.
+val_001647,White curtain
+val_001648,The desk.
+val_001649,"Yes, a printer is present."
+val_001650,The sign.
+val_001651,Sink
+val_001652,A table.
+val_001653,To the left.
+val_001654,The picture.
+val_001655,"Yes, there is."
+val_001656,The cabinet.
+val_001657,"Yes, it does."
+val_001658,The chair.
+val_001659,Left side
+val_001660,The desk.
+val_001661,Between them.
+val_001662,"Yes, there is."
+val_001663,A chair.
+val_001664,Bedspread
+val_001665,The printer.
+val_001666,No.
+val_001667,A plant.
+val_001668,The tag.
+val_001669,The towel.
+val_001670,Toilet tank
+val_001671,The table.
+val_001672,No.
+val_001673,To the left.
+val_001674,Right side.
+val_001675,The window.
+val_001676,No.
+val_001677,No.
+val_001678,Left
+val_001679,No.
+val_001680,The chair.
+val_001681,A lamp
+val_001682,The table.
+val_001683,A chair.
+val_001684,The television.
+val_001685,The wall.
+val_001686,A plant.
+val_001687,The chair.
+val_001688,A basket.
+val_001689,Left side.
+val_001690,Right
+val_001691,The bed.
+val_001692,The cabinet.
+val_001693,A chair.
+val_001694,"Yes, there is."
+val_001695,"Yes, people."
+val_001696,No.
+val_001697,A chair.
+val_001698,Printer
+val_001699,Right side.
+val_001700,To the left.
+val_001701,Blackboard
+val_001702,Chair
+val_001703,Left
+val_001704,Clothes rack
+val_001705,Books
+val_001706,Shelf
+val_001707,Shoes
+val_001708,The floor.
+val_001709,The desk
+val_001710,The chair.
+val_001711,Chair
+val_001712,The paper.
+val_001713,Monitor
+val_001714,Right side.
+val_001715,No.
+val_001716,Left
+val_001717,Blue chair
+val_001718,White table
+val_001719,The trash can.

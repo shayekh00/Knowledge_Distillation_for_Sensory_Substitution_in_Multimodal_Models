@@ -40,6 +40,8 @@ from dataclasses import dataclass, field
 import torch
 import torch.nn.functional as F
 
+from distillation.losses import loca_calibrate
+
 DEFAULT_TOP_K = 4096
 SUPPORTED_TOP_K = (2048, 4096, 8192)
 
@@ -325,6 +327,74 @@ def omitted_teacher_mass(teacher_topk_probs: torch.Tensor) -> torch.Tensor:
     logits.
     """
     return (1.0 - teacher_topk_probs.float().sum(-1)).clamp_min(0.0)
+
+
+def build_student_to_teacher_lookup(mapping: VocabularyMapping) -> torch.Tensor:
+    """Dense ``[V_student]`` lookup: index ``i`` -> the teacher id student
+    token ``i`` maps to, or ``-1`` if token ``i`` has no teacher target at all
+    (dropped at projection, same as `project_student_probs`'s own semantics).
+
+    Depends only on the mapping, never on a batch, so it is built once per
+    training run (`train_kd.py`, alongside where the mapping itself loads) and
+    reused for every step rather than rebuilt from the sparse index arrays
+    every forward pass.
+    """
+    lookup = torch.full((mapping.student_vocab_size,), -1, dtype=torch.long)
+    lookup[mapping.student_ids] = mapping.teacher_ids
+    return lookup
+
+
+def calibrate_topk_with_loca(teacher_topk_ids: torch.Tensor, teacher_topk_probs: torch.Tensor,
+                             gold_teacher_ids: torch.Tensor,
+                             alpha: float = 0.8) -> tuple[torch.Tensor, torch.Tensor]:
+    """LoCa calibration restricted to the cached top-K support (plan §8, D2/D5/D8).
+
+    Top-K selection keeps the K *largest* probabilities, so the highest
+    non-gold probability computed from the cache is exactly the true global
+    value — no approximation there; if some omitted token had a higher
+    probability, it could not have been omitted. The only real uncertainty is
+    gold's own probability: it is only known when gold itself is among the
+    cached top-K. Rows where it is not are **excluded from calibration**
+    rather than approximated — silently substituting a guessed probability for
+    a real one is exactly the failure mode the rest of this project's
+    verification work exists to catch, not something to reintroduce here.
+
+    Reuses `loca_calibrate` unmodified rather than re-deriving its formula: the
+    cached ``[N, K]`` array is a dense ``[..., V]`` array with ``V = K``, and
+    "gold's column index within it" is exactly the ``targets`` argument
+    `loca_calibrate` already expects.
+
+    Args:
+        teacher_topk_ids: ``[N, K]``.
+        teacher_topk_probs: ``[N, K]``.
+        gold_teacher_ids: ``[N]`` — gold's id in *teacher* vocabulary space
+            (`build_student_to_teacher_lookup` applied to the batch's own
+            student-vocab labels).
+    Returns:
+        ``(calibrated_probs, found_mask)`` — `calibrated_probs` has shape
+        ``[n_found, K]`` (only the rows where gold was in the cache;
+        `loca_calibrate`'s own column order preserved), `found_mask` is
+        ``[N]`` bool marking which input rows those are.
+    """
+    if teacher_topk_ids.shape != teacher_topk_probs.shape:
+        raise ValueError("teacher top-K ids and probs must have the same shape")
+    if gold_teacher_ids.shape[0] != teacher_topk_ids.shape[0]:
+        raise ValueError(
+            f"gold_teacher_ids has {gold_teacher_ids.shape[0]} rows but the cache "
+            f"has {teacher_topk_ids.shape[0]}")
+
+    matches = teacher_topk_ids == gold_teacher_ids.unsqueeze(-1)     # [N, K]
+    found_mask = matches.any(dim=-1)
+    if not found_mask.any():
+        return teacher_topk_probs.new_zeros((0, teacher_topk_probs.size(-1))), found_mask
+
+    # argmax on a bool-as-float row returns the first True column; rows have at
+    # most one match since topk() indices are unique within a row, so "first"
+    # and "only" coincide for every found row.
+    gold_col_index = matches.float().argmax(dim=-1)
+    calibrated = loca_calibrate(teacher_topk_probs[found_mask], gold_col_index[found_mask],
+                                alpha=alpha)
+    return calibrated, found_mask
 
 
 def aggregate_spans(distributions: torch.Tensor, spans: list[Span],

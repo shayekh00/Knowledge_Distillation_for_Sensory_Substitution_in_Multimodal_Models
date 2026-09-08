@@ -1,0 +1,75 @@
+{
+  "resources": {
+    "recipe": "B3",
+    "model": "Qwen/Qwen3.5-0.8B",
+    "modality": "depth",
+    "seed": 2026,
+    "epochs": 1,
+    "examples_seen": 15278,
+    "examples_skipped": 0,
+    "optimizer_steps": 955,
+    "learning_rate": 2e-05,
+    "accumulation": 4,
+    "batch_size": 4,
+    "effective_batch": 16,
+    "gradient_checkpointing": false,
+    "lora_rank": 16,
+    "elapsed_minutes": 21.12,
+    "examples_per_second": 12.058,
+    "peak_vram_gb": 14.67,
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "pilot": false,
+    "projected_minutes_full_train_epoch": 21.1
+  },
+  "history": [
+    {
+      "step": 125,
+      "examples": 2000,
+      "loss": 1.0996714654564856,
+      "examples_per_second": 11.988110502709057,
+      "peak_vram_gb": 13.887950336
+    },
+    {
+      "step": 250,
+      "examples": 4000,
+      "loss": 0.8967795813977718,
+      "examples_per_second": 12.041247545090593,
+      "peak_vram_gb": 13.887950336
+    },
+    {
+      "step": 375,
+      "examples": 6000,
+      "loss": 0.8873507253825664,
+      "examples_per_second": 12.038775843074118,
+      "peak_vram_gb": 13.887950336
+    },
+    {
+      "step": 500,
+      "examples": 8000,
+      "loss": 0.8806505212187767,
+      "examples_per_second": 12.047729942228953,
+      "peak_vram_gb": 14.67357184
+    },
+    {
+      "step": 625,
+      "examples": 10000,
+      "loss": 0.8090237264335155,
+      "examples_per_second": 12.048597594445996,
+      "peak_vram_gb": 14.67357184
+    },
+    {
+      "step": 750,
+      "examples": 12000,
+      "loss": 0.8291899815797806,
+      "examples_per_second": 12.054129458867429,
+      "peak_vram_gb": 14.67357184
+    },
+    {
+      "step": 875,
+      "examples": 14000,
+      "loss": 0.7981903769075871,
+      "examples_per_second": 12.061163872948876,
+      "peak_vram_gb": 14.67357184
+    }
+  ]
+}

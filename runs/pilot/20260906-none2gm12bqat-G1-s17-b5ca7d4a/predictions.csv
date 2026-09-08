@@ -1,0 +1,1721 @@
+question_id,prediction
+val_000000,No.
+val_000001,The drawer.
+val_000002,The table.
+val_000003,Left
+val_000004,Chair
+val_000005,The bed.
+val_000006,Chair
+val_000007,Chair
+val_000008,Right side
+val_000009,Wall
+val_000010,A chair
+val_000011,Chair
+val_000012,The desk.
+val_000013,The shelf.
+val_000014,A table
+val_000015,No.
+val_000016,Table
+val_000017,Left side
+val_000018,The table.
+val_000019,The cloth.
+val_000020,The sofa.
+val_000021,Right side.
+val_000022,The table.
+val_000023,Chair
+val_000024,Left
+val_000025,The shelf.
+val_000026,The table.
+val_000027,"Yes, a door."
+val_000028,The shelf.
+val_000029,I cannot see a window in this image.
+val_000030,No.
+val_000031,The carpet.
+val_000032,Left
+val_000033,The cabinet.
+val_000034,No.
+val_000035,The table.
+val_000036,The table.
+val_000037,The table.
+val_000038,Left
+val_000039,Left side
+val_000040,Window
+val_000041,The desk.
+val_000042,Table
+val_000043,The board.
+val_000044,No.
+val_000045,Sofa
+val_000046,The furniture.
+val_000047,The desk.
+val_000048,The clothes.
+val_000049,Left
+val_000050,I cannot see any furniture or items in this image to determine their distance.
+val_000051,A table
+val_000052,The headboard.
+val_000053,The pot.
+val_000054,A box
+val_000055,The chair.
+val_000056,The lamp.
+val_000057,The bed.
+val_000058,The table.
+val_000059,The chair.
+val_000060,The table.
+val_000061,The shelf.
+val_000062,No.
+val_000063,No.
+val_000064,The table.
+val_000065,Left side.
+val_000066,Left side
+val_000067,No.
+val_000068,The television.
+val_000069,The table.
+val_000070,No.
+val_000071,No.
+val_000072,No.
+val_000073,Chair
+val_000074,Left
+val_000075,The background.
+val_000076,No.
+val_000077,The chair.
+val_000078,The table.
+val_000079,Left side.
+val_000080,None
+val_000081,I cannot see a trash can in this image.
+val_000082,Nothing.
+val_000083,The cabinet.
+val_000084,Left side
+val_000085,No.
+val_000086,No.
+val_000087,Chair
+val_000088,No.
+val_000089,The chair.
+val_000090,Right side.
+val_000091,The cushion.
+val_000092,A chair.
+val_000093,The railing.
+val_000094,No.
+val_000095,The paper.
+val_000096,The window.
+val_000097,No.
+val_000098,The wall.
+val_000099,No.
+val_000100,Left
+val_000101,The table.
+val_000102,Left
+val_000103,The stool.
+val_000104,No.
+val_000105,Small rock
+val_000106,The bin.
+val_000107,The file cabinet.
+val_000108,Left side
+val_000109,Left
+val_000110,I cannot see a sign or a chair in this image.
+val_000111,Left side.
+val_000112,The laptop.
+val_000113,Right
+val_000114,Bookshelf
+val_000115,The bed.
+val_000116,The chair.
+val_000117,The microwave.
+val_000118,The mattress.
+val_000119,I cannot see a chair or a table in this image.
+val_000120,No.
+val_000121,No.
+val_000122,The table.
+val_000123,No.
+val_000124,No.
+val_000125,A chair.
+val_000126,A chair
+val_000127,A table.
+val_000128,The chair.
+val_000129,A table
+val_000130,The chair.
+val_000131,The table.
+val_000132,No.
+val_000133,Left side
+val_000134,Left side.
+val_000135,No.
+val_000136,Chair
+val_000137,No.
+val_000138,The desk.
+val_000139,Left side.
+val_000140,No.
+val_000141,The mirror.
+val_000142,Left
+val_000143,A person
+val_000144,"Yes, a whiteboard is present."
+val_000145,A pillow
+val_000146,The table.
+val_000147,Nothing.
+val_000148,The chair.
+val_000149,"Yes, one."
+val_000150,Table
+val_000151,The shelf.
+val_000152,The board.
+val_000153,The image is too dark to see any objects.
+val_000154,Left side.
+val_000155,The chair.
+val_000156,Right side
+val_000157,The bed.
+val_000158,The wall.
+val_000159,Right
+val_000160,I cannot see a bag in this image.
+val_000161,The shelf.
+val_000162,No.
+val_000163,Left
+val_000164,The wall.
+val_000165,I cannot see a sofa or a cabinet in this image.
+val_000166,Left
+val_000167,The table.
+val_000168,Left side
+val_000169,No.
+val_000170,No.
+val_000171,The ceiling.
+val_000172,A table
+val_000173,No.
+val_000174,A chair
+val_000175,No.
+val_000176,The drawer.
+val_000177,A table.
+val_000178,"Yes, a blind."
+val_000179,A table
+val_000180,The door.
+val_000181,I cannot see a counter or any specific items in this image.
+val_000182,The bed.
+val_000183,No.
+val_000184,The chair.
+val_000185,The cabinet.
+val_000186,The chair.
+val_000187,Left
+val_000188,The whiteboard.
+val_000189,The cabinet.
+val_000190,Left
+val_000191,No.
+val_000192,A chair
+val_000193,"Yes, there is."
+val_000194,The printer.
+val_000195,The sign.
+val_000196,The person.
+val_000197,The trash can.
+val_000198,A chair
+val_000199,No.
+val_000200,No.
+val_000201,Left
+val_000202,The bed.
+val_000203,No.
+val_000204,Television
+val_000205,No.
+val_000206,No.
+val_000207,The table.
+val_000208,No.
+val_000209,Back bench
+val_000210,Right side.
+val_000211,The window.
+val_000212,No.
+val_000213,No.
+val_000214,Chair
+val_000215,The box.
+val_000216,Right side
+val_000217,No.
+val_000218,"Yes, there is."
+val_000219,The chair.
+val_000220,No.
+val_000221,Right side
+val_000222,Chair
+val_000223,No.
+val_000224,Nothing.
+val_000225,Left
+val_000226,Right side.
+val_000227,"Yes, there is."
+val_000228,The chair.
+val_000229,The chair.
+val_000230,The door.
+val_000231,Left
+val_000232,The large rectangle.
+val_000233,Right side
+val_000234,Chair
+val_000235,The door.
+val_000236,The bed.
+val_000237,Left side.
+val_000238,No.
+val_000239,No.
+val_000240,Left side.
+val_000241,No.
+val_000242,Plant
+val_000243,Soundbar
+val_000244,A table.
+val_000245,A sofa.
+val_000246,No.
+val_000247,The whiteboard.
+val_000248,The counter.
+val_000249,A person
+val_000250,Nothing.
+val_000251,The table.
+val_000252,No.
+val_000253,The flower.
+val_000254,The desk.
+val_000255,The chair.
+val_000256,Nothing.
+val_000257,No.
+val_000258,Left
+val_000259,Right
+val_000260,The chair.
+val_000261,The chair is not visible in the image.
+val_000262,The painting.
+val_000263,A chair.
+val_000264,The printer.
+val_000265,None
+val_000266,Left side
+val_000267,Right
+val_000268,A table.
+val_000269,Arm
+val_000270,Nothing.
+val_000271,The chair.
+val_000272,The whiteboard.
+val_000273,No.
+val_000274,The bed.
+val_000275,The pillow.
+val_000276,No.
+val_000277,The bed.
+val_000278,No.
+val_000279,I cannot see a sofa in this image.
+val_000280,The table.
+val_000281,The lamp.
+val_000282,The window.
+val_000283,The rug.
+val_000284,The sofa.
+val_000285,I cannot see a dishwasher or a counter in this image.
+val_000286,The table.
+val_000287,Left side
+val_000288,Left side
+val_000289,No.
+val_000290,The toilet.
+val_000291,The table.
+val_000292,Right
+val_000293,No.
+val_000294,Coffee table
+val_000295,Table
+val_000296,The door.
+val_000297,The photo.
+val_000298,No.
+val_000299,The file cabinet.
+val_000300,No.
+val_000301,The desk.
+val_000302,To the right.
+val_000303,Left
+val_000304,A chair.
+val_000305,The window.
+val_000306,The door.
+val_000307,A chair.
+val_000308,Right side.
+val_000309,No.
+val_000310,Left side
+val_000311,Right
+val_000312,The whiteboard.
+val_000313,The dresser.
+val_000314,The sofa.
+val_000315,The table.
+val_000316,The chair.
+val_000317,Left side
+val_000318,The mat.
+val_000319,Left
+val_000320,Nothing.
+val_000321,The table.
+val_000322,The price tag.
+val_000323,The table.
+val_000324,No.
+val_000325,Clothes
+val_000326,Left
+val_000327,A chair
+val_000328,No.
+val_000329,The box.
+val_000330,Left
+val_000331,The table.
+val_000332,Table
+val_000333,A lamp.
+val_000334,The chair.
+val_000335,A chair.
+val_000336,The chair.
+val_000337,Right
+val_000338,No.
+val_000339,No.
+val_000340,No.
+val_000341,Chair
+val_000342,Nothing.
+val_000343,Right
+val_000344,I cannot see a shelf or glass in this image.
+val_000345,Left
+val_000346,The furniture.
+val_000347,Left side
+val_000348,No.
+val_000349,Nothing.
+val_000350,The table.
+val_000351,No.
+val_000352,Left
+val_000353,No.
+val_000354,I cannot see a poster or a picture frame in this image.
+val_000355,The sink.
+val_000356,Right
+val_000357,The table is not visible in the image.
+val_000358,No.
+val_000359,Left
+val_000360,Chair
+val_000361,A sofa.
+val_000362,The chair.
+val_000363,No.
+val_000364,Right side.
+val_000365,The table.
+val_000366,Stool
+val_000367,The large black object.
+val_000368,Table
+val_000369,Left
+val_000370,The mirror.
+val_000371,The table.
+val_000372,The beam.
+val_000373,A chair.
+val_000374,No.
+val_000375,No.
+val_000376,A table.
+val_000377,Left side.
+val_000378,The door.
+val_000379,No.
+val_000380,Right side.
+val_000381,Left side
+val_000382,Right side.
+val_000383,Clothes
+val_000384,No.
+val_000385,The whiteboard.
+val_000386,Nothing.
+val_000387,Table
+val_000388,Table
+val_000389,The wall.
+val_000390,The window.
+val_000391,"Yes, a stool is present."
+val_000392,A chair.
+val_000393,The rug
+val_000394,The table
+val_000395,The table.
+val_000396,The clock.
+val_000397,Left
+val_000398,Chair
+val_000399,The whiteboard is not present in the image.
+val_000400,The chair.
+val_000401,Bench
+val_000402,The door.
+val_000403,The chair.
+val_000404,The chairs.
+val_000405,A sink.
+val_000406,No.
+val_000407,Right
+val_000408,No.
+val_000409,Left side.
+val_000410,No.
+val_000411,Right side.
+val_000412,To the left.
+val_000413,Right side.
+val_000414,The dresser.
+val_000415,No.
+val_000416,The desk.
+val_000417,Left
+val_000418,No.
+val_000419,The desk.
+val_000420,The chair.
+val_000421,The door.
+val_000422,Left chair
+val_000423,No.
+val_000424,A beam
+val_000425,A chair.
+val_000426,Seats
+val_000427,No.
+val_000428,The shelf.
+val_000429,The ceiling.
+val_000430,The chair.
+val_000431,No.
+val_000432,The paper.
+val_000433,The counter.
+val_000434,A table
+val_000435,Left
+val_000436,The image is too dark and blurry to identify a chair or any other specific objects
+val_000437,Left side
+val_000438,The bed.
+val_000439,No.
+val_000440,Left
+val_000441,The chairs.
+val_000442,Left
+val_000443,Right
+val_000444,The cpu
+val_000445,The sofa.
+val_000446,No.
+val_000447,No.
+val_000448,A person
+val_000449,No.
+val_000450,Right
+val_000451,The back wall.
+val_000452,Nothing.
+val_000453,The door.
+val_000454,A chair
+val_000455,No.
+val_000456,The bookshelf.
+val_000457,Large rock
+val_000458,The chair.
+val_000459,The mattress.
+val_000460,"Yes, a door."
+val_000461,Left side
+val_000462,Table
+val_000463,No.
+val_000464,The chair.
+val_000465,Nightstand
+val_000466,No.
+val_000467,A table
+val_000468,Left
+val_000469,The sofa.
+val_000470,The bed.
+val_000471,Chair
+val_000472,A chair.
+val_000473,The table.
+val_000474,A person
+val_000475,No.
+val_000476,Left
+val_000477,The chair.
+val_000478,Chair
+val_000479,The board.
+val_000480,The chair.
+val_000481,No.
+val_000482,No.
+val_000483,No.
+val_000484,A wall.
+val_000485,I cannot see a table in this image.
+val_000486,The sign.
+val_000487,The window.
+val_000488,Left chair
+val_000489,No.
+val_000490,Chair
+val_000491,The desk.
+val_000492,The bed.
+val_000493,The table.
+val_000494,The table.
+val_000495,A chair.
+val_000496,Large cylinder
+val_000497,The chair.
+val_000498,The chair.
+val_000499,No.
+val_000500,The monitor.
+val_000501,Table
+val_000502,Chair
+val_000503,A chair.
+val_000504,A table.
+val_000505,Window
+val_000506,The background.
+val_000507,The window.
+val_000508,Chair
+val_000509,No.
+val_000510,Chair
+val_000511,The mirror.
+val_000512,The bag.
+val_000513,The chair.
+val_000514,The door.
+val_000515,No.
+val_000516,The chair.
+val_000517,No.
+val_000518,Chair
+val_000519,Left
+val_000520,The rug.
+val_000521,The lamp.
+val_000522,Right side
+val_000523,No.
+val_000524,The chair.
+val_000525,A chair
+val_000526,Right side
+val_000527,The table.
+val_000528,Left
+val_000529,The door.
+val_000530,The chair.
+val_000531,A chair.
+val_000532,The chair.
+val_000533,No.
+val_000534,Left side
+val_000535,The chair.
+val_000536,The pillow.
+val_000537,Right
+val_000538,The bed.
+val_000539,The chair.
+val_000540,A table
+val_000541,"Yes, there is."
+val_000542,Plants
+val_000543,A bed
+val_000544,No.
+val_000545,The door.
+val_000546,The window.
+val_000547,Nothing visible.
+val_000548,The paper.
+val_000549,No.
+val_000550,Chair
+val_000551,The door.
+val_000552,No.
+val_000553,Right side.
+val_000554,Bed
+val_000555,Door frame
+val_000556,No.
+val_000557,The desk.
+val_000558,No.
+val_000559,The chair.
+val_000560,Left
+val_000561,No.
+val_000562,"Yes, there is."
+val_000563,The chair.
+val_000564,Left side
+val_000565,The curtain.
+val_000566,"Yes, it does."
+val_000567,The door.
+val_000568,No.
+val_000569,No whiteboard.
+val_000570,No.
+val_000571,Left
+val_000572,The bed.
+val_000573,The dishwasher.
+val_000574,The painting.
+val_000575,Right.
+val_000576,The chalkboard.
+val_000577,Left side.
+val_000578,No.
+val_000579,The file cabinet.
+val_000580,Nothing.
+val_000581,The ceiling.
+val_000582,No.
+val_000583,No.
+val_000584,The table.
+val_000585,I cannot see any objects in this image.
+val_000586,No.
+val_000587,Table
+val_000588,Left
+val_000589,Left
+val_000590,I cannot see a table or a chair in this image.
+val_000591,The mirror.
+val_000592,A wall.
+val_000593,A chair
+val_000594,Left
+val_000595,A chair.
+val_000596,The bin.
+val_000597,Desk
+val_000598,No.
+val_000599,None visible
+val_000600,The chair.
+val_000601,The shelf.
+val_000602,The chair.
+val_000603,The chair.
+val_000604,The shelf.
+val_000605,A bed
+val_000606,Right
+val_000607,Left
+val_000608,The blind.
+val_000609,A wall.
+val_000610,No.
+val_000611,Right
+val_000612,No.
+val_000613,Right
+val_000614,Left
+val_000615,Left
+val_000616,Chair
+val_000617,The furniture.
+val_000618,No.
+val_000619,No.
+val_000620,No.
+val_000621,The floor.
+val_000622,The window.
+val_000623,The table.
+val_000624,The drain.
+val_000625,Left
+val_000626,A desk
+val_000627,Left side
+val_000628,The table.
+val_000629,The door.
+val_000630,Left side.
+val_000631,To the left.
+val_000632,The desk.
+val_000633,Left
+val_000634,Left
+val_000635,Counter
+val_000636,Left side.
+val_000637,Bed
+val_000638,A chair
+val_000639,The chair.
+val_000640,Left side
+val_000641,The counter.
+val_000642,Lamp
+val_000643,The carpet.
+val_000644,A bed.
+val_000645,The table.
+val_000646,Left
+val_000647,The chair.
+val_000648,The basket.
+val_000649,Left
+val_000650,No.
+val_000651,No.
+val_000652,Right
+val_000653,No.
+val_000654,A stool
+val_000655,A chair.
+val_000656,The chair.
+val_000657,Stool
+val_000658,Left side
+val_000659,Nothing.
+val_000660,No.
+val_000661,No.
+val_000662,I cannot see a chair or a desk in this image.
+val_000663,No.
+val_000664,A chair
+val_000665,The chair.
+val_000666,No.
+val_000667,Left side.
+val_000668,"Yes, there is."
+val_000669,No.
+val_000670,Right side
+val_000671,I cannot see a pillow in this image.
+val_000672,No.
+val_000673,"Yes, there is."
+val_000674,The cabinet.
+val_000675,No.
+val_000676,No.
+val_000677,The window.
+val_000678,The wire.
+val_000679,No.
+val_000680,The window.
+val_000681,Stool
+val_000682,No person.
+val_000683,Bed
+val_000684,Left
+val_000685,The chair.
+val_000686,Left
+val_000687,No.
+val_000688,A chair.
+val_000689,Right
+val_000690,None visible.
+val_000691,A dresser
+val_000692,The shelf.
+val_000693,No.
+val_000694,Bookshelf
+val_000695,The chair.
+val_000696,The cupboard.
+val_000697,No.
+val_000698,No.
+val_000699,Left side
+val_000700,Desk
+val_000701,No.
+val_000702,Left
+val_000703,No.
+val_000704,A chair.
+val_000705,Table
+val_000706,The carpet.
+val_000707,Right side.
+val_000708,None
+val_000709,The table.
+val_000710,Nightstand
+val_000711,No.
+val_000712,I cannot see a desk in this image.
+val_000713,The table.
+val_000714,Left side
+val_000715,Chair
+val_000716,The blind.
+val_000717,No.
+val_000718,The desk.
+val_000719,I cannot see a table in this image.
+val_000720,Nothing visible.
+val_000721,No.
+val_000722,The chair is not visible in the image.
+val_000723,Door
+val_000724,I cannot see a door or a handle in this image.
+val_000725,Left
+val_000726,Left side
+val_000727,The monitor.
+val_000728,The dresser.
+val_000729,Left
+val_000730,The chair.
+val_000731,The trash can.
+val_000732,The chair.
+val_000733,The ceiling.
+val_000734,No.
+val_000735,No.
+val_000736,The chair.
+val_000737,A box.
+val_000738,The shelf.
+val_000739,Left side
+val_000740,The television.
+val_000741,The stool.
+val_000742,I cannot see a bag or a phone in this image.
+val_000743,No.
+val_000744,The picture.
+val_000745,The refrigerator.
+val_000746,No.
+val_000747,The wall.
+val_000748,Left
+val_000749,The image is too dark to identify any objects.
+val_000750,The printer is not visible in the image.
+val_000751,Right
+val_000752,The window.
+val_000753,No.
+val_000754,A box.
+val_000755,No.
+val_000756,The door.
+val_000757,The handle.
+val_000758,Left side
+val_000759,The door.
+val_000760,The sofa.
+val_000761,Right side
+val_000762,The rack.
+val_000763,No.
+val_000764,The chair.
+val_000765,To the left.
+val_000766,No.
+val_000767,Chair
+val_000768,The light.
+val_000769,The table.
+val_000770,No.
+val_000771,The right side.
+val_000772,The desk.
+val_000773,Monitor
+val_000774,The paper.
+val_000775,Toilet
+val_000776,I cannot see a plant in this image.
+val_000777,Chair
+val_000778,The whiteboard is not present in the image.
+val_000779,The mirror.
+val_000780,There is no box in the image.
+val_000781,Television
+val_000782,Right
+val_000783,Chair
+val_000784,Right side.
+val_000785,Chair
+val_000786,Left
+val_000787,No.
+val_000788,No.
+val_000789,The chair is not visible in the image.
+val_000790,Left
+val_000791,Right
+val_000792,Left side.
+val_000793,"Yes, it does."
+val_000794,A chair
+val_000795,The chair.
+val_000796,The table.
+val_000797,No.
+val_000798,The headboard.
+val_000799,A chair
+val_000800,To the right.
+val_000801,"Yes, there is."
+val_000802,"Yes, there is."
+val_000803,Doorway
+val_000804,The chair.
+val_000805,Left
+val_000806,The stool.
+val_000807,There is no plant in the image.
+val_000808,Window
+val_000809,A table
+val_000810,Left
+val_000811,The table.
+val_000812,No.
+val_000813,No.
+val_000814,The table.
+val_000815,A desk.
+val_000816,A chair.
+val_000817,Chair
+val_000818,The window.
+val_000819,Right
+val_000820,Chair
+val_000821,A chair.
+val_000822,"Yes, there is."
+val_000823,Right side.
+val_000824,The whiteboard.
+val_000825,Nothing.
+val_000826,The sink.
+val_000827,Nothing.
+val_000828,The curtain.
+val_000829,Right side.
+val_000830,None
+val_000831,A chair
+val_000832,A door
+val_000833,No.
+val_000834,The table.
+val_000835,Right side.
+val_000836,No.
+val_000837,Left side
+val_000838,Left
+val_000839,Left
+val_000840,The television.
+val_000841,Left
+val_000842,The tag.
+val_000843,The table.
+val_000844,The shelf.
+val_000845,Chair
+val_000846,Right
+val_000847,Left side
+val_000848,No.
+val_000849,Left side
+val_000850,Left side.
+val_000851,television
+val_000852,Window
+val_000853,The floor.
+val_000854,The dresser.
+val_000855,The hood.
+val_000856,Right side.
+val_000857,Umbrella
+val_000858,The chair.
+val_000859,A chair.
+val_000860,Left
+val_000861,No.
+val_000862,Chair
+val_000863,No.
+val_000864,Left
+val_000865,The chair.
+val_000866,The paper.
+val_000867,People
+val_000868,Nothing.
+val_000869,Desk
+val_000870,The bookshelf.
+val_000871,No.
+val_000872,The board.
+val_000873,Left
+val_000874,A chair
+val_000875,The bed.
+val_000876,I cannot see any objects or a window in this image.
+val_000877,Window
+val_000878,Chair
+val_000879,Chair
+val_000880,The whiteboard.
+val_000881,Left side.
+val_000882,No.
+val_000883,"Yes, there is."
+val_000884,A chair.
+val_000885,Right side.
+val_000886,The refrigerator.
+val_000887,The desk.
+val_000888,A chair.
+val_000889,No.
+val_000890,The chair
+val_000891,No.
+val_000892,Chair
+val_000893,Right side.
+val_000894,The large black object.
+val_000895,No.
+val_000896,The whiteboard.
+val_000897,I cannot see any items or a trash can in this image.
+val_000898,No.
+val_000899,The lamp.
+val_000900,Left
+val_000901,The table.
+val_000902,No.
+val_000903,The bag.
+val_000904,The floor.
+val_000905,A table
+val_000906,Left
+val_000907,Right.
+val_000908,A stool
+val_000909,A book
+val_000910,Tripod
+val_000911,The shelf.
+val_000912,The floor.
+val_000913,No.
+val_000914,No.
+val_000915,Books
+val_000916,The desk.
+val_000917,No.
+val_000918,The chair.
+val_000919,The door.
+val_000920,The window.
+val_000921,A chair.
+val_000922,Neither.
+val_000923,The clothes.
+val_000924,Left side
+val_000925,No.
+val_000926,Left
+val_000927,Left side
+val_000928,Chair
+val_000929,The table.
+val_000930,The dishwasher.
+val_000931,No.
+val_000932,A chair.
+val_000933,The trash can.
+val_000934,The table.
+val_000935,I cannot see a paper in this image.
+val_000936,No.
+val_000937,No.
+val_000938,The blackboard.
+val_000939,The bed.
+val_000940,"Yes, a door."
+val_000941,No.
+val_000942,Right
+val_000943,No.
+val_000944,The table.
+val_000945,Left
+val_000946,No.
+val_000947,No.
+val_000948,The chair.
+val_000949,No.
+val_000950,The mug.
+val_000951,No.
+val_000952,Left side.
+val_000953,No.
+val_000954,No.
+val_000955,No.
+val_000956,A table
+val_000957,Neither.
+val_000958,The chair.
+val_000959,No.
+val_000960,The headboard.
+val_000961,Table
+val_000962,A chair.
+val_000963,Left side.
+val_000964,Nothing.
+val_000965,Left
+val_000966,Right side.
+val_000967,The floor.
+val_000968,The image is too dark to identify any objects.
+val_000969,The chair.
+val_000970,Nothing.
+val_000971,The floor mat.
+val_000972,The sofa.
+val_000973,No.
+val_000974,"Yes, it does."
+val_000975,Right side.
+val_000976,Left
+val_000977,The sofa.
+val_000978,Left side.
+val_000979,The door.
+val_000980,The cupboard.
+val_000981,No.
+val_000982,Center
+val_000983,No.
+val_000984,The mirror is not visible.
+val_000985,Chair
+val_000986,Left
+val_000987,Left
+val_000988,Left
+val_000989,The table.
+val_000990,The shelf.
+val_000991,I cannot see a bag in this image.
+val_000992,A pot
+val_000993,The chair.
+val_000994,A chair.
+val_000995,I cannot see a sofa in this image.
+val_000996,"Yes, a person."
+val_000997,Nothing visible.
+val_000998,The door.
+val_000999,Chair
+val_001000,The mirror.
+val_001001,Left
+val_001002,No.
+val_001003,Chair
+val_001004,Left
+val_001005,Left side.
+val_001006,The chair.
+val_001007,Right
+val_001008,Right
+val_001009,No.
+val_001010,"Yes, a door."
+val_001011,The dresser.
+val_001012,The chair.
+val_001013,No.
+val_001014,The chair.
+val_001015,No.
+val_001016,The pillar.
+val_001017,No.
+val_001018,Left side
+val_001019,The table.
+val_001020,Window
+val_001021,No.
+val_001022,No.
+val_001023,The bed.
+val_001024,The chair.
+val_001025,The cabinet.
+val_001026,Bed
+val_001027,No.
+val_001028,No sofa.
+val_001029,Left side
+val_001030,The chair.
+val_001031,The mattress.
+val_001032,Left
+val_001033,Left
+val_001034,Right side
+val_001035,A chair
+val_001036,The counter.
+val_001037,Left side.
+val_001038,The table.
+val_001039,Door
+val_001040,No.
+val_001041,The furniture.
+val_001042,To the left.
+val_001043,The table.
+val_001044,I cannot see a price tag in this image.
+val_001045,I cannot see a keyboard in this image.
+val_001046,A person.
+val_001047,The mirror.
+val_001048,Nothing.
+val_001049,Left
+val_001050,Table
+val_001051,The light.
+val_001052,Left
+val_001053,To the left.
+val_001054,The bed.
+val_001055,The shelf.
+val_001056,No.
+val_001057,"Yes, a whiteboard is present."
+val_001058,Large table
+val_001059,The door.
+val_001060,A door
+val_001061,The flag.
+val_001062,No.
+val_001063,The table.
+val_001064,No.
+val_001065,No.
+val_001066,The bathtub.
+val_001067,The image is too blurry to identify any specific objects.
+val_001068,Left
+val_001069,The chair.
+val_001070,No.
+val_001071,Left side.
+val_001072,A chair
+val_001073,I cannot see a keyboard in this image.
+val_001074,No.
+val_001075,The chair.
+val_001076,The chair.
+val_001077,Right side.
+val_001078,No.
+val_001079,No.
+val_001080,No.
+val_001081,Left
+val_001082,No.
+val_001083,"Yes, it does."
+val_001084,Pumpkins
+val_001085,No.
+val_001086,Nothing
+val_001087,The desk.
+val_001088,The table.
+val_001089,Left
+val_001090,The carpet.
+val_001091,The rug.
+val_001092,Chair
+val_001093,No window.
+val_001094,The bed.
+val_001095,None visible
+val_001096,No chair.
+val_001097,The chair.
+val_001098,Nothing.
+val_001099,The mirror.
+val_001100,The window.
+val_001101,The floor.
+val_001102,Right
+val_001103,No.
+val_001104,Table
+val_001105,Left
+val_001106,No.
+val_001107,The table.
+val_001108,Table
+val_001109,The table.
+val_001110,A chair
+val_001111,None
+val_001112,The lamp.
+val_001113,The cabinet.
+val_001114,Chair
+val_001115,The mirror is not visible in the image.
+val_001116,"Yes, it does."
+val_001117,No objects.
+val_001118,No.
+val_001119,No.
+val_001120,The door.
+val_001121,The table.
+val_001122,The sofa.
+val_001123,The curtain.
+val_001124,None
+val_001125,Chair
+val_001126,I cannot see a keyboard or a whiteboard in this image.
+val_001127,Right
+val_001128,The mirror.
+val_001129,A chair.
+val_001130,No.
+val_001131,Chair
+val_001132,No.
+val_001133,Table
+val_001134,The mirror.
+val_001135,A chair
+val_001136,Left
+val_001137,The chair.
+val_001138,The image does not contain a table.
+val_001139,No.
+val_001140,The chair.
+val_001141,No.
+val_001142,The printer.
+val_001143,Left
+val_001144,Chair
+val_001145,I cannot see a whiteboard or a table in this image.
+val_001146,Left
+val_001147,The door.
+val_001148,Right side.
+val_001149,Left side.
+val_001150,The table.
+val_001151,The chair is not visible in the image.
+val_001152,Right
+val_001153,I cannot see a refrigerator or a shelf in this image.
+val_001154,The window.
+val_001155,Table
+val_001156,No.
+val_001157,No.
+val_001158,No.
+val_001159,I cannot see a book in this image.
+val_001160,Left side
+val_001161,Chair
+val_001162,Not visible.
+val_001163,The door.
+val_001164,The hanging object.
+val_001165,Left side.
+val_001166,None
+val_001167,The nightstand.
+val_001168,The table.
+val_001169,The plant.
+val_001170,The keyboard.
+val_001171,To the right.
+val_001172,Left
+val_001173,Nothing.
+val_001174,I cannot see a basket or a shelf in this image.
+val_001175,The chair.
+val_001176,Whiteboard
+val_001177,The sink.
+val_001178,The stairs.
+val_001179,The chair.
+val_001180,No picture frame.
+val_001181,The person.
+val_001182,I cannot see a dresser in this image.
+val_001183,The chair.
+val_001184,Left
+val_001185,Left
+val_001186,The bottle.
+val_001187,A chair
+val_001188,The chair.
+val_001189,The computer.
+val_001190,Left
+val_001191,The chair.
+val_001192,The table.
+val_001193,The sofa.
+val_001194,The box.
+val_001195,Chair
+val_001196,A person
+val_001197,The chair.
+val_001198,"Yes, there is."
+val_001199,No.
+val_001200,The book.
+val_001201,"Yes, there is."
+val_001202,Left
+val_001203,The plate.
+val_001204,A chair.
+val_001205,Stool
+val_001206,Table
+val_001207,The chair.
+val_001208,No.
+val_001209,The tissue box.
+val_001210,The window.
+val_001211,The monitor.
+val_001212,No.
+val_001213,No.
+val_001214,The door.
+val_001215,Right
+val_001216,I cannot see a keyboard in this image.
+val_001217,No.
+val_001218,Left
+val_001219,No.
+val_001220,No.
+val_001221,To the right.
+val_001222,Left
+val_001223,Right
+val_001224,No.
+val_001225,The table.
+val_001226,I cannot see a printer in this image.
+val_001227,The bed.
+val_001228,Left
+val_001229,Floor mat
+val_001230,There is no trash can in the image.
+val_001231,No.
+val_001232,I cannot see a desk in this image.
+val_001233,No.
+val_001234,The table.
+val_001235,No.
+val_001236,No object.
+val_001237,No.
+val_001238,The floor mat.
+val_001239,The window
+val_001240,Right side
+val_001241,Left side
+val_001242,Office chair
+val_001243,The chair.
+val_001244,No.
+val_001245,"Yes, a toilet is present."
+val_001246,The table.
+val_001247,Right side
+val_001248,The sink.
+val_001249,A desk.
+val_001250,The cross.
+val_001251,No.
+val_001252,Left
+val_001253,The ceiling.
+val_001254,A table
+val_001255,Left
+val_001256,There is no clock.
+val_001257,The box.
+val_001258,The rug.
+val_001259,Right side.
+val_001260,No.
+val_001261,None
+val_001262,The table.
+val_001263,No.
+val_001264,Lamp
+val_001265,The wire.
+val_001266,A chair.
+val_001267,"Yes, a desk."
+val_001268,Right side
+val_001269,Wall
+val_001270,Left side
+val_001271,The table.
+val_001272,The table.
+val_001273,Left side
+val_001274,Left
+val_001275,A chair.
+val_001276,Left
+val_001277,Left
+val_001278,No.
+val_001279,The table.
+val_001280,I cannot see a bookshelf or a table in this image.
+val_001281,The back box.
+val_001282,The chair.
+val_001283,"Yes, a desk."
+val_001284,Chair
+val_001285,The wall.
+val_001286,The lights.
+val_001287,Chair
+val_001288,Left
+val_001289,Chair
+val_001290,No.
+val_001291,"Yes, it does."
+val_001292,No.
+val_001293,Left side
+val_001294,Chair
+val_001295,No.
+val_001296,The dishwasher.
+val_001297,No.
+val_001298,Left
+val_001299,Chairs
+val_001300,Left
+val_001301,The chair.
+val_001302,No.
+val_001303,No.
+val_001304,Right side
+val_001305,No.
+val_001306,No.
+val_001307,Chair
+val_001308,Lamp
+val_001309,Nothing.
+val_001310,No.
+val_001311,A table.
+val_001312,A chair
+val_001313,Chair
+val_001314,A bottle
+val_001315,Right side.
+val_001316,A chair
+val_001317,The window.
+val_001318,Right side
+val_001319,The wall.
+val_001320,Laptop
+val_001321,The large black block.
+val_001322,No sign.
+val_001323,The monitor.
+val_001324,The bathtub.
+val_001325,The window.
+val_001326,No.
+val_001327,No.
+val_001328,The sofa is not visible in the image.
+val_001329,Desk
+val_001330,Chair
+val_001331,Left
+val_001332,The sofa is not present in the image.
+val_001333,Left side
+val_001334,"Yes, a desk is present."
+val_001335,The door.
+val_001336,A block
+val_001337,Right
+val_001338,A chair
+val_001339,No.
+val_001340,The chair.
+val_001341,The chair.
+val_001342,Seats
+val_001343,The table.
+val_001344,No.
+val_001345,Table
+val_001346,The table.
+val_001347,Black circle
+val_001348,I cannot see a window in this image.
+val_001349,No.
+val_001350,Right side
+val_001351,The chair.
+val_001352,No.
+val_001353,The floor.
+val_001354,A person.
+val_001355,No.
+val_001356,The book.
+val_001357,A lamp.
+val_001358,Chair
+val_001359,No.
+val_001360,The flower.
+val_001361,Left side
+val_001362,No.
+val_001363,The chair.
+val_001364,I cannot see a chair in this image.
+val_001365,The sky.
+val_001366,No.
+val_001367,Left
+val_001368,No.
+val_001369,Neither.
+val_001370,A chair.
+val_001371,The desk.
+val_001372,No.
+val_001373,No.
+val_001374,No.
+val_001375,None
+val_001376,Piano
+val_001377,Left
+val_001378,No.
+val_001379,A chair.
+val_001380,The floor mat.
+val_001381,None visible
+val_001382,Left
+val_001383,None
+val_001384,No.
+val_001385,Chair
+val_001386,Left side
+val_001387,The chair.
+val_001388,A chair.
+val_001389,Left side
+val_001390,Right side
+val_001391,A table.
+val_001392,Table
+val_001393,I cannot see a plant or a television in this image.
+val_001394,The window.
+val_001395,Table
+val_001396,The sofa.
+val_001397,Nothing.
+val_001398,Left
+val_001399,The table.
+val_001400,No.
+val_001401,No.
+val_001402,Left side
+val_001403,The outlet.
+val_001404,Bed
+val_001405,No.
+val_001406,Left side
+val_001407,The ottoman.
+val_001408,The table.
+val_001409,To the left.
+val_001410,The table.
+val_001411,No.
+val_001412,No.
+val_001413,A desk.
+val_001414,The door.
+val_001415,"Yes, there is."
+val_001416,The chair.
+val_001417,Chair
+val_001418,Left
+val_001419,Left side.
+val_001420,Left side.
+val_001421,Left side
+val_001422,Right
+val_001423,The window.
+val_001424,Left
+val_001425,Left
+val_001426,I cannot see a trash can or a recycle bin in this image.
+val_001427,The table.
+val_001428,The door.
+val_001429,No.
+val_001430,Left
+val_001431,The monitor.
+val_001432,No.
+val_001433,I cannot see a laptop or a desk in this image.
+val_001434,Left
+val_001435,Left side
+val_001436,No.
+val_001437,No.
+val_001438,Left
+val_001439,Left side
+val_001440,The chair.
+val_001441,The clothes.
+val_001442,Left
+val_001443,The sofa.
+val_001444,A person.
+val_001445,The wall.
+val_001446,A person.
+val_001447,The box is not present in the image.
+val_001448,The table.
+val_001449,Bookshelf
+val_001450,Back chairs
+val_001451,The table.
+val_001452,No.
+val_001453,The chair.
+val_001454,File cabinet
+val_001455,The window.
+val_001456,The clothes.
+val_001457,The chair.
+val_001458,No.
+val_001459,The trash can.
+val_001460,Left side.
+val_001461,Left
+val_001462,The window.
+val_001463,The couch.
+val_001464,Chair
+val_001465,The door.
+val_001466,I cannot see a bag in this image.
+val_001467,The sofa.
+val_001468,The chair.
+val_001469,The chair.
+val_001470,No.
+val_001471,No.
+val_001472,Right
+val_001473,A person
+val_001474,No.
+val_001475,The dresser.
+val_001476,The table.
+val_001477,The pillar.
+val_001478,Chair
+val_001479,A chair
+val_001480,No.
+val_001481,Left side.
+val_001482,Right side
+val_001483,Left
+val_001484,The paper.
+val_001485,The chair.
+val_001486,The drawer.
+val_001487,Right
+val_001488,The table.
+val_001489,A chair.
+val_001490,No.
+val_001491,Left
+val_001492,No.
+val_001493,Bowl
+val_001494,Right side.
+val_001495,The door.
+val_001496,The chalkboard.
+val_001497,The image is too abstract to identify a bed or specific objects.
+val_001498,A wall.
+val_001499,The shelf.
+val_001500,Left side
+val_001501,A chair.
+val_001502,Left
+val_001503,The camera.
+val_001504,Right
+val_001505,No.
+val_001506,No.
+val_001507,The table.
+val_001508,No.
+val_001509,A chair.
+val_001510,There is no sign in this image.
+val_001511,A table
+val_001512,The ottoman.
+val_001513,The paper.
+val_001514,Right side.
+val_001515,The chair.
+val_001516,The monitor.
+val_001517,Nothing
+val_001518,The mattress.
+val_001519,A lamp.
+val_001520,"Yes, there is."
+val_001521,Nothing.
+val_001522,The table.
+val_001523,The window.
+val_001524,The chair.
+val_001525,No.
+val_001526,Right
+val_001527,No.
+val_001528,The chair.
+val_001529,Nothing.
+val_001530,I cannot see a bag in this image.
+val_001531,The chair.
+val_001532,The poster.
+val_001533,The refrigerator.
+val_001534,A chair
+val_001535,The window.
+val_001536,The chair.
+val_001537,The lamp.
+val_001538,Nothing.
+val_001539,Buildings
+val_001540,The people.
+val_001541,The barrel.
+val_001542,No.
+val_001543,A chair.
+val_001544,The bed.
+val_001545,Chair
+val_001546,A person.
+val_001547,Left
+val_001548,The window.
+val_001549,Bed
+val_001550,No.
+val_001551,No.
+val_001552,No.
+val_001553,A chair.
+val_001554,No object.
+val_001555,Nothing.
+val_001556,The chair.
+val_001557,The monitor.
+val_001558,Left side
+val_001559,Chair
+val_001560,Chair
+val_001561,The chair.
+val_001562,No.
+val_001563,No.
+val_001564,Chair
+val_001565,No.
+val_001566,No.
+val_001567,The chair.
+val_001568,Right side.
+val_001569,The table.
+val_001570,The bed.
+val_001571,The image is too dark to identify any objects.
+val_001572,Table
+val_001573,The cupboard.
+val_001574,I cannot see a table or a clock in this image.
+val_001575,A book.
+val_001576,The tall pillar.
+val_001577,No.
+val_001578,Chair
+val_001579,Left
+val_001580,The chair.
+val_001581,No.
+val_001582,The paper.
+val_001583,The lamp.
+val_001584,No.
+val_001585,"Yes, it does."
+val_001586,The table.
+val_001587,No bed.
+val_001588,No pillow.
+val_001589,Left
+val_001590,The sofa.
+val_001591,The counter.
+val_001592,Left side
+val_001593,A chair.
+val_001594,The dresser is the only object in the image.
+val_001595,I cannot see a trash can in this image.
+val_001596,No.
+val_001597,A lamp.
+val_001598,"Yes, there is."
+val_001599,A vase.
+val_001600,The window.
+val_001601,Left side
+val_001602,Chair
+val_001603,Right
+val_001604,Chair
+val_001605,Bed
+val_001606,No.
+val_001607,The sofa.
+val_001608,No.
+val_001609,The floor.
+val_001610,The window.
+val_001611,The mirror.
+val_001612,The blackboard.
+val_001613,The toilet.
+val_001614,Left side.
+val_001615,A chair
+val_001616,Left side.
+val_001617,No.
+val_001618,Nightstand
+val_001619,No.
+val_001620,I cannot see a window or a price tag in this image.
+val_001621,No.
+val_001622,The pictures.
+val_001623,No.
+val_001624,Table
+val_001625,The table is on the right.
+val_001626,The chair.
+val_001627,Bench
+val_001628,No.
+val_001629,A table
+val_001630,No.
+val_001631,Chair
+val_001632,Chair
+val_001633,Left side
+val_001634,No.
+val_001635,The chair.
+val_001636,The table.
+val_001637,The cabinet is not visible in the image.
+val_001638,To the left.
+val_001639,Nothing.
+val_001640,Chair
+val_001641,No.
+val_001642,Left side
+val_001643,The cup.
+val_001644,No.
+val_001645,The chair.
+val_001646,The desk.
+val_001647,The clock.
+val_001648,The desk.
+val_001649,No.
+val_001650,The machine.
+val_001651,The table.
+val_001652,A chair.
+val_001653,I cannot see a telephone or paper in this image.
+val_001654,The chairs.
+val_001655,No.
+val_001656,The cabinet.
+val_001657,No.
+val_001658,The chair.
+val_001659,Right side
+val_001660,The desk.
+val_001661,Left side
+val_001662,No.
+val_001663,A table.
+val_001664,Bed
+val_001665,The table.
+val_001666,No.
+val_001667,I cannot see a cabinet in this image.
+val_001668,The tag.
+val_001669,Toilet paper
+val_001670,The bed.
+val_001671,The table.
+val_001672,No.
+val_001673,Left
+val_001674,Right side.
+val_001675,The cupboard.
+val_001676,No.
+val_001677,No.
+val_001678,Left
+val_001679,No.
+val_001680,The chair.
+val_001681,A chair.
+val_001682,The table.
+val_001683,Chair
+val_001684,The refrigerator.
+val_001685,The printer is not visible in the image.
+val_001686,A plant.
+val_001687,The chair.
+val_001688,A table.
+val_001689,Left side.
+val_001690,Left
+val_001691,The mirror.
+val_001692,The printer.
+val_001693,A chair.
+val_001694,No.
+val_001695,"Yes, people."
+val_001696,No.
+val_001697,A chair.
+val_001698,The shelf.
+val_001699,Right side.
+val_001700,Left
+val_001701,Table
+val_001702,None
+val_001703,Left
+val_001704,Clothes
+val_001705,A chair.
+val_001706,The desk.
+val_001707,The bed.
+val_001708,The desk.
+val_001709,The desk.
+val_001710,The shelf.
+val_001711,None visible.
+val_001712,The curtain.
+val_001713,The shelf.
+val_001714,Right side.
+val_001715,No.
+val_001716,I cannot see a rug or a book in this image.
+val_001717,No plant.
+val_001718,The background.
+val_001719,The monitor.

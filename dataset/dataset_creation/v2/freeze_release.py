@@ -71,8 +71,11 @@ VOLATILE_MANIFEST_FIELDS = {"built_at_utc"}
 
 
 def sha256_of(path: str) -> str:
-    if os.path.basename(path) == "manifest.json":
+    basename = os.path.basename(path)
+    if basename == "manifest.json":
         return _sha256_of_manifest(path)
+    if basename == "scene_index.jsonl":
+        return _sha256_of_scene_index(path)
     digest = hashlib.sha256()
     with open(path, "rb") as file_handle:
         for chunk in iter(lambda: file_handle.read(1 << 20), b""):
@@ -93,6 +96,56 @@ def _sha256_of_manifest(path: str) -> str:
     substantive = {k: v for k, v in manifest.items() if k not in VOLATILE_MANIFEST_FIELDS}
     canonical = json.dumps(substantive, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(canonical.encode()).hexdigest()
+
+
+# Decimal places kept when canonicalising scene_index.jsonl floats before
+# hashing. Every P0/P2 threshold this pipeline acts on (min_area_frac=0.005,
+# min_valid_fraction=0.3, and similar) is coarser than this by several orders
+# of magnitude, so rounding here cannot flip a real decision — it only drops
+# bits no decision ever reads.
+SCENE_INDEX_FLOAT_PRECISION = 6
+
+
+def _round_floats(value):
+    if isinstance(value, float):
+        return round(value, SCENE_INDEX_FLOAT_PRECISION)
+    if isinstance(value, dict):
+        return {key: _round_floats(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_round_floats(item) for item in value]
+    return value
+
+
+def _sha256_of_scene_index(path: str) -> str:
+    """Hash the P0 scene index's decision-bearing content only.
+
+    Each object record carries geometry/depth floats (`area_frac`,
+    `centroid_x`, `centroid_y`, `depth_median_m`, `depth_valid_frac`, ...)
+    computed from polygon and depth-array arithmetic, so their last bits
+    shift with the numpy/scipy version and BLAS backend the P0 build ran
+    under. Confirmed directly, 2026-09-06: after an environment migration,
+    a full P0 rebuild reproduced the identical 11,235 P0 drop decisions and
+    the identical canonical manifest (`_sha256_of_manifest`, above) as the
+    frozen v2.4 build, yet the raw scene_index.jsonl bytes still differed —
+    this is the manifest's `built_at_utc` problem again, one level down,
+    and gets the same fix: hash the meaningful content, not the raw bytes.
+
+    Record *order* is deliberately left alone rather than sorted away:
+    `build_index.py` iterates the toolbox `.mat` file in a fixed order with
+    no `set()`, `glob`, or multiprocessing in the path, so order is already
+    stable and a reordering would be a real change worth catching, not noise.
+    """
+    digest = hashlib.sha256()
+    with open(path, "r") as index_file:
+        for line in index_file:
+            line = line.strip()
+            if not line:
+                continue
+            canonical_record = _round_floats(json.loads(line))
+            canonical = json.dumps(canonical_record, sort_keys=True, separators=(",", ":"))
+            digest.update(canonical.encode())
+            digest.update(b"\n")
+    return digest.hexdigest()
 
 
 def row_count(path: str) -> int:

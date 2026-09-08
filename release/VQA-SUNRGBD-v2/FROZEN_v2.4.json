@@ -1,4 +1,13 @@
 {
+  "corrections": [
+    {
+      "date_utc": "2026-09-06",
+      "field": "tracked_inputs[\"data/index/scene_index.jsonl\"]",
+      "new_sha256": "6f3c20181451d363d34a12ceda0ee0b5287ab79a50621a9697e316483ffe62c0",
+      "old_sha256": "ab17e4a95b8da7b8f44fe185348a39451c98f52a317308dfce5f79fd7ccd5536",
+      "reason": "The recorded hash was a raw-byte sha256 of a file whose per-object geometry/depth floats (area_frac, centroid_x/y, depth_median_m, depth_valid_frac) are computed from numpy/scipy arithmetic and so shift their last bits with the numeric stack, exactly like the manifest's built_at_utc problem _sha256_of_manifest already exists to solve. After an environment migration (2026-09-05), --verify reported drift here. Investigated rather than assumed: the P0 drop log matched the frozen release's stats/drops.csv p0_drops rows exactly (11,235/11,235, 0 differences either direction), and _sha256_of_manifest's own canonical hash of index/manifest.json (config, seed 42, toolbox checksums, per-type counts) was already unaffected and matched. So the content this file's freeze exists to pin was proven unchanged; only its float-precision noise was not. sha256_of() now canonicalises scene_index.jsonl the same way it already canonicalises manifest.json (round floats, sort keys, preserve record order) before hashing, and this field is updated to that canonical hash so --verify v2.4 reflects true drift again rather than crying wolf on every environment rebuild. See experiment_protocol.md \u00a713 for the dated amendment."
+    }
+  ],
   "frozen_at_utc": "2026-09-05T01:10:06.500159+00:00",
   "note": "Any change to a tracked input or a rule_based/*.csv file invalidates this version. Bump `version` and re-freeze rather than editing in place. Verify with --verify.",
   "release_files": {
@@ -18,7 +27,7 @@
   "tracked_inputs": {
     "data/config.yaml": "b26f1ed4db2ff718d2ddd3949508ef6587762e4d2928eea0a547d2033b64674e",
     "data/index/manifest.json": "aec6ab8420149c0c2a3943c3ce5f90b3c4a788afc19c6b6674f030e5d175b9cb",
-    "data/index/scene_index.jsonl": "ab17e4a95b8da7b8f44fe185348a39451c98f52a317308dfce5f79fd7ccd5536",
+    "data/index/scene_index.jsonl": "6f3c20181451d363d34a12ceda0ee0b5287ab79a50621a9697e316483ffe62c0",
     "data/splits/test_images.txt": "d98729e2420c3d6d95a36956c868b9716fa2913daaa0b3175f9f03fd3a774d68",
     "data/splits/train_images.txt": "7fdcde5b6e00ce895386085f9f9e110014571d5e0c00ce7aa68cb70f41b2e733",
     "data/splits/val_images.txt": "c908a17dc8390f3f18bdaad4389fed6f906ff824b7f7d099dda83aaef6f45150",

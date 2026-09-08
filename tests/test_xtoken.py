@@ -30,6 +30,8 @@ from distillation.xtoken import (  # noqa: E402
     omitted_teacher_mass,
     project_student_probs,
     projected_kl_loss,
+    build_student_to_teacher_lookup,
+    calibrate_topk_with_loca,
 )
 
 
@@ -309,3 +311,137 @@ def test_span_aggregation_averages_positions_within_a_span():
 def test_span_aggregation_rejects_an_unknown_side():
     with pytest.raises(ValueError, match="teacher.*student"):
         aggregate_spans(torch.rand(2, 2), [Span((0, 1), (0, 1), "x")], which="both")
+
+
+# ---------------------------------------------------------------------------
+# Top-K-restricted LoCa (plan §8, D2/D5/D8) — compose_loss's xtoken branch
+# silently ignored config.use_loca before this; these pin the fix.
+# ---------------------------------------------------------------------------
+
+def test_build_student_to_teacher_lookup_maps_known_ids_and_flags_the_rest():
+    mapping = VocabularyMapping(
+        student_ids=torch.tensor([0, 2, 5]), teacher_ids=torch.tensor([10, 12, 15]),
+        student_vocab_size=6, teacher_vocab_size=20,
+        exact_matches=3, retokenized=0, unmapped=3)
+    lookup = build_student_to_teacher_lookup(mapping)
+    assert lookup.tolist() == [10, -1, 12, -1, -1, 15]
+
+
+def test_topk_loca_makes_gold_top1_when_found_in_cache():
+    """Mirrors `test_loca_makes_gold_top1_whether_or_not_it_started_there`,
+    through the top-K wrapper rather than `loca_calibrate` directly."""
+    topk_ids = torch.tensor([[3, 1, 4]])
+    topk_probs = torch.tensor([[0.70, 0.25, 0.05]])
+    for gold_id in (3, 1, 4):
+        calibrated, found = calibrate_topk_with_loca(
+            topk_ids, topk_probs, torch.tensor([gold_id]), alpha=0.8)
+        assert found.tolist() == [True]
+        gold_col = (topk_ids[0] == gold_id).nonzero(as_tuple=True)[0].item()
+        assert calibrated.argmax(-1).item() == gold_col, f"gold id {gold_id} not top-1"
+
+
+def test_topk_loca_preserves_non_target_ratios():
+    topk_ids = torch.tensor([[10, 11, 12, 13]])
+    topk_probs = torch.tensor([[0.5, 0.3, 0.15, 0.05]])
+    calibrated, found = calibrate_topk_with_loca(
+        topk_ids, topk_probs, torch.tensor([10]), alpha=0.8)
+    assert found.tolist() == [True]
+    before = topk_probs[0, 1] / topk_probs[0, 2]
+    after = calibrated[0, 1] / calibrated[0, 2]
+    assert before.item() == pytest.approx(after.item(), abs=1e-5)
+
+
+def test_topk_loca_gold_at_the_last_rank_of_the_cache():
+    """Boundary case: gold is the K-th (last) retained entry, not dropped."""
+    topk_ids = torch.tensor([[7, 8, 9, 42]])
+    topk_probs = torch.tensor([[0.60, 0.25, 0.10, 0.05]])
+    calibrated, found = calibrate_topk_with_loca(
+        topk_ids, topk_probs, torch.tensor([42]), alpha=0.8)
+    assert found.tolist() == [True]
+    assert calibrated.argmax(-1).item() == 3
+    # p_wrong is the true global max here since top-K keeps the K largest —
+    # 0.60, the highest of the three competitors, same as the dense case.
+    expected_scale = 0.8 / (1 - 0.05 + 0.60)
+    assert calibrated[0, 0].item() == pytest.approx(0.60 * expected_scale, abs=1e-5)
+
+
+def test_topk_loca_excludes_rows_where_gold_is_missing_from_the_cache():
+    """The critical new case top-K adds over the dense original: gold can
+    legitimately fall outside a truncated cache. Silently approximating its
+    probability would be exactly the failure mode already caught once this
+    session (the enable_thinking prompt defect) — so these rows are dropped
+    and counted, never guessed."""
+    topk_ids = torch.tensor([[1, 2, 3], [4, 5, 6]])
+    topk_probs = torch.tensor([[0.5, 0.3, 0.2], [0.5, 0.3, 0.2]])
+    gold_teacher_ids = torch.tensor([2, 99])              # 99 is in neither row
+    calibrated, found = calibrate_topk_with_loca(topk_ids, topk_probs, gold_teacher_ids, alpha=0.8)
+    assert found.tolist() == [True, False]
+    assert calibrated.shape == (1, 3)
+
+
+def test_topk_loca_returns_empty_when_gold_is_found_nowhere():
+    topk_ids = torch.tensor([[1, 2, 3]])
+    topk_probs = torch.tensor([[0.5, 0.3, 0.2]])
+    calibrated, found = calibrate_topk_with_loca(
+        topk_ids, topk_probs, torch.tensor([999]), alpha=0.8)
+    assert found.tolist() == [False]
+    assert calibrated.shape == (0, 3)
+
+
+def test_topk_loca_shape_mismatch_is_rejected():
+    with pytest.raises(ValueError, match="same shape"):
+        calibrate_topk_with_loca(torch.zeros(1, 3), torch.zeros(1, 4), torch.tensor([0]))
+    with pytest.raises(ValueError, match="rows"):
+        calibrate_topk_with_loca(torch.zeros(2, 3), torch.zeros(2, 3), torch.tensor([0]))
+
+
+def test_scatter_add_check_tolerance_scales_with_collapse_size():
+    """`check_scatter_add_accumulates` (distillation/verify_xtoken_identity.py)
+    once used a fixed 1e-5 tolerance, tuned on the Qwen-Qwen pair's 665-way
+    collapse. Measured on the real Gemma-4-12B-it -> Qwen3.5-0.8B mapping
+    (2026-09-07): a 5,880-way collapse lands at a 2.8e-5 float32 summation
+    error — confirmed as accumulation noise, not a projection bug, by an
+    independent float64 rerun and a plain sequential-sum reproduction — which
+    the old fixed tolerance would have wrongly rejected. This pins the fix
+    (`max(1e-5, n_collapsed * 1e-8)`) with a synthetic large collapse, without
+    downloading either real tokenizer."""
+    from distillation.verify_xtoken_identity import check_scatter_add_accumulates
+
+    n = 6000
+    # n student ids (0..n-1) all collapse onto teacher id 0; one more student
+    # id (n) maps to a distinct teacher id so the mapping is not degenerate.
+    student_ids = torch.arange(n + 1)
+    teacher_ids = torch.cat([torch.zeros(n, dtype=torch.long), torch.tensor([1])])
+    mapping = VocabularyMapping(
+        student_ids=student_ids, teacher_ids=teacher_ids,
+        student_vocab_size=n + 1, teacher_vocab_size=2,
+        exact_matches=n + 1, retokenized=0, unmapped=0)
+    check_scatter_add_accumulates(mapping)  # must not raise
+
+
+def test_scatter_add_check_still_rejects_a_real_miss():
+    """A genuine bug (only half the mass reaching the collapsed id) must still
+    fail regardless of collapse size — the scaled tolerance must not become
+    so loose it stops catching real defects."""
+    from distillation.verify_xtoken_identity import check_scatter_add_accumulates
+    from distillation import verify_xtoken_identity as module
+
+    n = 6000
+    student_ids = torch.arange(n + 1)
+    teacher_ids = torch.cat([torch.zeros(n, dtype=torch.long), torch.tensor([1])])
+    mapping = VocabularyMapping(
+        student_ids=student_ids, teacher_ids=teacher_ids,
+        student_vocab_size=n + 1, teacher_vocab_size=2,
+        exact_matches=n + 1, retokenized=0, unmapped=0)
+
+    original = module.project_student_probs
+
+    def broken_projection(probs, mapping):
+        return original(probs, mapping) * 0.5
+
+    module.project_student_probs = broken_projection
+    try:
+        with pytest.raises(SystemExit, match="did not sum all contributions"):
+            check_scatter_add_accumulates(mapping)
+    finally:
+        module.project_student_probs = original

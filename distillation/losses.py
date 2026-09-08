@@ -79,7 +79,27 @@ def _safe_targets(labels: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
 
 def masked_cross_entropy(logits: torch.Tensor, labels: torch.Tensor,
                          already_shifted: bool = False) -> torch.Tensor:
-    """Mean CE over valid answer positions only.
+    """Mean CE over valid answer positions, normalised **per example**.
+
+    Each row contributes the mean over its own answer tokens, and rows are then
+    averaged equally. Pooling every token in the batch instead — the usual
+    default — would weight a row by how many tokens its answer happens to have,
+    which is wrong here twice over:
+
+    * The endpoint is per-question macro accuracy: a question counts once
+      regardless of whether its answer is "no" or "file cabinet". Token pooling
+      would quietly upweight the open-vocabulary types (`identify_superlative`,
+      `nearest_object`) against the binary ones.
+    * It would make the loss depend on the micro-batch size, so a batch chosen
+      for VRAM reasons would silently change the optimisation. Per-example
+      normalisation makes ``batch_size`` numerically inert: batch 4 with
+      accumulation 4 and batch 1 with accumulation 16 optimise the same
+      objective. That is what lets CE and a KD run that needs a smaller batch
+      stay matched under §4's "identical optimizer-step accounting".
+
+    Only the valid positions are gathered before the float32 upcast. At batch 4
+    that is a few thousand rows of the 248k-wide vocabulary rather than every
+    padded position, which is a ~1.8 GB difference per step.
 
     Args:
         logits: ``[B, L, V]``
@@ -91,10 +111,21 @@ def masked_cross_entropy(logits: torch.Tensor, labels: torch.Tensor,
     mask = valid_answer_mask(labels)
     if not mask.any():
         raise ValueError("no valid answer positions: every label is IGNORE_INDEX")
-    return F.cross_entropy(
-        logits.reshape(-1, logits.size(-1)).float(),
-        labels.reshape(-1),
-        ignore_index=IGNORE_INDEX)
+
+    flat_mask = mask.reshape(-1)
+    selected = F.cross_entropy(
+        logits.reshape(-1, logits.size(-1))[flat_mask].float(),
+        labels.reshape(-1)[flat_mask],
+        reduction="none")
+
+    rows, length = labels.shape
+    row_of = torch.arange(rows, device=labels.device).repeat_interleave(length)[flat_mask]
+    totals = torch.zeros(rows, device=selected.device, dtype=selected.dtype)
+    counts = torch.zeros_like(totals)
+    totals.index_add_(0, row_of, selected)
+    counts.index_add_(0, row_of, torch.ones_like(selected))
+    supervised = counts > 0
+    return (totals[supervised] / counts[supervised]).mean()
 
 
 # ---------------------------------------------------------------------------

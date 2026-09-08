@@ -82,10 +82,14 @@ def main() -> None:
     parser.add_argument("--representation", choices=["replicated", "gradient"],
                         default="replicated")
     parser.add_argument("--split", default="val", choices=["train", "val", "test"])
+    parser.add_argument("--csv", help="Override the frozen release CSV that "
+                        "--split would resolve to, with an arbitrary path (e.g. a "
+                        "leave-one-source-out subset). Never points inside "
+                        "release/ for a derived file — that directory is frozen (G1).")
     parser.add_argument("--out", required=True, help="Prediction CSV to write.")
     parser.add_argument("--limit", type=int, help="Only the first N rows (smoke test).")
-    parser.add_argument("--prompt-style", choices=sorted(PROMPT_STYLES), default="enumerated",
-                        help="Instruction wording; frozen before the main runs (§6.4).")
+    parser.add_argument("--prompt-style", choices=sorted(PROMPT_STYLES), default="terse",
+                        help="Instruction wording; frozen as `terse` (experiment_protocol.md §8.3).")
     parser.add_argument("--thinking", choices=["off", "on"], default="off",
                         help="Qwen3.5 is a reasoning model whose chat template emits "
                              "chain-of-thought by default. Left on, a 16-token budget "
@@ -99,7 +103,7 @@ def main() -> None:
     import torch
     from transformers import AutoModelForImageTextToText, AutoProcessor
 
-    release_csv = os.path.join(PROJECT_ROOT, "release", "VQA-SUNRGBD-v2",
+    release_csv = args.csv or os.path.join(PROJECT_ROOT, "release", "VQA-SUNRGBD-v2",
                                "rule_based", f"{args.split}.csv")
     dataset_dir = os.path.join(PROJECT_ROOT, "dataset")
     rows = load_rows(release_csv, args.limit)
@@ -107,14 +111,20 @@ def main() -> None:
     print(f"{len(rows)} rows from {args.split}; model={args.model}; "
           f"modality={args.modality}", flush=True)
 
-    load_kwargs = {"torch_dtype": getattr(torch, args.dtype), "device_map": "cuda:0"}
+    compute_dtype = getattr(torch, args.dtype)
+    load_kwargs = {"dtype": compute_dtype, "device_map": "cuda:0"}
     if args.quantize != "none":
         from transformers import BitsAndBytesConfig
         load_kwargs["quantization_config"] = (
             BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
-                               bnb_4bit_compute_dtype=torch.bfloat16)
+                               bnb_4bit_compute_dtype=compute_dtype)
             if args.quantize == "nf4" else BitsAndBytesConfig(load_in_8bit=True))
-        load_kwargs.pop("torch_dtype")
+        # `dtype` is deliberately *kept* alongside the quantization config. It used
+        # to be popped, which left the modules bitsandbytes does not quantize — the
+        # vision tower's LayerNorms among them — in float32 while the quantized
+        # path fed them `bnb_4bit_compute_dtype` activations. Gemma-4 dies on that
+        # with "expected scalar type Float but found BFloat16"; Qwen3.5 happened
+        # to survive it, which is why the NF4 teacher rows worked and hid the bug.
 
     processor = AutoProcessor.from_pretrained(args.model)
     model = AutoModelForImageTextToText.from_pretrained(args.model, **load_kwargs)
@@ -142,6 +152,13 @@ def main() -> None:
             prompt = processor.apply_chat_template(messages, add_generation_prompt=True,
                                                    tokenize=False, **template_kwargs)
             inputs = processor(images=image, text=prompt, return_tensors="pt").to(model.device)
+            # Processors emit `pixel_values` as float32 regardless of the model's
+            # dtype. Under 4-bit the vision tower's LayerNorms are in the compute
+            # dtype, and the mismatch aborts the forward ("expected scalar type
+            # Float but found BFloat16") — Gemma-4 does, Qwen3.5 tolerates it.
+            # Integer inputs (ids, masks, token-type ids) must stay integral.
+            inputs = {key: value.to(compute_dtype) if value.is_floating_point() else value
+                      for key, value in inputs.items()}
             with torch.inference_mode():
                 generated = model.generate(**inputs, max_new_tokens=MAX_NEW_TOKENS,
                                            do_sample=False)

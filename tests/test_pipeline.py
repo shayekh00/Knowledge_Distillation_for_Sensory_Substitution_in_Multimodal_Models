@@ -421,7 +421,53 @@ def test_contrastive_recipe_requires_a_negative_bank():
 
 def test_recipe_library_covers_the_matrix_rows():
     library = recipe_library()
-    for row in ("B3", "B4", "D0", "D1", "D5", "X0", "X1", "X2", "X3", "X5"):
+    for row in ("B3", "B4", "D0", "D1", "D3", "D4", "D5", "D6", "D7", "D8", "D9",
+                "X0", "X1", "X2", "X3", "X5"):
         assert row in library, f"matrix row {row} missing from the library"
     assert library["X3"].use_ce is False
     assert library["X2"].kd_objective == "xtoken"
+
+
+def test_d7_is_joint_not_two_stage():
+    """D7 declares a feature objective (like D3/D5/D6/D8) but stage='joint', so
+    it must not be routed through the F->S2 machinery those rows use."""
+    library = recipe_library()
+    assert library["D7"].stage == "joint"
+    assert library["D7"].is_two_stage() is False
+    assert "vision_attention" in library["D7"].trainable_modules
+    assert "language_attention" in library["D7"].trainable_modules
+    # Sanity: the F->S2 rows are still correctly identified as two-stage.
+    for row in ("D3", "D4", "D5", "D6", "D8", "D9"):
+        assert library[row].is_two_stage() is True, row
+
+
+def test_d6_stage_one_p_keeps_kd_objective_raw():
+    """D6's stage one is P (§8.2): feature alignment plus a small *raw* KD
+    term — unlike stage_one() (F), kd_objective must survive, use_loca must
+    not, and the surface stays vision-only."""
+    config = recipe_library()["D6"]
+    p = config.stage_one_p()
+    assert p.stage == "P"
+    assert p.kd_objective == config.kd_objective  # preserved, not cleared
+    assert p.use_loca is False                    # raw KD, not LoCa (§8.2)
+    assert p.use_ce is False
+    assert p.lambda_kd == pytest.approx(0.1)       # documented default
+    assert p.trainable_modules == ("vision_attention", "vision_merger")
+    # An explicit weight overrides the default.
+    assert config.stage_one_p(p_lambda_kd=0.25).lambda_kd == pytest.approx(0.25)
+
+
+def test_stage_one_p_refuses_a_row_with_no_kd_objective():
+    config = recipe_library()["D0"]  # feature-only, no kd_objective
+    with pytest.raises(ValueError, match="nothing to make it P"):
+        config.stage_one_p()
+
+
+def test_d9_declares_the_strict_label_access_shape():
+    """§8.1: D9 must not use CE or LoCa. Its full label-free path (a
+    teacher-generated-prefix cache) is a separate, not-yet-built artifact —
+    this only pins the config-level shape."""
+    config = recipe_library()["D9"]
+    assert config.use_ce is False
+    assert config.use_loca is False
+    assert config.kd_objective != "none"

@@ -1,0 +1,19 @@
+{
+  "accumulation": 16,
+  "batch_size": null,
+  "distillation_mode": "none",
+  "effective_batch": null,
+  "epochs": 1,
+  "gradient_checkpointing": null,
+  "learning_rate": 2e-05,
+  "lora_rank": 16,
+  "modality": "depth",
+  "model": "Qwen/Qwen3.5-0.8B",
+  "precision": "bfloat16",
+  "prompt_style": "terse",
+  "recipe": "B3",
+  "representation": "replicated",
+  "seed": 2026,
+  "split": "val",
+  "teacher": null
+}

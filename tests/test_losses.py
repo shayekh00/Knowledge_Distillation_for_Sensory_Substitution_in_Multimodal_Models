@@ -69,6 +69,31 @@ def test_appending_padding_does_not_change_the_normalised_loss():
     assert base.item() == pytest.approx(padded.item(), abs=1e-6)
 
 
+def test_ce_is_invariant_to_micro_batch_size():
+    """§4: CE and KD must share optimizer-step accounting even at different batch sizes.
+
+    A KD row may have to shrink its batch to fit the teacher cache alongside the
+    student. That is only allowed to be a throughput decision if the objective
+    does not move with the batch size, so this pins the property rather than
+    trusting it: rows with *unequal* answer lengths are exactly the case where
+    token-pooled averaging would drift.
+    """
+    torch.manual_seed(0)
+    rows, length, vocabulary = 4, 9, 32
+    logits = torch.randn(rows, length, vocabulary)
+    labels = torch.full((rows, length), IGNORE_INDEX)
+    for row, answer_length in enumerate([1, 2, 3, 4]):
+        labels[row, length - answer_length - 1:length - 1] = torch.randint(
+            0, vocabulary, (answer_length,))
+
+    batched = masked_cross_entropy(logits, labels)
+    one_at_a_time = torch.stack([
+        masked_cross_entropy(logits[row:row + 1], labels[row:row + 1])
+        for row in range(rows)]).mean()
+
+    assert batched.item() == pytest.approx(one_at_a_time.item(), abs=1e-6)
+
+
 def test_padding_contributes_zero_to_kd():
     """§7.3: 'Padding and prompt tokens contribute zero to both CE and KD.'"""
     torch.manual_seed(0)
