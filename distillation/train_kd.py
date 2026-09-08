@@ -45,11 +45,13 @@ from distillation.epoch_loop import (  # noqa: E402
 from distillation.losses import IGNORE_INDEX  # noqa: E402
 from distillation.runner import TeacherSignals, compose_loss, recipe_library  # noqa: E402
 from distillation.teacher_cache_loader import (  # noqa: E402
+    GeneratedTextCache,
     QwenAdapter,
     TeacherCache,
     assert_rows_align,
 )
-from distillation.train_student import build_batch, build_image, load_rows  # noqa: E402
+from distillation.train_student import (  # noqa: E402
+    build_batch, build_batch_with_answers, build_image, load_rows)
 
 
 def main() -> None:
@@ -65,6 +67,13 @@ def main() -> None:
                         help="Pooled-features cache from build_feature_cache.py. "
                              "Required for any recipe with a feature objective "
                              "(D0, D3, D5, D8).")
+    parser.add_argument("--generated-text-cache",
+                        help="generated_text cache from build_teacher_generation_cache.py. "
+                             "Required for D9 only (§8.1): its --cache must itself be a "
+                             "teacher_generated-prefix topk_logits cache "
+                             "(build_teacher_cache.py --prefix-source teacher_generated), "
+                             "and this is the matching generated_text cache D9's own "
+                             "training batches are built against instead of gold.")
     parser.add_argument("--stage", default="auto", choices=["auto", "F", "P", "S2"],
                         help="Which half of a two-stage row to run. 'auto' runs the "
                              "recipe exactly as declared. 'F' runs its derived "
@@ -184,6 +193,14 @@ def main() -> None:
         parser.error(
             f"recipe {args.recipe} needs cached candidate scores, not top-K logits.")
 
+    # §8.1's strict label-access rule: D9 is the only row whose KD prefix is
+    # not the gold answer, so it is the only row needing the matching
+    # teacher_generated topk_logits cache and its generated_text counterpart.
+    strict_label_access = args.recipe == "D9"
+    if strict_label_access and not args.generated_text_cache:
+        parser.error("recipe D9 needs --generated-text-cache "
+                     "(build_teacher_generation_cache.py's output directory)")
+
     random.seed(args.seed)
     torch.manual_seed(args.seed)
 
@@ -203,11 +220,34 @@ def main() -> None:
         "prompt_hash": prompt_signature(processor),
         "rgb_transform": "PIL RGB, processor default resize",
         "signal_kind": "topk_logits", "top_k": args.top_k, "temperature": 1.0,
+        # None for every row but D9 — see build_teacher_cache.py's identical
+        # comment: an explicit "gold" here would change the digest for D1-D8
+        # and invalidate every cache already verified against them.
+        "prefix_source": "teacher_generated" if strict_label_access else None,
     })
     cache = None
     if needs_logits:
         cache = TeacherCache(args.cache, key)
         print(f"logits cache verified: {args.cache} ({key.digest()})", flush=True)
+
+    generated_cache = None
+    if strict_label_access:
+        generation_key = CacheKey({
+            "dataset_version": dataset_version(), "split": "train",
+            "teacher_model": args.teacher, "teacher_revision": teacher_revision,
+            "teacher_tokenizer_revision": teacher_revision, "precision": "bfloat16",
+            "prompt_hash": prompt_signature(processor),
+            "rgb_transform": "PIL RGB, processor default resize",
+            "signal_kind": "generated_text",
+        })
+        generated_cache = GeneratedTextCache(args.generated_text_cache, generation_key)
+        print(f"generated-text cache verified: {args.generated_text_cache} "
+              f"({generation_key.digest()})", flush=True)
+        # §8.1: "the gold answer column must be removed before the
+        # training/cache interface, and the run succeeds with them absent" —
+        # not merely unused. Stripped once here rather than trusted to stay
+        # unread through the rest of the loop.
+        rows = [{k: v for k, v in row.items() if k != "answer"} for row in rows]
 
     feature_cache = None
     if config.feature_objective != "none":
@@ -397,7 +437,11 @@ def main() -> None:
             if not chunk:
                 continue
 
-            batch = build_batch(processor, chunk, images)
+            if generated_cache is not None:
+                answers = generated_cache.answers_for([row["question_id"] for row in chunk])
+                batch = build_batch_with_answers(processor, chunk, images, answers)
+            else:
+                batch = build_batch(processor, chunk, images)
             labels = batch.pop("labels")
             if (labels != IGNORE_INDEX).sum() == 0:
                 skipped += len(chunk)

@@ -14,6 +14,20 @@ dataset/SUNRGBDtoolbox.zip
 dataset/SUNRGBDtoolbox/
 dataset/__MACOSX/
 
+# Raw ARKitScenes downloads — not source, fetched via download_data.py (see
+# arkitscenes_plan.md). Phase 0's 5-scan sample alone is ~9,300 individual
+# files (one per frame per asset type); a Phase 2 subset would be far larger.
+dataset/ARKitScenes_phase0/
+dataset/ARKitScenes/
+# Apple's own ARKitScenes repo (download_data.py + metadata CSVs), cloned as
+# a tool dependency, not vendored source — it carries its own nested .git,
+# which is exactly why it needs its own explicit line rather than being
+# swept in by a parent-directory pattern.
+dataset/dataset_creation/arkit_tools/ARKitScenes/
+# Ad-hoc progress log of the Phase 2 bulk download driver — not curated
+# evidence like build_log/*.csv, just a growing run log.
+dataset/dataset_creation/arkit_tools/phase2_download.log
+
 # v2 pipeline intermediates — regenerable from data/config.yaml + the raw
 # toolbox via build_index.py (P0) and the P2 generators. Not committed to
 # keep repo size sane; data/vocab, data/splits, data/templates (curated

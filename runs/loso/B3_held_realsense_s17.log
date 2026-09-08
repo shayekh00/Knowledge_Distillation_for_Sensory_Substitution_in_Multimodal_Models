@@ -1,23 +1,59 @@
 13793 training rows; recipe=B3; modality=depth
 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-Loading weights:   0%|          | 0/473 [00:00<?, ?it/s]Loading weights:  35%|███▌      | 166/473 [00:00<00:00, 1630.07it/s]Loading weights:  74%|███████▍  | 349/473 [00:00<00:00, 1745.73it/s]Loading weights: 100%|██████████| 473/473 [00:00<00:00, 2112.30it/s]
-[W907 19:51:05.066187335 CUDACachingAllocator.cpp:3934] memory allocation failed with OOM on device 0 while trying to allocate 872415232 bytes (free: 165609472, total: 25229131776).
-[W907 19:51:08.072819281 CUDACachingAllocator.cpp:3934] memory allocation failed with OOM on device 0 while trying to allocate 868220928 bytes (free: 150929408, total: 25229131776).
-[W907 19:51:13.482475035 CUDACachingAllocator.cpp:3934] memory allocation failed with OOM on device 0 while trying to allocate 889192448 bytes (free: 226426880, total: 25229131776).
-[W907 19:51:18.833161310 CUDACachingAllocator.cpp:3934] memory allocation failed with OOM on device 0 while trying to allocate 872415232 bytes (free: 182386688, total: 25229131776).
-[W907 19:51:23.880502245 CUDACachingAllocator.cpp:3934] memory allocation failed with OOM on device 0 while trying to allocate 889192448 bytes (free: 245301248, total: 25229131776).
-[W907 19:51:23.882326599 CUDACachingAllocator.cpp:3934] memory allocation failed with OOM on device 0 while trying to allocate 889192448 bytes (free: 320798720, total: 25229131776).
+Loading weights:   0%|          | 0/473 [00:00<?, ?it/s]Loading weights:  47%|████▋     | 220/473 [00:00<00:00, 2192.99it/s]Loading weights: 100%|██████████| 473/473 [00:00<00:00, 3019.21it/s]
 trainable params: 1,081,344 || all params: 854,067,264 || trainable%: 0.1266
-Traceback (most recent call last):
-  File "/data/dev/navid/kd-vago-ubuntu-two/workspace/Knowledge_Distillation_for_Sensory_Substitution_in_Multimodal_Models/distillation/train_student.py", line 347, in <module>
-    main()
-  File "/data/dev/navid/kd-vago-ubuntu-two/workspace/Knowledge_Distillation_for_Sensory_Substitution_in_Multimodal_Models/distillation/train_student.py", line 252, in main
-    (loss / accumulation).backward()
-  File "/data/dev/navid/kd-vago-ubuntu-two/workspace/Knowledge_Distillation_for_Sensory_Substitution_in_Multimodal_Models/.venv-models/lib/python3.12/site-packages/torch/_tensor.py", line 623, in backward
-    torch.autograd.backward(
-  File "/data/dev/navid/kd-vago-ubuntu-two/workspace/Knowledge_Distillation_for_Sensory_Substitution_in_Multimodal_Models/.venv-models/lib/python3.12/site-packages/torch/autograd/__init__.py", line 395, in backward
-    _engine_run_backward(
-  File "/data/dev/navid/kd-vago-ubuntu-two/workspace/Knowledge_Distillation_for_Sensory_Substitution_in_Multimodal_Models/.venv-models/lib/python3.12/site-packages/torch/autograd/graph.py", line 1072, in _engine_run_backward
-    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 848.00 MiB. GPU 0 has a total capacity of 23.50 GiB of which 305.94 MiB is free. Process 9454 has 8.45 GiB memory in use. Including non-PyTorch memory, this process has 14.72 GiB memory in use. Of the allocated memory 12.05 GiB is allocated by PyTorch, and 2.20 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+  epoch 0 4000/13793  step 250  loss 1.0001  12.04 ex/s  peak 13.89 GB
+  epoch 0 8000/13793  step 500  loss 0.8701  12.06 ex/s  peak 14.68 GB
+  epoch 0 12000/13793  step 750  loss 0.8401  12.07 ex/s  peak 14.68 GB
+  epoch 0 val macro 0.4065  best so far 0.4065 (epoch 0)
+  epoch 1 16001/13793  step 1000  loss 0.8195  10.60 ex/s  peak 14.68 GB
+  epoch 1 20001/13793  step 1250  loss 0.8005  10.86 ex/s  peak 14.68 GB
+  epoch 1 24001/13793  step 1500  loss 0.7840  11.04 ex/s  peak 14.68 GB
+  epoch 1 val macro 0.4356  best so far 0.4356 (epoch 1)
+  epoch 2 28002/13793  step 1750  loss 0.7928  10.41 ex/s  peak 14.68 GB
+  epoch 2 32002/13793  step 2000  loss 0.7619  10.59 ex/s  peak 14.68 GB
+  epoch 2 36002/13793  step 2250  loss 0.7643  10.74 ex/s  peak 14.68 GB
+  epoch 2 40002/13793  step 2500  loss 0.7646  10.86 ex/s  peak 14.68 GB
+  epoch 2 val macro 0.4331  best so far 0.4356 (epoch 1)
+  epoch 3 44003/13793  step 2750  loss 0.7435  10.48 ex/s  peak 14.68 GB
+  epoch 3 48003/13793  step 3000  loss 0.7549  10.59 ex/s  peak 14.68 GB
+  epoch 3 52003/13793  step 3250  loss 0.7239  10.69 ex/s  peak 14.68 GB
+  epoch 3 val macro 0.4357  best so far 0.4357 (epoch 3)
+  epoch 4 56004/13793  step 3501  loss 0.7361  10.41 ex/s  peak 14.68 GB
+  epoch 4 60004/13793  step 3751  loss 0.7222  10.50 ex/s  peak 14.68 GB
+  epoch 4 64004/13793  step 4001  loss 0.7055  10.59 ex/s  peak 14.68 GB
+  epoch 4 68004/13793  step 4251  loss 0.7237  10.66 ex/s  peak 14.68 GB
+  epoch 4 val macro 0.4301  best so far 0.4357 (epoch 3)
+  epoch 5 72005/13793  step 4501  loss 0.7055  10.45 ex/s  peak 14.68 GB
+  epoch 5 76005/13793  step 4751  loss 0.6945  10.52 ex/s  peak 14.68 GB
+  epoch 5 80005/13793  step 5001  loss 0.6889  10.59 ex/s  peak 14.68 GB
+  epoch 5 val macro 0.4314  best so far 0.4357 (epoch 3)  [stopping]
+{
+  "recipe": "B3",
+  "model": "Qwen/Qwen3.5-0.8B",
+  "modality": "depth",
+  "seed": 17,
+  "epochs": 10,
+  "examples_seen": 82758,
+  "examples_skipped": 0,
+  "optimizer_steps": 5173,
+  "learning_rate": 2e-05,
+  "accumulation": 4,
+  "batch_size": 4,
+  "effective_batch": 16,
+  "gradient_checkpointing": false,
+  "lora_rank": 16,
+  "elapsed_minutes": 132.83,
+  "examples_per_second": 10.384,
+  "peak_vram_gb": 14.68,
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "pilot": true,
+  "projected_minutes_full_train_epoch": 24.5,
+  "max_epochs": 10,
+  "patience": 2,
+  "epochs_run": 6,
+  "best_epoch": 3,
+  "best_val_macro": 0.43573741299672386,
+  "stopped_on": "patience"
+}
+adapter saved to runs/loso/B3_held_realsense_s17/adapter

@@ -92,7 +92,7 @@ def generate_val_predictions(model, processor, rows, images, prompt_style="terse
     return predictions
 
 
-def score_val_macro(predictions, split: str = "val") -> float:
+def score_val_macro(predictions, split: str = "val", release_dir: str = RELEASE_DIR) -> float:
     """Score `[(question_id, prediction), ...]` exactly as `evaluate.py`
     scores any prediction file, and return the macro accuracy.
 
@@ -103,16 +103,26 @@ def score_val_macro(predictions, split: str = "val") -> float:
     whole split, and the result looks like catastrophic failure rather than
     partial coverage.
 
-    That has now produced a wrong reading three times in this project: a
-    `--limit 300` inference run scored 7.1% against a 30.3% chance floor, and a
+    That has now produced a wrong reading four times in this project: a
+    `--limit 300` inference run scored 7.1% against a 30.3% chance floor, a
     `--val-limit 8` stage-F run scored 0.06% and was briefly taken as evidence
     that the stage had no usable metric at all (it scores 34.3% at full
-    coverage). Each time the number was arithmetically correct and completely
-    misleading. So coverage is checked and announced here rather than left for
-    someone to notice: partial coverage is legitimate for a smoke test, but it
-    must never be read as, or compared against, a real result.
+    coverage), and a leave-one-source-out training run whose predictions
+    covered only the in-distribution val subset (1,565 of 1,720 rows) scored
+    against the full frozen `val.csv` before `release_dir` existed as a
+    parameter here — the 155 held-out-sensor rows this run never predicted
+    counted as wrong every epoch. Each time the number was arithmetically
+    correct and completely misleading. So coverage is checked and announced
+    here rather than left for someone to notice: partial coverage is
+    legitimate for a smoke test, but it must never be read as, or compared
+    against, a real result. `release_dir` lets a caller whose predictions
+    cover a genuine, deliberately smaller gold set (e.g. an LOSO subset) score
+    against *that* subset's own gold rather than the full frozen release —
+    without it, "smaller than the frozen split" and "partial coverage of the
+    frozen split" are indistinguishable to this function, and only one of them
+    is actually a problem.
     """
-    gold = load_release_split(split, RELEASE_DIR)
+    gold = load_release_split(split, release_dir)
     synonym_map = load_synonyms(os.path.join(VOCAB_DIR, "synonyms.csv"))
     canonical_vocab = load_canonical_vocab(os.path.join(VOCAB_DIR, "canonical_objects.csv"))
     frame = pd.DataFrame(predictions, columns=["question_id", "prediction"])

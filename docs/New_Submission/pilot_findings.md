@@ -641,6 +641,151 @@ ablation which could answer the attribution question will not be run.
 
 ---
 
+## 13. Gemma-4-12B-it screened, both precisions: unusable as a teacher
+
+Zero-shot, `terse`, both modalities, full 1,720-row val split, greedy decoding
+(same contract as every B1/B2 number). Two checkpoints: the QAT-trained model
+dequantized back to bf16 (`google/gemma-4-12B-it-qat-q4_0-unquantized`, run
+earlier as a mechanism check) and the plain instruction-tuned checkpoint
+(`google/gemma-4-12B-it`, screened here at `--quantize nf4` for VRAM — bf16
+loads at 24.18 GB peak, §9's measurement, at the card's limit with no
+headroom).
+
+| Model | Depth | RGB | Peak VRAM |
+|---|---:|---:|---:|
+| Gemma-4-12B-it, QAT (dequantized bf16) | 32.8% | 39.4% | 8.50 GB |
+| Gemma-4-12B-it, plain (NF4) | **28.2%** | 37.8% | 8.50 GB |
+| *for reference:* Qwen3.5-0.8B zero-shot (B1/B2) | 36.18% | 42.61% | — |
+| *for reference:* chance floor | 30.3% | 30.3% | — |
+
+**Neither Gemma-4-12B checkpoint beats our own untrained 0.8B student's
+zero-shot numbers, on either modality**, and the plain (non-QAT) checkpoint's
+depth score sits **below the 30.3% chance floor** — driven by a high invalid-
+answer rate concentrated in `left_right` (65.6% invalid) and `nearest_object`
+(44.9% invalid), where the model frequently fails to produce a
+constrained-vocabulary answer at all rather than answering wrong. This
+confirms the read already reached from the QAT screen alone: **Gemma-4-12B is
+not usable as a teacher for this benchmark**, on either modality, at either
+precision. It remains valid for its originally intended purpose — a mechanism
+check that X-Token's cross-tokenizer projection produces a sane loss on a
+genuinely unrelated tokenizer pair (Open list, below) — but a
+`gemma-4-12B-it → Qwen3.5-0.8B`
+KD row would be distilling from a weaker model than the student already is
+zero-shot, so it stays a feasibility/mapping-quality screen and is not proposed
+as a headline result. Counter-intuitively the QAT-dequantized checkpoint
+slightly *out-scores* the plain one on both modalities (32.8 vs 28.2 depth,
+39.4 vs 37.8 RGB) — not investigated further since both are well below the
+bar that would make either useful.
+
+---
+
+## 14. Leave-one-source-out: training on 3 sensors transfers to the 4th with no measured drop
+
+SUN RGB-D's four capture sensors (`kv1`, `kv2`, `xtion`, `realsense`) are a
+natural, already-present axis for testing whether this benchmark's depth CE
+training generalizes across hardware, or just memorizes one sensor's noise
+signature. B3 (depth CE, recipe defaults, seed 17) retrained from scratch on a
+split that **excludes every `realsense` row from training**: 13,793 train rows
+(3 sensors only), stopped by §7.3's patience-2 rule at epoch 3 of 6 run
+(`epochs_run` 6, `elapsed_minutes` 132.8).
+
+| Split | n | Val macro |
+|---|---:|---:|
+| In-distribution (3 sensors, `realsense` excluded from both train and this val) | 1,565 | 43.57% (best epoch 3 checkpoint) |
+| **Held-out `realsense` (0 rows seen in training)** | 155 | **46.4%** |
+| *for reference:* full-data B3 (all 4 sensors, §7's original run) | 1,720 | 44.9% |
+
+Both split-specific numbers use their own gold file via `evaluate.py
+--release-dir` (`distillation/loso/indist_no_realsense/` and
+`distillation/loso/held_realsense/` respectively) — scoring either one against
+the full frozen 1,720-row `val.csv` would silently count the other split's
+rows as wrong, which is exactly the bug caught and fixed in `score_val_macro`
+before this run (a first attempt did exactly that, scored 37.24%, and was
+discarded before being recorded anywhere as a result).
+
+**Reading:** the held-out-sensor score is *not lower* than the in-distribution
+score — nominally 2.8 points higher, though at n=155 (vs. n=1,565) the standard
+error on that gap is large enough that "no measurable degradation" is the
+honest claim, not "generalizes better." Per-type accuracy on the held-out
+sensor: existence 62.2% (n=37), left_right 73.1% (n=26), relative_depth 68.0%
+(n=25) — all comfortably above their chance floors; identify_superlative 17.5%
+and nearest_object 11.1% (open-vocabulary types, n=40/27) are weak in absolute
+terms but consistent with how those two types score everywhere else in this
+study, not specifically a held-sensor failure. **This is a single run at one
+seed** (§7.3's seed-reduction decision applies here too — no retraining-
+variability estimate exists for this number either), and the excluded-sensor
+choice (`realsense`, 1,720/10,335 ≈ 12.5% of scenes) was not itself varied, so
+this is one generalization probe, not a full cross-sensor matrix. Still, a
+clean result in the direction the manuscript wants: nothing here suggests the
+depth-CE student is fitting sensor-specific artifacts rather than the
+depth-derived task signal itself.
+
+---
+
+## 15. D4 (raw KD) beats D5 (LoCa KD) from the identical aligned checkpoint
+
+D4 and D5 share exactly the same stage-F derivation — this run reused D5's own
+stage-F adapter (`runs/kd/align_curve_contrastive_s17/preserved/epoch_1`)
+rather than re-deriving it, so the vision-alignment weights feeding stage S2
+are bit-identical between the two rows. The only difference is stage S2's
+KD term: D4 uses raw teacher→student KL (no gold-conditioned correction), D5
+uses LoCa (label-conditioned calibration, ECAI 2024) on top of the same KL.
+This is **not** the alignment-vs-KD attribution question left open in §13.1
+point 5/§13 (2026-09-07) — both rows include the same alignment stage; this
+isolates the S2 calibration choice alone, holding stage F fixed.
+
+| Row | S2 KD term | Best epoch | Val macro |
+|---|---|---:|---:|
+| D5 | LoCa KD | 7 (of 10 run) | 50.13% |
+| **D4** | **Raw KD** | 5 (of 8 run) | **51.59%** |
+
+D4 beats D5 by 1.46 points, at one seed, from the identical aligned starting
+point (202.1 min, 10.08 ex/s, stopped on patience at epoch 8). Both clear
+§5.1's >= 2-point CE threshold comfortably (B3 CE reference: 44.9%). The
+same seed-variance caveat as everywhere else applies (§7.3: ~0.9-point spread
+from seed alone measured on B3) — a 1.46-point gap from one seed each is
+suggestive, not conclusive, that raw KD out-performs LoCa's label-conditioned
+calibration once the vision surface is already aligned, but the manuscript
+should not overstate the ordering without a second seed. Practically:
+raw KD is also the simpler mechanism (no gold-conditioned correction term to
+implement or attribute), so this result does not create pressure to justify
+LoCa's added complexity for this benchmark.
+
+---
+
+## 16. D6 — the submitted method — beats both D4 and D5
+
+D6 is §8.2's **P → S2** row: the method "as submitted," where stage one is
+feature alignment **plus** a small raw KD term (`--p-lambda-kd 0.1`), not the
+feature-alignment-only F stage that D4 and D5 share. Its S2 stage (CE + LoCa
+KD) is otherwise identical in shape to D5's.
+
+| Row | Stage one | Stage two | Best epoch | Val macro |
+|---|---|---|---:|---:|
+| D5 | F (feature only) | CE + LoCa KD | 7 (of 10) | 50.13% |
+| D4 | F (feature only, reused from D5) | CE + raw KD | 5 (of 8) | 51.59% |
+| **D6** | **P (feature + raw KD)** | **CE + LoCa KD** | **3 (of 6)** | **53.50%** |
+
+D6 beats D5 by 3.37 points and D4 by 1.91 points, at one seed each, and does
+so in fewer stage-two epochs than either (best at epoch 3 vs. epoch 5/7). It
+costs more stage-one compute to get there: P's alignment stage took 92.4 min
+(3 epochs, 8.26 ex/s) against D4/D5's shared F stage's 48.1 min (5 epochs,
+26.45 ex/s) — P is slower per example because it also runs the KD forward
+pass every step, not just the cheap feature-pooling one. Total pipeline: 92.4
+(P) + 150.6 (S2) = 243.0 min, versus D4's 202.1 min (S2 only, F reused) and
+D5's 48.1 + 281.0 = 329.1 min original pipeline.
+
+**Reading these three together:** stage one (P vs. F) and stage two (raw vs.
+LoCa) each move the result independently in the same direction. D6 stacks
+both improvements — a KD signal reaching the vision surface during alignment,
+plus LoCa's label-conditioned calibration in stage two — and each row is a
+single-seed measurement (§7.3's caveat applies identically to all three: no
+retraining-variability estimate exists for any of them). The relative
+ordering (D6 > D4 > D5) is consistent with each component's expected effect
+direction, which is weak corroboration but not a substitute for a second seed.
+
+---
+
 ## Open
 
 *Updated 2026-09-07 after the multi-epoch CE-vs-KD result (§10.2).*

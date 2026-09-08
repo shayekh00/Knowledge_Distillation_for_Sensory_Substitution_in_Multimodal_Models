@@ -21,6 +21,7 @@ from distillation.cache import CacheKey, write_cache_key  # noqa: E402
 from distillation.losses import IGNORE_INDEX  # noqa: E402
 from distillation.runner import TeacherSignals  # noqa: E402
 from distillation.teacher_cache_loader import (  # noqa: E402
+    GeneratedTextCache,
     TeacherCache,
     assert_rows_align,
 )
@@ -342,3 +343,66 @@ def test_use_loca_refuses_an_empty_calibrated_set():
     with pytest.raises(ValueError, match="found gold.*for 0 of"):
         compose_loss(config, StubAdapter(), {}, signals, xtoken_mapping=mapping,
                     gold_teacher_lookup=lookup)
+
+
+# ---------------------------------------------------------------------------
+# GeneratedTextCache and the D9 prefix_source backward-compatibility guarantee
+# ---------------------------------------------------------------------------
+
+def test_prefix_source_gold_default_produces_the_pre_existing_digest():
+    """The single most safety-critical property of D9's infrastructure: adding
+    the `prefix_source` field to CacheKey must not change the digest of any
+    cache built before this field existed (D4/D5/D6/D7's already-verified
+    gold-prefix caches). build_teacher_cache.py encodes the default ("gold")
+    case as `prefix_source: None`, which this pins as digest-identical to
+    never having passed the field at all."""
+    without_field = make_key()
+    with_none = make_key(prefix_source=None)
+    assert without_field.digest() == with_none.digest()
+
+    with_explicit_gold = make_key(prefix_source="gold")
+    assert with_explicit_gold.digest() != without_field.digest(), (
+        "an explicit 'gold' string must NOT collide with the omitted-field digest "
+        "— build_teacher_cache.py relies on translating 'gold' to None precisely "
+        "to avoid this")
+
+
+def test_prefix_source_teacher_generated_is_a_distinct_cache():
+    gold = make_key()
+    teacher_generated = make_key(prefix_source="teacher_generated")
+    assert gold.digest() != teacher_generated.digest()
+
+
+def test_generated_text_cache_reads_back_completions(tmp_path):
+    key = CacheKey({
+        "dataset_version": "v2.4", "split": "train",
+        "teacher_model": "Qwen/Qwen3.5-9B", "precision": "bfloat16",
+        "prompt_hash": "f6cc1b602803c6f1", "signal_kind": "generated_text",
+    })
+    directory = str(tmp_path)
+    write_cache_key(directory, key)
+    import json
+    with open(os.path.join(directory, "completions.json"), "w", encoding="utf-8") as handle:
+        json.dump({"q0": "no", "q1": "left"}, handle)
+
+    cache = GeneratedTextCache(directory, key)
+    assert cache.has("q0")
+    assert not cache.has("q99")
+    assert cache.answers_for(["q1", "q0"]) == {"q1": "left", "q0": "no"}
+
+
+def test_generated_text_cache_refuses_a_missing_question_id(tmp_path):
+    key = CacheKey({
+        "dataset_version": "v2.4", "split": "train",
+        "teacher_model": "Qwen/Qwen3.5-9B", "precision": "bfloat16",
+        "prompt_hash": "f6cc1b602803c6f1", "signal_kind": "generated_text",
+    })
+    directory = str(tmp_path)
+    write_cache_key(directory, key)
+    import json
+    with open(os.path.join(directory, "completions.json"), "w", encoding="utf-8") as handle:
+        json.dump({"q0": "no"}, handle)
+
+    cache = GeneratedTextCache(directory, key)
+    with pytest.raises(KeyError, match="q1"):
+        cache.answers_for(["q0", "q1"])

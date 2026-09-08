@@ -1,0 +1,92 @@
+{
+  "split": "val",
+  "seed": 42,
+  "constrained": false,
+  "baselines": {
+    "chance": {
+      "existence": 0.5,
+      "identify_superlative": 0.007092198581560289,
+      "left_right": 0.5,
+      "nearest_object": 0.007092198581560286,
+      "relative_depth": 0.5
+    },
+    "random": {
+      "existence": 0.6486486486486487,
+      "identify_superlative": 0.0,
+      "left_right": 0.6153846153846154,
+      "nearest_object": 0.0,
+      "relative_depth": 0.72
+    },
+    "majority": {
+      "existence": 0.40540540540540543,
+      "identify_superlative": 0.125,
+      "left_right": 0.5769230769230769,
+      "nearest_object": 0.1111111111111111,
+      "relative_depth": 0.4
+    },
+    "question_only": {
+      "existence": 0.5405405405405406,
+      "identify_superlative": 0.075,
+      "left_right": 0.6923076923076923,
+      "nearest_object": 0.25925925925925924,
+      "relative_depth": 0.12
+    }
+  },
+  "split_majority_share_oracle": {
+    "existence": 0.5945945945945946,
+    "identify_superlative": 0.15,
+    "left_right": 0.5769230769230769,
+    "nearest_object": 0.2222222222222222,
+    "relative_depth": 0.6
+  },
+  "prediction_ids": {
+    "n_gold_items": 155,
+    "n_prediction_rows": 155,
+    "n_missing": 0,
+    "n_unexpected": 0,
+    "unexpected_examples": []
+  },
+  "per_type": [
+    {
+      "question_type": "existence",
+      "n_items": 37,
+      "n_predicted": 37,
+      "n_invalid": 0,
+      "accuracy": 0.6216216216216216,
+      "macro_f1": 0.4861111111111111
+    },
+    {
+      "question_type": "identify_superlative",
+      "n_items": 40,
+      "n_predicted": 40,
+      "n_invalid": 0,
+      "accuracy": 0.175,
+      "macro_f1": null
+    },
+    {
+      "question_type": "left_right",
+      "n_items": 26,
+      "n_predicted": 26,
+      "n_invalid": 0,
+      "accuracy": 0.7307692307692307,
+      "macro_f1": 0.7097288676236044
+    },
+    {
+      "question_type": "nearest_object",
+      "n_items": 27,
+      "n_predicted": 27,
+      "n_invalid": 0,
+      "accuracy": 0.1111111111111111,
+      "macro_f1": null
+    },
+    {
+      "question_type": "relative_depth",
+      "n_items": 25,
+      "n_predicted": 25,
+      "n_invalid": 0,
+      "accuracy": 0.68,
+      "macro_f1": 0.6794871794871795
+    }
+  ],
+  "macro_accuracy": 0.4637003927003927
+}

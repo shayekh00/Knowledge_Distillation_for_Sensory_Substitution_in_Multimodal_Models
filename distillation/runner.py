@@ -493,15 +493,27 @@ def recipe_library(top_k: int = 4096) -> dict:
         # §8.1's strict label-access rule (no CE, no LoCa, no gold prefixes) is
         # a *data-path* requirement this config cannot enforce by itself: the
         # gold answer column must be removed before the training/cache
-        # interface and replaced by a teacher-generated prefix, which needs a
-        # teacher-completion cache that does not exist yet (a new artifact,
-        # distinct from build_teacher_cache.py's top-K logit cache). This entry
-        # is the row's declared shape, not a run-ready recipe — do not launch
-        # it until that cache and its batch-builder path are built.
+        # interface and replaced by a teacher-generated prefix. The code path
+        # for that now exists (2026-09-08): build_teacher_generation_cache.py
+        # produces the teacher's own free completions, build_teacher_cache.py
+        # --prefix-source teacher_generated caches top-K logits over them
+        # instead of gold, train_student.build_batch_with_answers builds
+        # batches from any {question_id: text} mapping (not just row["answer"])
+        # and train_kd.py strips the gold "answer" column from every row before
+        # this recipe touches them. What remains before this can actually run
+        # is not code — it is the two GPU cache-building passes themselves
+        # (a free-generation pass over the full train split, then a logits
+        # pass over that generated text), neither of which has been run. Like
+        # D4, this reuses D5's stage-F checkpoint
+        # (runs/kd/align_curve_contrastive_s17/preserved/epoch_1) — the
+        # alignment stage does not touch answer text at all, so it needs no
+        # variant of its own.
         "D9": RecipeConfig(recipe="D9", stage="S2", use_ce=False, kd_objective="xtoken",
                            feature_objective="contrastive", top_k=top_k,
-                           notes="BLOCKED: needs a teacher-generated-prefix cache; "
-                                 "see experiment_protocol.md §8.1"),
+                           notes="Code path ready (2026-09-08); not run — needs "
+                                 "build_teacher_generation_cache.py then "
+                                 "build_teacher_cache.py --prefix-source teacher_generated "
+                                 "run first. See experiment_protocol.md §8.1"),
         # Distillation-mode ladder
         "X0": RecipeConfig(recipe="X0", stage="S2", use_ce=True, kd_objective="sequence"),
         "X1": RecipeConfig(recipe="X1", stage="S2", use_ce=True, kd_objective="candidate"),

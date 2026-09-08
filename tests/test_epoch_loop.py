@@ -122,3 +122,41 @@ def test_full_coverage_is_not_flagged(capsys, monkeypatch):
 
     epoch_loop.score_val_macro([("q0", "yes"), ("q1", "no")], split="val")
     assert "PARTIAL COVERAGE" not in capsys.readouterr().out
+
+
+def test_release_dir_override_scores_against_the_smaller_gold_set(capsys, monkeypatch):
+    """The bug this pins: an LOSO training run's predictions covered only an
+    in-distribution val subset (1,565 of 1,720 real rows), but `score_val_macro`
+    always loaded the *full* frozen val.csv as gold — every excluded row
+    silently counted as wrong every epoch, and PARTIAL COVERAGE fired on a
+    run that was never partial by its own (smaller) gold set's standard.
+    `release_dir` lets a caller point at that subset's own gold instead, and
+    the 10-row predictions below must read as full coverage of the 10-row
+    subset gold, not partial coverage of some larger, wrong gold set."""
+    import pandas as pd
+    import distillation.epoch_loop as epoch_loop
+
+    full_gold = pd.DataFrame({"question_id": [f"q{i}" for i in range(100)],
+                             "answer": ["yes"] * 100})
+    subset_gold = pd.DataFrame({"question_id": [f"q{i}" for i in range(10)],
+                                "answer": ["yes"] * 10})
+
+    def fake_load(split, release_dir):
+        return subset_gold if release_dir == "subset_dir" else full_gold
+
+    monkeypatch.setattr(epoch_loop, "load_release_split", fake_load)
+    monkeypatch.setattr(epoch_loop, "load_synonyms", lambda *a, **k: {})
+    monkeypatch.setattr(epoch_loop, "load_canonical_vocab", lambda *a, **k: set())
+    monkeypatch.setattr(epoch_loop, "score_predictions", lambda *a, **k: pd.DataFrame())
+    monkeypatch.setattr(epoch_loop, "macro_accuracy", lambda *a, **k: 0.5)
+
+    predictions = [(f"q{i}", "yes") for i in range(10)]  # covers all of subset_gold
+    epoch_loop.score_val_macro(predictions, split="val", release_dir="subset_dir")
+    assert "PARTIAL COVERAGE" not in capsys.readouterr().out
+
+
+def test_score_val_macro_default_release_dir_is_the_frozen_release():
+    import distillation.epoch_loop as epoch_loop
+    from evaluate import RELEASE_DIR
+    import inspect
+    assert inspect.signature(epoch_loop.score_val_macro).parameters["release_dir"].default == RELEASE_DIR

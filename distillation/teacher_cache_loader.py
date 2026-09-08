@@ -19,6 +19,7 @@ Two invariants matter here and both are enforced rather than assumed:
 """
 from __future__ import annotations
 
+import json
 import os
 
 import numpy as np
@@ -70,6 +71,53 @@ class TeacherCache:
             topk_ids=ids, topk_probs=probs,
             metadata={"rows_per_example": [pair[0].size(0) for pair in pairs],
                       "cache_digest": self.key.digest()})
+
+
+class GeneratedTextCache:
+    """Random access to a `generated_text` cache — the teacher's own
+    free-generated completions, from `build_teacher_generation_cache.py`.
+
+    D9's substitute for `row["answer"]` (§8.1): every other recipe's KD term
+    forces the gold answer as a teaching-forcing prefix even with CE off, which
+    leaks the label. D9 forces this cache's text instead, so `answers[qid]`
+    below is the only thing that ever stands in for `row["answer"]` on this
+    row's training/cache-building path.
+
+    One consolidated JSON table, like `FeatureCache`'s one consolidated table
+    and for the same reason: the payload is small (a few words per row, a few
+    thousand rows) and needs random access by question id, not a per-batch
+    stream.
+    """
+
+    def __init__(self, directory: str, expected_key: CacheKey):
+        verify_cache_key(directory, expected_key)
+        self.directory = directory
+        self.key = expected_key
+        path = os.path.join(directory, "completions.json")
+        if not os.path.isfile(path):
+            raise FileNotFoundError(
+                f"{path} is missing. A generated_text cache is one consolidated "
+                f"JSON table, not per-example files — run "
+                f"build_teacher_generation_cache.py for this key.")
+        with open(path, encoding="utf-8") as handle:
+            self.completions: dict = json.load(handle)
+
+    def has(self, question_id: str) -> bool:
+        return question_id in self.completions
+
+    def answers_for(self, question_ids) -> dict:
+        """`{question_id: generated text}` for exactly the ids given — the
+        shape `build_batch_with_answers` needs. Raises rather than silently
+        substituting anything (gold included) for a row this cache never
+        generated a completion for."""
+        missing = [qid for qid in question_ids if qid not in self.completions]
+        if missing:
+            raise KeyError(
+                f"{len(missing)} question id(s) absent from {self.directory}, e.g. "
+                f"{missing[0]!r}. The generation cache was built over a different "
+                f"row set — regenerate it for this split rather than training "
+                f"with a gold fallback, which would defeat §8.1's label-access rule.")
+        return {qid: self.completions[qid] for qid in question_ids}
 
 
 def assert_rows_align(teacher: TeacherSignals, labels: torch.Tensor) -> None:

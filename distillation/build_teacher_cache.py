@@ -46,7 +46,9 @@ if PROJECT_ROOT not in sys.path:
 
 from distillation.cache import CacheKey, cache_directory, write_cache_key  # noqa: E402
 from distillation.losses import IGNORE_INDEX  # noqa: E402
-from distillation.train_student import PROMPT_SUFFIX, build_batch, build_image, load_rows  # noqa: E402
+from distillation.teacher_cache_loader import GeneratedTextCache  # noqa: E402
+from distillation.train_student import (  # noqa: E402
+    PROMPT_SUFFIX, build_batch, build_batch_with_answers, build_image, load_rows)
 
 DEFAULT_CACHE_ROOT = os.path.join(
     PROJECT_ROOT, "checkpoints_scratch", "teacher_cache")
@@ -138,7 +140,24 @@ def main() -> None:
                         help="Regenerate every example even if an intact cache file "
                              "already exists. Default is to resume, which is what "
                              "makes an interrupted run cheap to finish.")
+    parser.add_argument("--prefix-source", default="gold", choices=["gold", "teacher_generated"],
+                        help="What answer text is forced as the teacher-forcing prefix "
+                             "before caching top-K logits. 'gold' (default) is every "
+                             "row D1-D8 use, and matches this script's behaviour before "
+                             "this flag existed exactly — the key omits `prefix_source` "
+                             "entirely in that case, so existing gold caches remain valid "
+                             "and reusable. 'teacher_generated' is D9's strict label-access "
+                             "rule (§8.1): the prefix is each row's own completion from "
+                             "--generated-text-cache instead of row['answer'], which is "
+                             "then not read at all.")
+    parser.add_argument("--generated-text-cache",
+                        help="Directory from build_teacher_generation_cache.py. Required "
+                             "with --prefix-source teacher_generated.")
     args = parser.parse_args()
+
+    if args.prefix_source == "teacher_generated" and not args.generated_text_cache:
+        parser.error("--prefix-source teacher_generated needs --generated-text-cache "
+                     "(a directory from build_teacher_generation_cache.py)")
 
     import torch
     from peft import LoraConfig  # noqa: F401  (import guard: fails loudly if peft is absent)
@@ -168,10 +187,37 @@ def main() -> None:
         "signal_kind": "topk_logits",
         "top_k": args.top_k,
         "temperature": 1.0,
+        # None (not "gold") for the default case so this key's digest is
+        # byte-for-byte identical to every cache built before this flag
+        # existed — CacheKey.digest() reads every field with `.get(name)`, so
+        # an explicit "gold" here would silently invalidate every existing
+        # gold-prefix cache (the one D4/D5/D6/D7 already depend on) the next
+        # time this script is run against it.
+        "prefix_source": None if args.prefix_source == "gold" else args.prefix_source,
     })
     directory = cache_directory(args.out_root, key)
     os.makedirs(directory, exist_ok=True)
     write_cache_key(directory, key)
+
+    generated_cache = None
+    if args.prefix_source == "teacher_generated":
+        # The generation cache's own key: same split/teacher/prompt as this
+        # run declares, signal_kind="generated_text" — built independently by
+        # build_teacher_generation_cache.py, verified here rather than trusted.
+        generation_key = CacheKey({
+            "dataset_version": dataset_version(),
+            "split": args.split,
+            "teacher_model": args.teacher,
+            "teacher_revision": teacher_revision,
+            "teacher_tokenizer_revision": teacher_revision,
+            "precision": "bfloat16",
+            "prompt_hash": prompt_signature(processor),
+            "rgb_transform": "PIL RGB, processor default resize",
+            "signal_kind": "generated_text",
+        })
+        generated_cache = GeneratedTextCache(args.generated_text_cache, generation_key)
+        print(f"generated-text cache verified: {args.generated_text_cache} "
+              f"({generation_key.digest()})", flush=True)
     print(f"cache directory: {directory}", flush=True)
     print(json.dumps(key.describe(), indent=2), flush=True)
 
@@ -217,7 +263,11 @@ def main() -> None:
         if not kept:
             continue
 
-        batch = build_batch(processor, kept, images)
+        if generated_cache is not None:
+            answers = generated_cache.answers_for([row["question_id"] for row in kept])
+            batch = build_batch_with_answers(processor, kept, images, answers)
+        else:
+            batch = build_batch(processor, kept, images)
         labels = batch.pop("labels")
         batch = {k: v.to(model.device) for k, v in batch.items()}
         labels = labels.to(model.device)

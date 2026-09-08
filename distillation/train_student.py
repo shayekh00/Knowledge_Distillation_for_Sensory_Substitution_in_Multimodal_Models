@@ -72,8 +72,21 @@ def build_image(row, modality: str, representation: str):
     return Image.fromarray(depth_to_student_input(metres, representation))
 
 
-def build_batch(processor, rows, images):
-    """A padded batch whose labels are masked to each row's own answer span.
+def build_batch_with_answers(processor, rows, images, answers):
+    """A padded batch whose labels are masked to each row's own answer span,
+    where the answer text for each row comes from `answers[row["question_id"]]`
+    rather than always being `row["answer"]`.
+
+    This is `build_batch`'s actual implementation, generalised over where the
+    forced answer text comes from. D1-D8 always force the **gold** answer
+    (`build_batch` below is exactly that special case); D9's strict label-access
+    rule (`experiment_protocol.md` §8.1) instead forces the **teacher's own
+    free-generated completion** for that row, with no gold text anywhere in the
+    call — the two paths share every other detail (prompt rendering, thinking
+    mode, padding, the mask-building arithmetic), and duplicating that would be
+    exactly the kind of two-copies-that-drift risk this project has hit before
+    with the teacher-forced/eval prompt mismatch this same function's
+    docstring warns about below.
 
     Batch-1 training left the GPU latency-bound: measured 2.11 ex/s at batch 1
     against 12.84 ex/s at batch 4, with the data path accounting for 1.7% of a
@@ -106,7 +119,8 @@ def build_batch(processor, rows, images):
         prompt_text = processor.apply_chat_template(messages, add_generation_prompt=True,
                                                     tokenize=False, enable_thinking=False)
         prompt_texts.append(prompt_text)
-        full_texts.append(prompt_text + str(row["answer"]) + processor.tokenizer.eos_token)
+        answer = answers[row["question_id"]]
+        full_texts.append(prompt_text + str(answer) + processor.tokenizer.eos_token)
 
     prompt_inputs = processor(images=images, text=prompt_texts, padding=True,
                               return_tensors="pt")
@@ -121,6 +135,15 @@ def build_batch(processor, rows, images):
     batch = dict(full_inputs)
     batch["labels"] = labels
     return batch
+
+
+def build_batch(processor, rows, images):
+    """`build_batch_with_answers` forced to each row's own gold `answer` column
+    — the D1-D8 case, and every call site before D9 existed. Kept as its own
+    function (rather than inlining the dict comprehension at every call site)
+    so nothing else has to change: existing behaviour is exactly preserved."""
+    return build_batch_with_answers(
+        processor, rows, images, {row["question_id"]: row["answer"] for row in rows})
 
 
 def main() -> None:
@@ -147,6 +170,13 @@ def main() -> None:
                         "with a derived CSV (e.g. a leave-one-source-out split). "
                         "Never points inside release/ — that directory is frozen (G1).")
     parser.add_argument("--val-csv", help="Same override for val.csv.")
+    parser.add_argument("--val-release-dir", help="Directory holding the gold "
+                        "{split}.csv that score_val_macro checks predictions "
+                        "against. Required alongside --val-csv whenever that CSV is "
+                        "a genuine subset (e.g. leave-one-source-out) — without it, "
+                        "score_val_macro scores the subset's predictions against the "
+                        "full frozen val.csv and every excluded row silently counts "
+                        "as wrong (the exact bug this flag exists to prevent).")
     parser.add_argument("--learning-rate", type=float, default=1e-5)
     parser.add_argument("--batch-size", type=int, default=4,
                         help="Rows per forward/backward. 4 measured fastest here: "
@@ -176,6 +206,12 @@ def main() -> None:
                      f"--batch-size {args.batch_size}; the optimiser step would not "
                      f"see the batch size it claims")
     accumulation = args.effective_batch // args.batch_size
+    if args.val_csv and not args.val_release_dir:
+        parser.error("--val-csv needs --val-release-dir pointing at the directory "
+                     "that CSV lives in (its own val.csv, not the frozen release). "
+                     "Without it, score_val_macro checks predictions for that subset "
+                     "against the full frozen val.csv and every row the subset "
+                     "excludes silently counts as wrong every epoch.")
 
     import torch
     from peft import LoraConfig, get_peft_model
@@ -281,7 +317,8 @@ def main() -> None:
         # comparing CE and KD "by comparing differently scaled CE and KD
         # losses" — a stopping decision is exactly that comparison one level up).
         predictions = generate_val_predictions(model, processor, val_rows, val_images)
-        val_macro = score_val_macro(predictions, split="val")
+        score_kwargs = {"release_dir": args.val_release_dir} if args.val_release_dir else {}
+        val_macro = score_val_macro(predictions, split="val", **score_kwargs)
         epoch_dir = os.path.join(args.out, f"epoch_{epoch}")
         os.makedirs(epoch_dir, exist_ok=True)
         model.save_pretrained(os.path.join(epoch_dir, "adapter"))

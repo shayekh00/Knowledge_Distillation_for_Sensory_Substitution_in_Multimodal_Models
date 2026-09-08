@@ -22,8 +22,15 @@ def decode_sunrgbd_depth(depth_path: str, clip_max_m: float) -> np.ndarray:
     return np.clip(depth_m, 0.0, clip_max_m)
 
 
-def load_intrinsics(scene_dir_absolute: str) -> np.ndarray | None:
-    intrinsics_path = os.path.join(scene_dir_absolute, "intrinsics.txt")
+def load_intrinsics_file(intrinsics_path: str) -> np.ndarray | None:
+    """Read a 3x3 intrinsics matrix from an absolute path to an
+    `intrinsics.txt`-shaped file (9 whitespace-separated floats). Factored
+    out of `load_intrinsics` so a caller that already knows exactly which
+    file it wants (e.g. ARKitScenes' `intrinsics_path` schema field, one
+    real file per frame rather than one per scene) does not have to go
+    through scene-directory reconstruction to get there — see
+    `arkitscenes_plan.md` §2 on why that reconstruction is dataset-specific
+    and not safe to generalize blindly."""
     if not os.path.exists(intrinsics_path):
         return None
     with open(intrinsics_path, "r") as intrinsics_file:
@@ -31,6 +38,11 @@ def load_intrinsics(scene_dir_absolute: str) -> np.ndarray | None:
     if len(values) != 9:
         return None
     return np.array(values, dtype=np.float64).reshape(3, 3)
+
+
+def load_intrinsics(scene_dir_absolute: str) -> np.ndarray | None:
+    """SUN RGB-D's convention: one `intrinsics.txt` per scene directory."""
+    return load_intrinsics_file(os.path.join(scene_dir_absolute, "intrinsics.txt"))
 
 
 def backproject_to_camera_frame(pixel_x: float, pixel_y: float, depth_m: float,

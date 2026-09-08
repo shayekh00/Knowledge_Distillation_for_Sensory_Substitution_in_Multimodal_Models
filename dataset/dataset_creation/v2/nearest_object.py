@@ -17,9 +17,9 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from depth_utils import backproject_to_camera_frame, load_intrinsics  # noqa: E402
+from depth_utils import backproject_to_camera_frame, load_intrinsics, load_intrinsics_file  # noqa: E402
 from generator_common import answer_appears_in_question, load_templates, render_question, run_generator  # noqa: E402
-from scene_objects import scene_dir_absolute, true_instance_counts  # noqa: E402
+from scene_objects import DATASET_DIR, scene_dir_absolute, true_instance_counts  # noqa: E402
 
 TEMPLATES = load_templates("nearest_object.txt")
 MARGIN_RATIO = 0.8
@@ -38,7 +38,15 @@ def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_log
         drop_logger.log(scene["image_id"], "NO_SINGLE_INSTANCE_ANCHOR")
         return []
 
-    camera_intrinsics = load_intrinsics(scene_dir_absolute(scene["image_id"]))
+    # `intrinsics_path` is per-frame and dataset-agnostic (ARKitScenes: one
+    # real file per frame, not one per scene — arkitscenes_plan.md §2). Only
+    # SUN RGB-D records lack it, since they predate this field; those fall
+    # back to the scene-directory reconstruction that has always worked for
+    # them, so this is purely additive and changes no existing behaviour.
+    intrinsics_path = scene.get("intrinsics_path")
+    camera_intrinsics = (
+        load_intrinsics_file(os.path.join(DATASET_DIR, intrinsics_path)) if intrinsics_path
+        else load_intrinsics(scene_dir_absolute(scene["image_id"])))
     if camera_intrinsics is None:
         drop_logger.log(scene["image_id"], "MISSING_INTRINSICS")
         return []

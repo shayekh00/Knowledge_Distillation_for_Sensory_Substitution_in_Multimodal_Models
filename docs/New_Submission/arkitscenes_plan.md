@@ -1,7 +1,8 @@
 # VQA-ARKitScenes v1 — second-dataset plan
 
-**Status:** proposal, awaiting author decision.
-**Date:** 2026-09-07.
+**Status:** Phase 0 run and passed (2026-09-08) — see §6 for results. Phases
+1-6 remain proposal, awaiting author decision on §8's open items.
+**Date:** 2026-09-07 (Phase 0 results added 2026-09-08).
 **Purpose:** answer reviewer comments R1.5, R2.1 and R5.2 — the only weakness all
 three reviewers raised independently — by adding a second, genuinely independent
 benchmark built from **ARKitScenes** (Apple, NeurIPS 2021 Datasets & Benchmarks),
@@ -61,9 +62,45 @@ and `relative_depth.py` contain **zero** references to SUN RGB-D paths, `.mat`
 files, or the toolbox — they read `data/index/scene_index.jsonl` and nothing
 else.
 
-So the work is **one new indexer emitting the same schema**; vocabulary, question
-generation, balancing, answer-form normalisation, release building, freezing,
-training and evaluation are all reused unchanged.
+So the work is **one new indexer emitting the same schema**; question
+generation, balancing, answer-form normalisation, training and evaluation are
+reused unchanged. Vocabulary building and release naming are reused **with
+parameterization**, not literally unchanged — verified by reading the actual
+call graph rather than re-grepping the generator files alone, since a shared
+helper module can carry a hardcoded dependency the generators themselves never
+show:
+
+* **`scene_objects.scene_dir_absolute(image_id)`** — imported by
+  `nearest_object.py` (via `depth_utils.load_intrinsics`) to find each frame's
+  `intrinsics.txt` — hardcodes `os.path.join(DATASET_DIR, "SUNRGBD", image_id)`.
+  This is the one place a "dataset-agnostic" generator actually depends on a
+  SUN-RGB-D-specific path, and it was missed by grepping `nearest_object.py`
+  itself, which contains no `"SUNRGBD"` string at all. Fix is small — derive
+  the directory from the record's own `image_path`/`depth_path` field (already
+  dataset-agnostic strings) instead of reconstructing `"SUNRGBD/{image_id}"`
+  from scratch — but it is a real code change, not zero-touch reuse, and
+  belongs in Phase 1's deliverables.
+* **`build_vocab.py`'s Rule V2, step 3** — unconditionally loads
+  `dataset/SUNRGBDtoolbox/Metadata/seg37list.mat` via `load_seg37_concepts()`
+  and unions it into the canonical vocabulary regardless of frequency. Run
+  against an ARKitScenes `scene_index.jsonl` unmodified, this either crashes
+  (file absent) or — worse, if `SUNRGBDtoolbox/` is still present on disk from
+  the existing dataset — silently seeds ARKitScenes' canonical vocabulary with
+  37 SUN-RGB-D segmentation classes that have nothing to do with this dataset,
+  a wrong-but-plausible vocabulary rather than a crash. In practice this
+  "always-include" step is likely unnecessary for ARKitScenes at the planned
+  scale anyway: all 17 target classes are common indoor furniture that should
+  each clear the existing >=100-occurrence frequency threshold on their own in
+  2,500-5,000 images, so the fix is plausibly "skip the seg37 union for this
+  dataset" rather than building an equivalent always-include list — but that
+  is an empirical claim to verify against the real corpus in Phase 1, not
+  assume.
+* **`RELEASE_DIR`/`SEG37_MAT_PATH`-style path constants** in
+  `build_release.py`, `build_release_artifacts.py`, `freeze_release.py` all
+  hardcode `release/VQA-SUNRGBD-v2/...`. Trivial to parameterize (a
+  `--release-name` flag or an equivalent constant swap per dataset), but not
+  literally zero-touch — recorded here so Phase 1's "2-3 days" estimate is not
+  quietly wrong about scope.
 
 Target schema (one record per frame):
 
@@ -80,11 +117,10 @@ Thresholds in `data/config.yaml` must be honoured or consciously re-declared —
 `depth.clip_max_m: 8.0`, `seed: 42`. Changing any of them changes the manifest
 hash, which is the point.
 
-One additional dependency: `nearest_object.py` calls
-`depth_utils.load_intrinsics(scene_dir)`, which reads a per-scene
-`intrinsics.txt`. The ARKitScenes indexer must write an equivalent file per
-frame or scene, since ARKitScenes intrinsics are per-frame
-(`lowres_wide_intrinsics/`).
+One consequence of the `scene_dir_absolute()` fix above: whatever directory it
+is generalized to derive, the ARKitScenes indexer must write an
+`intrinsics.txt` there per frame (not per scan), since ARKitScenes intrinsics
+are natively per-frame (`lowres_wide_intrinsics/`) rather than per-scene.
 
 ---
 
@@ -118,6 +154,27 @@ a noisy one. Proposed test, to be validated rather than assumed:
 This mirrors how `depth_valid_frac` already gates SUN RGB-D objects, so it fits
 the existing `eligible` concept rather than adding a new one.
 
+**A fourth "reused unchanged" exception, more consequential than §2's three
+because it is not confined to the indexer.** Both `decode_sunrgbd_depth`
+(the indexer) and `distillation/depth_input.decode_metric_depth` — which is
+called at **training and evaluation time**, for every `modality="depth"` row,
+and is explicitly required to stay byte-identical to the indexer's decoder —
+implement the *official SUN RGB-D 16-bit encoding specifically*:
+`(raw >> 3) | (raw << 13)`, then divide by 1000. This is not a generic
+16-bit-depth-PNG convention; it is SUN RGB-D's own bit layout
+(`SUNRGBDtoolbox/readData/read3dPoints.m`). ARKitScenes' LiDAR depth files are
+Apple's own format and there is no evidence here that they share this specific
+bit rotation — Phase 0's checklist below already includes "LiDAR depth decodes
+to plausible metres" precisely because this cannot be assumed, but the
+existing decoder should not be the first thing tried: verify ARKitScenes'
+actual depth encoding from its own documentation first, then either write a
+second decode function or parameterize the existing one by dataset, rather
+than reusing `decode_sunrgbd_depth`'s bit-rotation and hoping the metres come
+out plausible by coincidence. And because `depth_input.py` sits on the
+**training** path, not just the indexer, this is a Phase 5 prerequisite too —
+every depth-modality row in the reduced ladder depends on it decoding
+correctly, not only the dataset-generation phase.
+
 **A genuine upside:** for `relative_depth` and `nearest_object`, ARKitScenes'
 3D boxes give *true metric geometry*, which is more reliable than SUN RGB-D's
 "median depth over a hand-drawn polygon". Depth-ordering questions should be
@@ -148,9 +205,24 @@ a blocker.
 
 ## 5. Disk and download budget
 
-**Constraint: 43 GB free** (`/data`, 98 GB total, 55% used; `dataset/` is
-currently 16 GB). The full ARKitScenes 3DOD subset is far larger than that, so
-**a bounded subset must be selected up front.**
+**Corrected 2026-09-08: 569 GB free, not 43 GB.** The original number came
+from `df -h /data`, which — because `/data` itself is not the actual mount
+point — silently fell back to reporting the container's 98 GB overlay root
+(55% used, 43 GB free). The project directory and everything under
+`dataset/` in fact live on a separate, dedicated volume,
+`/dev/mapper/ubuntu--vg-data--lv`, mounted at
+`/data/dev/navid/kd-vago-ubuntu-two`: **815 GB total, 569 GB free** (27%
+used). `dataset/` itself is currently 16 GB (before Phase 0/1's ~500 MB).
+
+This does not remove the need for a bounded subset — the full ARKitScenes
+3DOD corpus (623 GB, DATA.md) still dwarfs even 569 GB free, and the
+per-scan sampling efficiency argument below holds regardless of how much
+headroom exists — but it does mean **Phase 2's ≤25 GB budget is a small
+fraction of available space (~4%), not the "real step up in resource
+commitment" it was flagged as before this correction.** If a larger subset
+than 500 scans would strengthen the benchmark, disk is no longer the
+constraint that would stop it — bandwidth/wall-clock time (Phase 2 is
+already scoped as "~1 day, mostly waiting") is the more relevant one now.
 
 The key efficiency: **we do not need many frames per scan.** Consecutive frames
 are near-duplicates, and `sequence_id` grouping would place them in the same
@@ -179,11 +251,161 @@ separates visible from occluded instances; LiDAR depth decodes to plausible
 metres. **Gate: if projection or occlusion cannot be made to work on 5 scans,
 stop and switch to ScanNet** rather than scaling up a broken indexer.
 
+**Run 2026-09-08 — passed.** 5 real Training scans downloaded via the
+official `download_data.py` (`ARKitScenes/threedod`, patched locally to
+extract with Python's `zipfile` since this environment has no `unzip`
+binary — 503 MB total, well inside budget) and probed with a standalone
+script (`dataset/dataset_creation/arkit_tools/phase0_probe.py`, kept for
+Phase 1 to build from). Findings:
+
+- **Pose/intrinsics parse cleanly** and match `DATA.md`'s documented formats
+  exactly: `.pincam` is `width height fx fy cx cy` on one line; `.traj` is
+  `timestamp rx ry rz tx ty tz` (axis-angle radians, metres), one line per
+  frame, matched to each RGB/depth frame's own timestamp by nearest-neighbour
+  (observed alignment error ~0.0002-0.0005 s — timestamps are effectively
+  exact, not approximate).
+- **Depth confirmed plain millimetre uint16, no bit rotation** — checked
+  both `DATA.md`'s own statement and real pixel values (one frame's non-zero
+  range 1651-3425, i.e. 1.65-3.43 m after `/1000.0`, a plausible room depth).
+  This confirms §3's warning: `decode_metric_depth`'s SUN-RGB-D bit-rotation
+  must **not** be reused; ARKitScenes needs the simple `raw / 1000.0` path.
+- **A real ambiguity resolved, not assumed:** each annotated object carries
+  *two* OBB blocks, `segments.obb` and `segments.obbAligned`, at two
+  different scales (`obb`'s `axesLengths` were ~100x `obbAligned`'s, e.g.
+  `[120.7, 76.8, 120.0]` vs `[1.20, 1.21, 0.77]` for the same table — the
+  former is a mesh-native space, not metres). `obbAligned` is the metric,
+  room-scale, camera-pose-aligned box — confirmed by reading Apple's own
+  `threedod/benchmark_scripts/utils/tenFpsDataLoader.py`, which builds boxes
+  from `obbAligned` exclusively. The corner formula there
+  (`compute_box_3d`: `corners = rotmat.T @ local_corners + center`, with
+  `rotmat = normalizedAxes.reshape(3, 3)` unmodified) is what
+  `phase0_probe.py`'s `obb_corners_world` implements.
+- **Projection lands boxes correctly on real objects** — rendered overlays
+  (projected hull drawn on the actual RGB frame) show tight alignment on an
+  unambiguous case (a kitchen cabinet run: the drawn polygon sits directly on
+  the real cabinet fronts and shelving).
+- **The occlusion test behaves as intended** — a "cabinet" box whose observed
+  LiDAR depth (1.33 m) was far closer than the box's own depth (3.48 m) was
+  correctly flagged occluded; the rendered frame shows shelf clutter (bottles,
+  boxes) sitting in front of where the cabinet actually is, exactly the
+  physical situation the test is supposed to catch.
+- **One real failure mode found and fixed, not anticipated in §3:** a chair
+  box with one corner 0.18 m from the camera produced projected corners
+  scattered as far as 600+ px outside a 256x192 frame (extreme perspective
+  divergence from dividing by a near-zero depth), and the hull's clip against
+  the image rectangle happened to keep a 30%-of-frame region that, rendered,
+  corresponded to no part of the actual chair — a plausible-looking area
+  fraction from a geometrically meaningless hull, not a code bug in the
+  ordinary sense but a real property of corner-hull projection breaking down
+  when any corner is very close to the lens. Fixed with an explicit near-
+  distance gate (`MIN_CORNER_DEPTH_M = 0.4`, excluding any box with a corner
+  closer than that) — the far-distance analogue of `depth.clip_max_m`, which
+  Phase 1's indexer should adopt as a declared config value alongside the
+  existing thresholds. Removing exactly this one case dropped total
+  in-view projections from 101 to 92 across the 5-scan sample; everything
+  else was unaffected, confirming it was an isolated edge case, not systemic.
+- Occlusion rate across all sampled frames: 63/92 (68.5%) — high, but
+  expected: most sampled frames of a room-tour video simply do not have a
+  clear line of sight to a given annotated object, and among those that do
+  land in view geometrically, being blocked by nearer furniture or clutter is
+  common in real rooms. Not itself evidence of a problem.
+
+**Gate verdict: pass — proceed to Phase 1.** Both required mechanisms
+(projection, occlusion) work on real data; the one failure mode found has an
+understood cause and a cheap fix. Phase 1 should carry forward: the near-
+distance gate above, the `obbAligned`-only convention, and the confirmed
+plain-millimetre depth decode.
+
 ### Phase 1 — Indexer (2–3 days, no GPU)
-`dataset/dataset_creation/v2/build_index_arkit.py`, emitting the §2 schema.
-Deliverables: unit tests mirroring `test_freeze_release.py`'s discipline,
-including a **negative control** (a deliberately occluded object must be excluded)
-and a projection round-trip test on synthetic geometry with known answers.
+
+**Started 2026-09-08, core indexer built and passing against real data —
+not yet run at Phase-2 scale.** `dataset/dataset_creation/v2/build_index_arkit.py`
+emits the §2 schema (plus the additive `intrinsics_path` field) by reusing
+`phase0_probe.py`'s validated projection/occlusion code directly rather than
+re-deriving it. Run against the same 5 Phase 0 scans (8 sampled frames each):
+13 frame records kept of 40 sampled (27 dropped, mostly `NO_OBJECTS_IN_VIEW` —
+expected, matches Phase 0's own finding that most sampled frames of a room
+tour do not have a clear line of sight to a given annotated object), label
+counts `{table: 5, shelf: 5, washer: 8, cabinet: 8, refrigerator: 3, chair: 2}`.
+A produced record was checked field-by-field against `build_index.py`'s own
+schema and matches exactly.
+
+**One real design decision this script had to make that SUN RGB-D's indexer
+never faced:** ARKitScenes' boxes are scene-level, valid across an entire
+video, not per-image. An object absent from a frame's `objects` list here
+means "not visible in this frame at all" (occluded / out of the frustum /
+inside the near-distance gate) and is **omitted entirely**, not marked
+`is_valid_polygon=False` — the latter is reserved for an object that *is*
+visible but whose projected geometry is too degenerate to trust, mirroring
+SUN RGB-D's `INVALID_POLYGON` case exactly. Getting this wrong in either
+direction would either let scene-wide-but-not-here objects block legitimate
+existence-negatives, or (the other way) treat a real INVALID_POLYGON case as
+if the object were never in frame at all. Both cases and the negative
+control (a deliberately occluded object, at matching depth vs. not) are
+pinned in `tests/test_build_index_arkit.py` (7 tests, synthetic geometry
+with hand-computed pinhole answers), alongside a regression test for Phase
+0's near-distance failure mode and a schema-shape parity check against
+`build_index.py`'s own per-object record. Full suite 295 passed.
+
+**Also done, additively, with zero behaviour change to the existing SUN
+RGB-D pipeline (verified — full `dataset_creation/v2/tests` suite still
+passes unmodified):** `depth_utils.load_intrinsics` was split into a new
+`load_intrinsics_file(path)` (reads one file directly) plus
+`load_intrinsics(scene_dir)` as a thin SUN-RGB-D-shaped wrapper around it;
+`nearest_object.py` now prefers a record's own `intrinsics_path` field when
+present and only falls back to the old `scene_dir_absolute()` reconstruction
+when it is absent (true for every existing SUN RGB-D record, which therefore
+sees no change at all).
+
+**Deliberately not done yet, and not needed until Phase 2 exists:**
+`build_vocab.py`'s unconditional seg37 union (§2's other verified gap) —
+fixing it now would be speculative without a properly-sized corpus to check
+the "frequency threshold alone likely suffices" claim against; 13 frames
+across 5 scans is far too small a sample for that question to mean anything.
+Same for actually running P1(vocab)/P2(generators)/P3(release) end-to-end —
+worth doing once Phase 2's subset exists, not on this placeholder sample.
+
+**Next decision point: Phase 2 is a real step up in resource commitment** —
+~25 GB and "mostly waiting" vs. Phase 0/1's ~500 MB and minutes, so it was
+not started without flagging that explicitly.
+
+### Phase 2 — started 2026-09-08, bumped to 750 scans
+
+Per the disk correction above (569 GB free, not 43 GB), author decision was
+to bump the target from ~500 to **750 scans** — modestly more statistical
+headroom for the audit/generalization claims, while staying close enough to
+v2.4's own scale (4,187 images) that the two benchmarks remain comparable;
+disk was never really the reason to cap it at 500, and it still isn't the
+reason to go further than 750 (Phase 5's GPU-hour cost under the project's
+known wall-clock-reset constraint scales with corpus size regardless of
+disk headroom — see §8 for the full reasoning behind not going bigger).
+
+Sample drawn once, seed 42, **stratified by ARKitScenes' own official fold
+proportions** (4,498 Training : 549 Validation in the full 5,047-scan
+corpus, 89.1%/10.9%) rather than an arbitrary split: **668 Training + 82
+Validation = 750**, recorded at
+`dataset/dataset_creation/arkit_tools/phase2_sample.csv` for
+reproducibility (the plan's own §5 requirement). Downloading via
+`dataset/dataset_creation/arkit_tools/download_phase2.py`, which:
+- calls the vendored, zipfile-patched `download_data.download_data()`
+  directly (no shelling out) rather than reimplementing the download logic;
+- is resume-safe on its own terms — a scan whose `{video_id}_frames/` and
+  annotation JSON are both already on disk is skipped before even touching
+  the network, matching this project's established wall-clock-restart
+  pattern (a restart costs at most the one scan in flight, not the batch);
+- does **not** implement the earlier draft's "download, subsample frames,
+  delete the rest" pruning step — that traded bandwidth complexity for disk
+  savings, and disk is no longer scarce (750 scans x ~123 MB average
+  observed in Phase 0 ~= 92 GB, well inside 569 GB free). Simpler to keep
+  every frame `build_index_arkit.py` might later want to sample from.
+
+One real bug caught before committing to the full run: the download
+driver's own `REPO_ROOT` computation was off by one `dirname()` level (the
+exact same class of mistake `build_index_arkit.py` made and had fixed
+earlier the same day), which silently wrote a duplicated
+`dataset/dataset/ARKitScenes/...` path. Caught by smoke-testing 1-2 scans
+before launching the 750-scan batch, not discovered after; the misplaced
+82 MB was deleted before the real run started.
 
 ### Phase 2 — Subset download (~1 day, mostly waiting)
 Per §5, to a declared budget of ≤ 25 GB, leaving headroom.
@@ -207,7 +429,11 @@ and RGB), `B3` (depth CE), `B5` (RGB CE), `X2` (CE+KD, unaligned), and
 `D0`→`D3` plus `D0`→`D5` (aligned, CE-only and CE+KD). Eight rows, single seed
 (§5 policy), same 10-epoch/patience-2 budget. A new teacher feature cache and
 top-K logits cache are required for this dataset (~2 minutes and ~35 minutes
-respectively, at measured rates).
+respectively, at measured rates). Prerequisite carried over from §3: every
+`modality="depth"` row here depends on `depth_input.decode_metric_depth`
+actually decoding ARKitScenes' LiDAR files correctly — verified in Phase 0,
+fixed if needed in Phase 1 — not on the SUN-RGB-D-specific bit-rotation it
+currently implements happening to also be correct for a different sensor.
 
 ### Phase 6 (free, once Phase 5 exists) — Cross-dataset transfer
 Evaluate the SUN RGB-D-trained D5 checkpoint on VQA-ARKitScenes and vice versa.
@@ -246,12 +472,34 @@ reviewer:**
 
 ## 8. Decisions needed
 
-1. Proceed with Phase 0 (3–5 scans, half a day) as a go/no-go gate?
+1. ~~Proceed with Phase 0...~~ **Done (2026-09-08): passed.** See §6's Phase 0
+   results. Remaining decision: proceed to Phase 1 (the real indexer, 2-3
+   days), or hold pending author review of the Phase 0 findings first?
 2. Request ScanNet access in parallel now, as insurance and as a possible third
    dataset?
 3. `identify_superlative` on ARKitScenes: projected-hull area (consistent with
    v2.4) or 3D box volume (more accurate, but a different question)? Must be
    declared before generation, not chosen after seeing results.
-4. Run the leave-one-source-out study (train excluding `kv1/NYUdata`, test on it)
-   as an interim generalization result? It needs no download and ~8 GPU-hours,
-   and can proceed while Phases 0–2 run.
+   **Recommendation: projected-hull area.** Two independent reasons point the
+   same way, not just consistency with v2.4's own definition (real, but the
+   weaker of the two): the task's premise is a model answering from what a
+   camera actually sees, and "largest" by true 3D volume can disagree with
+   what is visually apparent in a given frame — a distant sofa outmasses a
+   near chair in volume while the chair fills more of the image — which asks
+   the model to reproduce privileged 3D ground truth it fundamentally cannot
+   derive from its own input, not to ground a visual judgment. This is the same
+   reasoning §3 already applies to the depth-definition choice (observed
+   median over box-centroid, "for consistency with v2.4's definition"), so
+   answering it the same way keeps `identify_superlative` and `relative_depth`
+   under one coherent operating principle across both benchmarks: the gold
+   answer is always what would be inferable from the image itself, and box
+   geometry that *disagrees* with the observed frame is recorded as evidence
+   alongside, never substituted as the gold answer.
+4. ~~Run the leave-one-source-out study...~~ **Done, independent of this plan**
+   (2026-09-08): training on 3 of SUN RGB-D's 4 sensors and testing on the
+   held-out one (not specifically `kv1/NYUdata`, but the same shape of
+   question) showed no measurable generalization drop — see
+   `pilot_findings.md` §14, `experiment_protocol.md`'s 2026-09-08 amendment row.
+   That result already exists; it does not substitute for ARKitScenes'
+   cross-*dataset* (as opposed to cross-*sensor*) transfer question (Phase 6),
+   which needs the real second dataset to answer at all.
