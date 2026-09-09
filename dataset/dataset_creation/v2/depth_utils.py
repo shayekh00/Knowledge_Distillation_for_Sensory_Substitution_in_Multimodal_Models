@@ -23,21 +23,28 @@ def decode_sunrgbd_depth(depth_path: str, clip_max_m: float) -> np.ndarray:
 
 
 def load_intrinsics_file(intrinsics_path: str) -> np.ndarray | None:
-    """Read a 3x3 intrinsics matrix from an absolute path to an
-    `intrinsics.txt`-shaped file (9 whitespace-separated floats). Factored
-    out of `load_intrinsics` so a caller that already knows exactly which
-    file it wants (e.g. ARKitScenes' `intrinsics_path` schema field, one
-    real file per frame rather than one per scene) does not have to go
-    through scene-directory reconstruction to get there — see
-    `arkitscenes_plan.md` §2 on why that reconstruction is dataset-specific
-    and not safe to generalize blindly."""
+    """Read a 3x3 intrinsics matrix from an absolute path to either an
+    `intrinsics.txt`-shaped file (9 whitespace-separated floats, SUN RGB-D)
+    or a `.pincam`-shaped file (6 floats: `width height fx fy cx cy`,
+    ARKitScenes — same format `arkit_tools/phase0_probe.py`'s
+    `load_intrinsics_pincam` already parses; duplicated here rather than
+    imported so this dataset-agnostic module has no dependency on that
+    ARKitScenes-specific tool script). Factored out of `load_intrinsics` so
+    a caller that already knows exactly which file it wants (e.g.
+    ARKitScenes' `intrinsics_path` schema field, one real file per frame
+    rather than one per scene) does not have to go through scene-directory
+    reconstruction to get there — see `arkitscenes_plan.md` §2 on why that
+    reconstruction is dataset-specific and not safe to generalize blindly."""
     if not os.path.exists(intrinsics_path):
         return None
     with open(intrinsics_path, "r") as intrinsics_file:
         values = [float(token) for token in intrinsics_file.read().split()]
-    if len(values) != 9:
-        return None
-    return np.array(values, dtype=np.float64).reshape(3, 3)
+    if len(values) == 9:
+        return np.array(values, dtype=np.float64).reshape(3, 3)
+    if len(values) == 6:
+        _width, _height, fx, fy, cx, cy = values
+        return np.array([[fx, 0, cx], [0, fy, cy], [0, 0, 1]], dtype=np.float64)
+    return None
 
 
 def load_intrinsics(scene_dir_absolute: str) -> np.ndarray | None:

@@ -39,7 +39,8 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from distillation.depth_input import decode_metric_depth, depth_to_student_input  # noqa: E402
+from distillation.depth_input import (  # noqa: E402
+    decode_arkit_depth, decode_metric_depth, depth_to_student_input)
 
 # The frozen instruction from plan §6.4. It replaces the legacy "single word or
 # number", which conflicts with legitimate multiword answers such as "tissue box".
@@ -65,12 +66,20 @@ def load_rows(release_csv: str, limit: int | None = None) -> list:
     return rows[:limit] if limit else rows
 
 
-def build_image(row, dataset_dir: str, modality: str, representation: str):
-    """The visual input for one row. Depth is decoded to metres first."""
+def build_image(row, dataset_dir: str, modality: str, representation: str,
+                dataset: str = "sunrgbd"):
+    """The visual input for one row. Depth is decoded to metres first.
+
+    `dataset` picks the decoder: "sunrgbd" (default, unchanged) for
+    `decode_metric_depth`'s bit-rotation, "arkitscenes" for
+    `decode_arkit_depth`'s plain-millimetre read — see
+    `distillation.train_student.build_image`'s identical parameter for why
+    (arkitscenes_plan.md §6 Phase 5)."""
     from PIL import Image
     if modality == "rgb":
         return Image.open(os.path.join(dataset_dir, row["image_path"])).convert("RGB")
-    depth_metres = decode_metric_depth(os.path.join(dataset_dir, row["depth_path"]))
+    decode = decode_arkit_depth if dataset == "arkitscenes" else decode_metric_depth
+    depth_metres = decode(os.path.join(dataset_dir, row["depth_path"]))
     return Image.fromarray(depth_to_student_input(depth_metres, representation))
 
 
@@ -84,8 +93,13 @@ def main() -> None:
     parser.add_argument("--split", default="val", choices=["train", "val", "test"])
     parser.add_argument("--csv", help="Override the frozen release CSV that "
                         "--split would resolve to, with an arbitrary path (e.g. a "
-                        "leave-one-source-out subset). Never points inside "
-                        "release/ for a derived file — that directory is frozen (G1).")
+                        "leave-one-source-out subset, or a different dataset's release). "
+                        "Never points inside release/VQA-SUNRGBD-v2/ for a derived file "
+                        "— that directory is frozen (G1).")
+    parser.add_argument("--dataset", choices=["sunrgbd", "arkitscenes"], default="sunrgbd",
+                        help="Picks the depth decoder for --modality depth (irrelevant "
+                             "for rgb). Does not by itself pick the release CSV — pass "
+                             "--csv for that (arkitscenes_plan.md §6 Phase 5).")
     parser.add_argument("--out", required=True, help="Prediction CSV to write.")
     parser.add_argument("--limit", type=int, help="Only the first N rows (smoke test).")
     parser.add_argument("--prompt-style", choices=sorted(PROMPT_STYLES), default="terse",
@@ -143,7 +157,7 @@ def main() -> None:
         writer = csv.writer(handle)
         writer.writerow(["question_id", "prediction"])
         for index, row in enumerate(rows):
-            image = build_image(row, dataset_dir, args.modality, args.representation)
+            image = build_image(row, dataset_dir, args.modality, args.representation, args.dataset)
             messages = [{"role": "user", "content": [
                 {"type": "image"},
                 {"type": "text", "text": (f"{row['question']}\n{suffix}" if suffix

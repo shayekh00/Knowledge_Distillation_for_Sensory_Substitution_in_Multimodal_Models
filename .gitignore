@@ -74,3 +74,8 @@ runs/gemma_noqat/
 runs/gemma_qat/
 runs/teacher_bf16/
 runs/pilot/B3_depth_4090_profile/
+
+# ARKitScenes Phase 5 ladder — exploratory/noisy single-seed results, not
+# yet confirmatory evidence (arkitscenes_plan.md §6); the pipeline that
+# produced them (run_phase5.sh) lives here too, kept local for now.
+runs/kd_arkit/

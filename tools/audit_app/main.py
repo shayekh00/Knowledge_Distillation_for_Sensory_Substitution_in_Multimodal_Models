@@ -61,9 +61,17 @@ AUDIT_ITEMS_CSV = Path(os.environ.get("AUDIT_ITEMS_CSV", AUDIT_DIR / "audit_item
 MODEL_ANSWERS_CSV = AUDIT_DIR / "model_answers.csv"
 RESPONSES_DIR = AUDIT_DIR / "responses"
 STATIC_DIR = Path(__file__).parent / "static"
-CANONICAL_OBJECTS_CSV = DATA_DIR / "vocab" / "canonical_objects.csv"
+# Same env-var-override pattern as AUDIT_DIR/AUDIT_ITEMS_CSV above, so the
+# app serves a different dataset's audit (e.g. ARKitScenes:
+# SCENE_INDEX_JSONL=data/index/scene_index_arkit.jsonl, CANONICAL_OBJECTS_CSV
+# =data/vocab_arkit/canonical_objects.csv) with no code change — see
+# arkitscenes_plan.md §6 Phase 4.
+CANONICAL_OBJECTS_CSV = Path(os.environ.get(
+    "CANONICAL_OBJECTS_CSV", DATA_DIR / "vocab" / "canonical_objects.csv"))
+SCENE_INDEX_JSONL = Path(os.environ.get(
+    "SCENE_INDEX_JSONL", DATA_DIR / "index" / "scene_index.jsonl"))
 
-SCENE_INDEX = SceneIndex(DATA_DIR / "index" / "scene_index.jsonl", DATASET_DIR)
+SCENE_INDEX = SceneIndex(SCENE_INDEX_JSONL, DATASET_DIR)
 
 
 def _load_canonical_display_names(path: Path) -> list[str]:

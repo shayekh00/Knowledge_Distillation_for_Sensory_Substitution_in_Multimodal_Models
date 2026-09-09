@@ -1,0 +1,99 @@
+{
+  "dataset": "arkitscenes",
+  "per_split": {
+    "train": {
+      "total_items": 1548,
+      "per_type_counts": {
+        "existence": 748,
+        "identify_superlative": 582,
+        "relative_depth": 77,
+        "nearest_object": 30,
+        "left_right": 111
+      }
+    },
+    "val": {
+      "total_items": 33,
+      "per_type_counts": {
+        "existence": 6,
+        "identify_superlative": 7,
+        "relative_depth": 7,
+        "nearest_object": 7,
+        "left_right": 6
+      }
+    },
+    "test": {
+      "total_items": 38,
+      "per_type_counts": {
+        "existence": 8,
+        "identify_superlative": 8,
+        "relative_depth": 8,
+        "nearest_object": 8,
+        "left_right": 6
+      }
+    }
+  },
+  "sanity_check_failures": [],
+  "sanity_check_warnings": [
+    "train/left_right: 7.2% of train items, below the 12% floor",
+    "train/relative_depth: 5.0% of train items, below the 12% floor",
+    "train/nearest_object: 1.9% of train items, below the 12% floor",
+    "val: type-balance spread 3.0% exceeds the \u00b12% target ({'identify_superlative': 0.21212121212121213, 'relative_depth': 0.21212121212121213, 'nearest_object': 0.21212121212121213, 'existence': 0.18181818181818182, 'left_right': 0.18181818181818182})",
+    "val/identify_superlative: majority answer share 28.6% exceeds target 8.0%",
+    "val/nearest_object: majority answer share 28.6% exceeds target 8.0%",
+    "test: type-balance spread 5.3% exceeds the \u00b12% target ({'existence': 0.21052631578947367, 'identify_superlative': 0.21052631578947367, 'relative_depth': 0.21052631578947367, 'nearest_object': 0.21052631578947367, 'left_right': 0.15789473684210525})",
+    "test/identify_superlative: majority answer share 12.5% exceeds target 8.0%",
+    "test/nearest_object: majority answer share 62.5% exceeds target 8.0%"
+  ],
+  "question_only_baselines": {
+    "existence": {
+      "question_type": "existence",
+      "accuracy": 0.16666666666666666,
+      "majority_baseline": 0.5,
+      "excess_over_majority": -0.33333333333333337,
+      "threshold": 0.05,
+      "passes": true,
+      "train_items": 748,
+      "evaluation_items": 6
+    },
+    "identify_superlative": {
+      "question_type": "identify_superlative",
+      "accuracy": 0.0,
+      "majority_baseline": 0.2857142857142857,
+      "excess_over_majority": -0.2857142857142857,
+      "threshold": 0.05,
+      "passes": true,
+      "train_items": 582,
+      "evaluation_items": 7
+    },
+    "relative_depth": {
+      "question_type": "relative_depth",
+      "accuracy": 0.5714285714285714,
+      "majority_baseline": 0.5714285714285714,
+      "excess_over_majority": 0.0,
+      "threshold": 0.05,
+      "passes": true,
+      "train_items": 77,
+      "evaluation_items": 7
+    },
+    "nearest_object": {
+      "question_type": "nearest_object",
+      "accuracy": 0.0,
+      "majority_baseline": 0.2857142857142857,
+      "excess_over_majority": -0.2857142857142857,
+      "threshold": 0.05,
+      "passes": true,
+      "train_items": 30,
+      "evaluation_items": 7
+    },
+    "left_right": {
+      "question_type": "left_right",
+      "accuracy": 0.3333333333333333,
+      "majority_baseline": 0.5,
+      "excess_over_majority": -0.16666666666666669,
+      "threshold": 0.05,
+      "passes": true,
+      "train_items": 111,
+      "evaluation_items": 6
+    }
+  }
+}

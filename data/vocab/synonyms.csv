@@ -1,6 +1,7 @@
 raw_normalized,canonical_concept,reason
 couch,sofa,informal synonym for the same seating furniture
 tv,television,expand the common abbreviation to match the seg37 class name
+tv_monitor,television,ARKitScenes' single combined TV/monitor 3DOD class folds into the existing television concept
 moniter,monitor,common misspelling
 computermonitor,monitor,redundant qualifier; in an indoor scene a bare monitor is a computer monitor
 refridgerator,refrigerator,common misspelling

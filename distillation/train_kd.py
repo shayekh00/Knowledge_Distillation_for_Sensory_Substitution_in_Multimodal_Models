@@ -97,6 +97,23 @@ def main() -> None:
                         help="Named only to rebuild the cache key for verification; "
                              "the teacher itself is never loaded.")
     parser.add_argument("--modality", default="depth", choices=["depth", "rgb"])
+    parser.add_argument("--dataset", choices=["sunrgbd", "arkitscenes"], default="sunrgbd",
+                        help="Picks the depth decoder for --modality depth (irrelevant "
+                             "for rgb): sunrgbd's bit-rotation vs. arkitscenes' plain-"
+                             "millimetre PNGs (arkitscenes_plan.md §6 Phase 5). Does not "
+                             "select which release CSV to read — use --train-csv/--val-csv.")
+    parser.add_argument("--train-csv", help="Override the frozen release train.csv "
+                        "with a derived CSV (e.g. a different dataset's release). "
+                        "Never points inside release/VQA-SUNRGBD-v2/ — that directory "
+                        "is frozen (G1).")
+    parser.add_argument("--val-csv", help="Same override for val.csv.")
+    parser.add_argument("--val-release-dir", help="Directory holding the gold "
+                        "{split}.csv that score_val_macro checks predictions against. "
+                        "Required alongside --val-csv whenever that CSV is not "
+                        "release/VQA-SUNRGBD-v2/rule_based/val.csv — without it, "
+                        "score_val_macro scores this run's predictions against the "
+                        "wrong (SUN-RGB-D) gold file, exactly the bug train_student.py's "
+                        "identical flag exists to prevent.")
     parser.add_argument("--representation", default="replicated",
                         choices=["replicated", "gradient"])
     parser.add_argument("--seed", type=int, default=17)
@@ -115,6 +132,19 @@ def main() -> None:
     parser.add_argument("--effective-batch", type=int, default=16)
     parser.add_argument("--lora-rank", type=int, default=16)
     parser.add_argument("--top-k", type=int, default=4096)
+    parser.add_argument("--trainable-modules",
+                        help="Comma-separated override of the recipe's declared LoRA "
+                             "surface (e.g. 'vision_attention'). Exists because D0's "
+                             "declared surface — vision_attention+vision_merger, "
+                             "stage_one()'s current default too — was measured on "
+                             "SUN-RGB-D and rejected as sub-chance; the checkpoint "
+                             "D4/D5/D6/D9 actually used was an earlier attention-only "
+                             "run reused via --parent-checkpoint, not regenerated "
+                             "through today's declaration. A fresh alignment run on a "
+                             "new dataset (arkitscenes_plan.md §6 Phase 5) has no such "
+                             "checkpoint to borrow, so this lets it ask for the "
+                             "empirically-good surface directly instead of silently "
+                             "reproducing the rejected one.")
     parser.add_argument("--lambda-kd", type=float,
                         help="Override the recipe's KD weight.")
     parser.add_argument("--kd-temperature", type=float,
@@ -130,6 +160,8 @@ def main() -> None:
     if args.effective_batch % args.batch_size:
         parser.error(f"--effective-batch {args.effective_batch} is not a multiple of "
                      f"--batch-size {args.batch_size}")
+    if args.val_csv and not args.val_release_dir:
+        parser.error("--val-csv needs --val-release-dir (see its help text)")
     accumulation = args.effective_batch // args.batch_size
 
     import torch
@@ -171,6 +203,12 @@ def main() -> None:
             f"distillation/train_two_stage.py which chains both. Running it as one "
             f"pass would leave the feature term unable to reach any student "
             f"parameter (experiment_protocol.md §13.1 point 5).")
+    if args.trainable_modules is not None:
+        # Applied after stage resolution, not before: stage_one()/stage_one_p()
+        # return a *new* RecipeConfig with their own hardcoded trainable_modules
+        # (the merger-inclusive surface), which would silently discard an
+        # earlier override — this must have the final word.
+        config.trainable_modules = tuple(args.trainable_modules.split(","))
     print(f"stage: {config.stage} (--stage {args.stage})", flush=True)
 
     # Before anything is loaded: refuse a row whose objective cannot reach a
@@ -204,7 +242,7 @@ def main() -> None:
     random.seed(args.seed)
     torch.manual_seed(args.seed)
 
-    rows = load_rows("train", args.limit)
+    rows = load_rows("train", args.limit, csv_path=args.train_csv)
     processor = AutoProcessor.from_pretrained(args.model)
     processor.tokenizer.padding_side = "right"
 
@@ -214,7 +252,7 @@ def main() -> None:
     teacher_revision = getattr(AutoConfig.from_pretrained(args.teacher), "_commit_hash", None)
     student_revision = getattr(AutoConfig.from_pretrained(args.model), "_commit_hash", None)
     key = CacheKey({
-        "dataset_version": dataset_version(), "split": "train",
+        "dataset_version": dataset_version(args.dataset), "split": "train",
         "teacher_model": args.teacher, "teacher_revision": teacher_revision,
         "teacher_tokenizer_revision": teacher_revision, "precision": "bfloat16",
         "prompt_hash": prompt_signature(processor),
@@ -233,7 +271,7 @@ def main() -> None:
     generated_cache = None
     if strict_label_access:
         generation_key = CacheKey({
-            "dataset_version": dataset_version(), "split": "train",
+            "dataset_version": dataset_version(args.dataset), "split": "train",
             "teacher_model": args.teacher, "teacher_revision": teacher_revision,
             "teacher_tokenizer_revision": teacher_revision, "precision": "bfloat16",
             "prompt_hash": prompt_signature(processor),
@@ -254,7 +292,7 @@ def main() -> None:
         from distillation.build_feature_cache import CROP_AGGREGATION, FEATURE_LAYER
         from distillation.teacher_cache_loader import FeatureCache
         feature_key = CacheKey({
-            "dataset_version": dataset_version(), "split": "train",
+            "dataset_version": dataset_version(args.dataset), "split": "train",
             "teacher_model": args.teacher, "teacher_revision": teacher_revision,
             "processor_revision": teacher_revision, "precision": "bfloat16",
             "prompt_hash": None,
@@ -399,8 +437,8 @@ def main() -> None:
     # so it gets exactly the same fixed-budget/kept-last/no-early-stopping
     # treatment as stage F rather than a third code path.
     stage_f = config.stage in ("F", "P")
-    val_rows = load_rows("val", args.val_limit)
-    val_images = [build_image(row, args.modality, args.representation)
+    val_rows = load_rows("val", args.val_limit, csv_path=args.val_csv)
+    val_images = [build_image(row, args.modality, args.representation, args.dataset)
                   for row in val_rows]
     stopper = EarlyStopper(max_epochs=args.epochs, patience=args.patience)
     if stage_f:
@@ -428,7 +466,7 @@ def main() -> None:
                     skipped += 1                          # not in the cached split
                     continue
                 try:
-                    images.append(build_image(row, args.modality, args.representation))
+                    images.append(build_image(row, args.modality, args.representation, args.dataset))
                     chunk.append(row)
                 except Exception as error:                # unreadable frame, bad row
                     skipped += 1
@@ -502,7 +540,10 @@ def main() -> None:
         # KD "by comparing differently scaled CE and KD losses," and a stopping
         # decision on raw loss is exactly that one level up.
         predictions = generate_val_predictions(model, processor, val_rows, val_images)
-        val_macro = score_val_macro(predictions, split="val")
+        score_kwargs = {"release_dir": args.val_release_dir} if args.val_release_dir else {}
+        if args.dataset == "arkitscenes":
+            score_kwargs["canonical_objects_dir"] = os.path.join(PROJECT_ROOT, "data", "vocab_arkit")
+        val_macro = score_val_macro(predictions, split="val", **score_kwargs)
         epoch_dir = os.path.join(args.out, f"epoch_{epoch}")
         os.makedirs(epoch_dir, exist_ok=True)
         model.save_pretrained(os.path.join(epoch_dir, "adapter"))

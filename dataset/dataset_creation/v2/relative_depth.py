@@ -16,7 +16,7 @@ import sys
 from itertools import combinations
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from generator_common import load_templates, render_question, run_generator  # noqa: E402
+from generator_common import load_templates, parse_dataset_arg, render_question, run_generator  # noqa: E402
 from scene_objects import true_instance_counts  # noqa: E402
 
 TEMPLATES = load_templates("relative_depth.txt")
@@ -74,4 +74,4 @@ def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_log
 
 
 if __name__ == "__main__":
-    run_generator("relative_depth", generate_candidates_for_scene, seed_offset=4)
+    run_generator("relative_depth", generate_candidates_for_scene, seed_offset=4, dataset=parse_dataset_arg())

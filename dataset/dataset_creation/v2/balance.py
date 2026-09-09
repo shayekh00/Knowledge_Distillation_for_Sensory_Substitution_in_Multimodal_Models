@@ -128,6 +128,25 @@ def cap_majority_share(df: pd.DataFrame, answer_column: str, max_share: float,
     return current
 
 
+def cap_with_floor(capped: pd.DataFrame, original: pd.DataFrame, min_keep: int) -> pd.DataFrame:
+    """Wraps any of this module's capping/dedup functions: if applying the
+    cap would leave fewer than `min_keep` rows, keep the *original*,
+    uncapped pool instead of the (possibly empty) capped one.
+
+    Used only for ARKitScenes' small, type-scarce candidate pools
+    (arkitscenes_plan.md's release policy, author decision 2026-09-08):
+    SUN-RGB-D's fixed answer-balance caps (`cap_majority_share`,
+    `cap_answer_share_per_group`) are calibrated for pools of thousands and
+    can legitimately trim a pool of a few dozen rows to zero — dropping a
+    whole question type from a split via Rule 6.4's shared-minimum rule
+    even though the other four types have healthy pools. `min_keep=0`
+    (the default everywhere else) never triggers this — SUN-RGB-D's own
+    calls are untouched."""
+    if min_keep and len(capped) < min_keep:
+        return original
+    return capped
+
+
 def cap_answer_share_per_group(
     df: pd.DataFrame,
     answer_column: str,

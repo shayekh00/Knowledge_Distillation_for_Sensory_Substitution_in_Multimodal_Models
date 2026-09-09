@@ -30,6 +30,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.p
 DATA_DIR = os.path.join(REPO_ROOT, "data")
 BUILD_LOG_DIR = os.path.join(REPO_ROOT, "build_log")
 CANDIDATES_DIR = os.path.join(DATA_DIR, "candidates")
+ARKIT_CANDIDATES_DIR = os.path.join(DATA_DIR, "candidates_arkit")
 TEMPLATES_DIR = os.path.join(DATA_DIR, "templates")
 
 CANDIDATE_COLUMNS = [
@@ -62,8 +63,9 @@ def answer_appears_in_question(question: str, answer: str) -> bool:
 
 
 class DropLogger:
-    def __init__(self, question_type: str):
+    def __init__(self, question_type: str, filename_suffix: str = ""):
         self.question_type = question_type
+        self.filename_suffix = filename_suffix
         self.rows = []
 
     def log(self, image_id: str, reason_code: str, detail: str = ""):
@@ -72,7 +74,7 @@ class DropLogger:
 
     def write(self):
         os.makedirs(BUILD_LOG_DIR, exist_ok=True)
-        path = os.path.join(BUILD_LOG_DIR, f"p2_{self.question_type}_drops.csv")
+        path = os.path.join(BUILD_LOG_DIR, f"p2_{self.question_type}_drops{self.filename_suffix}.csv")
         with open(path, "w", newline="") as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=["image_id", "question_type", "reason_code", "detail"])
             writer.writeheader()
@@ -80,7 +82,18 @@ class DropLogger:
         return path
 
 
-def run_generator(question_type: str, generate_candidates_for_scene, seed_offset: int = 0) -> None:
+def parse_dataset_arg() -> str:
+    """Shared `--dataset {sunrgbd,arkitscenes}` CLI parsing for every P2
+    generator's `__main__` block, so each one stays a one-line call into
+    run_generator() rather than repeating argparse boilerplate five times."""
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dataset", default="sunrgbd", choices=["sunrgbd", "arkitscenes"])
+    return parser.parse_args().dataset
+
+
+def run_generator(question_type: str, generate_candidates_for_scene, seed_offset: int = 0,
+                  dataset: str = "sunrgbd") -> None:
     """
     generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_logger)
       -> list of dicts, each with at least:
@@ -100,12 +113,27 @@ def run_generator(question_type: str, generate_candidates_for_scene, seed_offset
 
     `seed_offset` keeps each question type on its own stream, so adding or
     removing a type does not perturb the others.
+
+    `dataset="sunrgbd"` (default) is byte-for-byte the original behaviour.
+    `dataset="arkitscenes"` (arkitscenes_plan.md, Phase 3) reads
+    scene_index_arkit.jsonl and the vocab_arkit/ outputs instead, and writes
+    to a separate candidates_arkit/ directory — synonyms.csv is the one
+    input shared between datasets (see build_vocab.py's own --dataset flag).
     """
     config = load_config()
 
+    if dataset == "arkitscenes":
+        scene_index_path = os.path.join(DATA_DIR, "index", "scene_index_arkit.jsonl")
+        vocab_dir = os.path.join(DATA_DIR, "vocab_arkit")
+        candidates_dir = ARKIT_CANDIDATES_DIR
+    else:
+        scene_index_path = os.path.join(DATA_DIR, "index", "scene_index.jsonl")
+        vocab_dir = os.path.join(DATA_DIR, "vocab")
+        candidates_dir = CANDIDATES_DIR
+
     synonym_map = load_synonyms(os.path.join(DATA_DIR, "vocab", "synonyms.csv"))
-    canonical_vocab = load_canonical_vocab(os.path.join(DATA_DIR, "vocab", "canonical_objects.csv"))
-    scenes = load_scene_index(os.path.join(DATA_DIR, "index", "scene_index.jsonl"))
+    canonical_vocab = load_canonical_vocab(os.path.join(vocab_dir, "canonical_objects.csv"))
+    scenes = load_scene_index(scene_index_path)
     scenes.sort(key=lambda scene: scene["image_id"])  # deterministic iteration order
 
     min_area_frac = config["geometry"]["min_area_frac"]
@@ -114,12 +142,12 @@ def run_generator(question_type: str, generate_candidates_for_scene, seed_offset
     # DATASET_CREATION_PLAN.md §13.17 for the measurement that decided it.
     crop_area_ratio = config["geometry"].get("crop_area_ratio", 0.0)
     typical_area_by_concept = load_concept_typical_area(
-        os.path.join(DATA_DIR, "vocab", "concept_typical_area.json")
+        os.path.join(vocab_dir, "concept_typical_area.json")
     ) if crop_area_ratio else {}
-    drop_logger = DropLogger(question_type)
+    drop_logger = DropLogger(question_type, filename_suffix="_arkit" if dataset == "arkitscenes" else "")
 
-    os.makedirs(CANDIDATES_DIR, exist_ok=True)
-    output_path = os.path.join(CANDIDATES_DIR, f"{question_type}.csv")
+    os.makedirs(candidates_dir, exist_ok=True)
+    output_path = os.path.join(candidates_dir, f"{question_type}.csv")
     candidate_count = 0
 
     with open(output_path, "w", newline="") as csv_file:

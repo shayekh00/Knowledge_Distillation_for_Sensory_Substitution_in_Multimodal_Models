@@ -469,6 +469,14 @@ def main() -> None:
                         "Scoring against a subset here gives that subset's own gold, "
                         "avoiding the 'missing rows count as wrong' trap "
                         "`distillation/epoch_loop.py`'s score_val_macro documents.")
+    parser.add_argument("--canonical-objects-dir", default=VOCAB_DIR,
+                        help="Directory holding canonical_objects.csv. Override for a "
+                        "different dataset's release (e.g. data/vocab_arkit for "
+                        "ARKitScenes) — scoring ARKitScenes predictions against SUN-"
+                        "RGB-D's 148-concept vocab would mark its own answers (e.g. "
+                        "'washer') out-of-vocabulary. synonyms.csv is always read "
+                        "from data/vocab/ regardless — it is shared across datasets "
+                        "(build_vocab.py's own --dataset flag does the same).")
     parser.add_argument("--constrained", action="store_true",
                         help="Snap each prediction onto its row's answer space.")
     parser.add_argument("--baselines-only", action="store_true")
@@ -482,7 +490,8 @@ def main() -> None:
         raise SystemExit("Pass --predictions, or --baselines-only for the baseline table.")
 
     synonym_map = load_synonyms(os.path.join(VOCAB_DIR, "synonyms.csv"))
-    canonical_vocab = load_canonical_vocab(os.path.join(VOCAB_DIR, "canonical_objects.csv"))
+    canonical_vocab = load_canonical_vocab(
+        os.path.join(args.canonical_objects_dir, "canonical_objects.csv"))
     gold = load_release_split(args.split, args.release_dir)
     train = load_release_split("train", args.release_dir)
 

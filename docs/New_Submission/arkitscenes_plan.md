@@ -1,7 +1,9 @@
 # VQA-ARKitScenes v1 — second-dataset plan
 
-**Status:** Phase 0 run and passed (2026-09-08) — see §6 for results. Phases
-1-6 remain proposal, awaiting author decision on §8's open items.
+**Status:** Phases 0-3 complete — VQA-ARKitScenes-v1.0 frozen (2026-09-08,
+train 1,548 / val 33 / test 38 rows) — see §6 for results. `answer_form`
+was not exercised and needs its own audit before use. Phases 4-6 remain
+proposal, awaiting author decision on §8's open items.
 **Date:** 2026-09-07 (Phase 0 results added 2026-09-08).
 **Purpose:** answer reviewer comments R1.5, R2.1 and R5.2 — the only weakness all
 three reviewers raised independently — by adding a second, genuinely independent
@@ -407,13 +409,170 @@ earlier the same day), which silently wrote a duplicated
 before launching the 750-scan batch, not discovered after; the misplaced
 82 MB was deleted before the real run started.
 
-### Phase 2 — Subset download (~1 day, mostly waiting)
-Per §5, to a declared budget of ≤ 25 GB, leaving headroom.
+**Completed 2026-09-08:** all 750/750 scans downloaded, 0 failures (749
+fetched + 1 already present from Phase 0), 85 GB on disk (~126.5 min).
 
 ### Phase 3 — Generate and freeze VQA-ARKitScenes v1 (half a day, CPU)
+
 Run the unchanged P2 generators, then `build_vocab`, `balance`, `answer_form`,
 `build_release`, `freeze_release.py`. Produces a frozen release with its own
 manifest and sha256s under the same discipline as v2.4.
+
+**Started 2026-09-08.** `build_index_arkit.py` run over both fold
+directories (`--split train` over Training, `--split test` over Validation —
+placeholders, see below), producing 945 frame records from 668 Training-fold
+scans and 126 from 82 Validation-fold scans (**82%/81% of sampled frames
+dropped, mostly `NO_OBJECTS_IN_VIEW`** — the same failure mode Phase 0
+flagged on its 5-scan sample, now confirmed at full scale and materially
+worse than assumed; see the vocab finding below).
+
+**Train/val/test policy** (deferred by `build_index_arkit.py`'s own
+docstring — "not resolved here"): new `assign_split_arkit.py` maps
+ARKitScenes' official Validation fold wholesale to `test` (the direct
+analogue of SUN-RGB-D's own fixed official test pool — the one externally-
+defined held-out set neither pipeline invented), then carves
+`val_fraction=0.15` out of the Training-fold pool by `GroupShuffleSplit` on
+scan id, **reusing `build_index.py`'s own tested `assign_split()`** rather
+than reimplementing split logic. Result: **1,071 total frames → 818 train /
+127 val / 126 test**, merged into `data/index/scene_index_arkit.jsonl`. 4
+new tests (`tests/test_assign_split_arkit.py`); full suite 331 passed.
+
+**`build_vocab.py`'s deferred seg37 decision, resolved against the real
+corpus.** The plan's original assumption — "all 17 target classes should
+each clear the ≥100-occurrence threshold on their own in 2,500-5,000
+images" — does not hold: the actual corpus is only 1,071 frames (roughly a
+third of that range), and at that scale only 5 of the 17 target classes
+(cabinet 579, chair 293, table 213, sofa 140, sink exactly 100) clear
+`FREQUENCY_THRESHOLD=100` unassisted; the other 12 (bed 87, toilet 77,
+bathtub 75, stool 58, shelf 57, washer 47, refrigerator 36, oven 35,
+tv_monitor/television 30, stove 19, fireplace 13, dishwasher 9) would have
+silently fallen out of the vocabulary. **Author decision: always-include
+the 17 target classes** (over lowering the threshold or accepting the
+narrower 5-class vocabulary) — the direct ARKitScenes analogue of seg37,
+except with no name-format mismatch to bridge, since these are exactly
+ARKitScenes' own raw 3DOD label strings. Implemented as `--dataset
+{sunrgbd,arkitscenes}` on `build_vocab.py`: `sunrgbd` (default) is verified
+byte-for-byte identical to the pre-change script (isolated by diffing two
+fresh reruns of the original vs. patched code against the same on-disk
+index — the git-committed vocab files themselves turned out to already be
+stale against a later index rebuild, an unrelated pre-existing drift, not
+a regression from this change); `arkitscenes` reads
+`scene_index_arkit.jsonl`, always-includes
+`ARKITSCENES_TARGET_RAW_NAMES` instead of loading seg37, and writes to a
+separate `data/vocab_arkit/` so SUN-RGB-D's curated vocab is never touched.
+Two small, purely additive vocabulary fixes needed along the way: `washer`
+had no `CATEGORY_AND_STRUCTURAL` entry (added, `electronics`), and
+ARKitScenes' combined `tv_monitor` class had no synonym mapping (added
+`tv_monitor -> television` to `data/vocab/synonyms.csv`, folding it into
+the concept SUN-RGB-D's own `tv` abbreviation already maps to). Result: all
+17 target classes present, **100% instance coverage** (1,868 instances),
+0 review-queue entries. Only 5/17 concepts have the ≥10 non-border-touching
+samples `concept_typical_area.json` needs for a trusted median size — worth
+flagging for Phase 4's audit, since the other 12 classes' crop-gate
+comparisons (Rule V3-adjacent, `scene_objects.py`) rest on no typical-size
+reference at all.
+
+**Not yet run**: `answer_form`, `freeze_release.py` — same `RELEASE_DIR`/
+path-constant parameterization gap §2 already flagged, not yet needed for
+`build_release.py` below (`answer_form` was not exercised by the sanity
+checks; needs its own audit before use).
+
+**`build_release.py` run, after finding and fixing two more real bugs it
+exposed** (2026-09-08) — both caught because running the real pipeline
+end-to-end surfaces gaps a schema-parity read-through cannot:
+
+1. **`load_intrinsics_file` never actually supported ARKitScenes**, despite
+   its own docstring's claim. `.pincam` files are 6 values (`width height
+   fx fy cx cy`); the function required exactly 9 (a flattened 3x3 matrix,
+   SUN RGB-D's `intrinsics.txt` shape) and silently returned `None`
+   otherwise — every `.pincam` read as `MISSING_INTRINSICS`, dropping 85%
+   of `nearest_object` candidates (913/1071) for a reason that had nothing
+   to do with real data scarcity. Fixed by branching on token count (6 ->
+   build K the same way `arkit_tools/phase0_probe.py`'s
+   `load_intrinsics_pincam` already does; 9 -> unchanged). 4 new tests
+   (`tests/test_depth_utils.py`); verified byte-identical for SUN RGB-D.
+2. **`left_right.py` re-parses the raw annotation JSON for polygon IoU**,
+   using SUN RGB-D's `frames[0]["polygon"]` shape — ARKitScenes' annotation
+   format has no such key, so every pair's polygon lookup failed
+   (`POLYGON_UNAVAILABLE`, 780 of 1851 drop rows), a genuine schema gap
+   Phase 1's read-through missed because `resolve_scene_objects` only
+   passes through an explicit, hand-listed set of fields — a new one
+   silently disappears rather than erroring. Fixed by having
+   `build_index_arkit.py` store the already-computed, already-clipped 2D
+   hull directly on each object record (`polygon_xy`, the same polygon
+   used to score visibility — no new geometry, just not discarding it),
+   threading it through `resolve_scene_objects`, and having `left_right.py`
+   prefer it over the raw-annotation reconstruction when present (same
+   prefer-the-new-field-when-present pattern `nearest_object.py`'s
+   `intrinsics_path` already established). Both fixes together took
+   `left_right`/`nearest_object` from 0 candidates each to 220/205.
+
+**P2 generators parameterized**: `generator_common.py`'s `run_generator()`
+gained a `dataset` argument (`sunrgbd` default, byte-identical — verified
+by diffing original-code vs. patched-code reruns against the same on-disk
+index for all 5 generators) alongside a shared `parse_dataset_arg()` each
+generator's `__main__` now calls; outputs go to `data/candidates_arkit/`
+and `build_log/p2_*_drops_arkit.csv` so nothing SUN-RGB-D owns is touched.
+Full ARKitScenes candidate counts: existence 26,494, identify_superlative
+1,471, left_right 220, nearest_object 205, relative_depth 145.
+
+**`build_release.py` run — found a third real problem, resolved by author
+decision.** First attempt crashed, then (once traced) produced a
+completely **empty val/test release** (0 items each), even though train
+was fine (1,548 items): Rule 6.4 caps every type's val/test count to
+whichever type has the fewest, and `nearest_object`'s own answer-balance
+cap (`cap_answer_share_per_group`, `NEAREST_CONDITIONAL_MAX_SHARE=0.20`)
+trimmed its 14-34-row val/test pools to exactly 0 — a cap calibrated for
+pools of thousands, dragging every other (healthy: 7-116 items) type down
+to 0 with it via the shared minimum. **Author decision: relax the caps
+rather than drop Rule 6.4's shared-minimum structure or drop
+`nearest_object` from the dataset.** Implemented as `balance.py`'s new
+`cap_with_floor(capped, original, min_keep)` — falls back to the *uncapped*
+pool exactly when the strict cap would drop below `min_keep`, a no-op at
+`min_keep=0` (every SUN-RGB-D call site, verified byte-identical). Wired
+into `build_release.py`'s two collapse-prone call sites at `min_keep=1`
+for `--dataset arkitscenes` only. 3 new tests
+(`tests/test_cap_with_floor.py`). Result: **train 1,548 / val 33 / test 38**
+items, all 5 question types present in every split, 0 sanity-check
+failures (9 warnings — expected at this scale: type-balance spread and
+majority-share targets calibrated for thousands of rows read as exceeded
+on val/test pools of 6-8 items per type). Written to
+`release/VQA-ARKitScenes-v1/rule_based/{train,val,test}.csv`,
+`build_log/p3_report_arkit.json`. **Not yet frozen** —
+val/test at 33-38 items total is a genuinely small benchmark slice, worth
+the author seeing before `freeze_release.py` locks it as a versioned
+release.
+
+Full suite 338 passed throughout (335 + 3 `cap_with_floor` tests).
+
+**Frozen as VQA-ARKitScenes-v1.0** (author instruction, 2026-09-08).
+`freeze_release.py` gained the same `--dataset` parameterization
+(`ARKIT_TRACKED_INPUTS`, `ARKIT_RELEASE_ROOT`) as the rest of the P1-P3
+family, plus one generalization needed for it specifically: `sha256_of`'s
+dispatch to the volatile-field-stripping manifest/scene-index hashers was
+matched by the exact SUN-RGB-D filenames (`manifest.json`,
+`scene_index.jsonl`); broadened to match by pattern
+(`manifest*.json`, `*.jsonl`) so `manifest_arkit_split.json` (which carries
+the same volatile `built_at_utc` field) and `scene_index_arkit.jsonl` (the
+same environment-dependent float precision) get identical treatment
+without a dataset branch inside the low-level hash functions — verified
+against SUN-RGB-D's real frozen v2.4 (`--verify v2.4` still resolves the
+same two files the same way). `release/VQA-ARKitScenes-v1/FROZEN_v1.0.json`:
+train.csv 1,548 rows, val.csv 33 rows, test.csv 38 rows; `--verify v1.0`
+passes clean.
+
+**Known, accepted side effect, not a bug**: `--verify v2.4` (SUN-RGB-D) now
+reports drift on every pipeline file this session's ARKitScenes work
+touched (`synonyms.csv`, `balance.py`, `build_release.py`,
+`depth_utils.py`, the 5 generators, `scene_objects.py`) — correctly, since
+those files' *bytes* did genuinely change, even though their SUN-RGB-D
+*behaviour* was verified byte-identical at every step above. The freeze
+mechanism hashes tracked-input content, not behavior, so it cannot
+distinguish "changed but behaviorally inert" from "changed and different" —
+by design, per its own docstring ("any future change... must produce a new
+version, not silently rewrite this one"). Not fixed here; re-freezing v2.4
+under a new tag was out of scope for this instruction and nothing about
+v2.4's own release CSVs changed.
 
 ### Phase 4 — Human audit (half a day)
 Reuse `tools/audit_app/` — the existing sampled-audit tool with evidence
@@ -469,6 +628,62 @@ reviewer:**
    needs human-written or human-verified questions — scope separately.
 
 ---
+
+**2026-09-08, Phase 5 launched.** Author instruction: no ScanNet (decision 2
+below) — "requires filling forms and stuff." D9 (the last SUN-RGB-D KD row)
+finished first (best val macro 47.88%, epoch 2), freeing the GPU.
+
+Before launching, extensive cross-cutting plumbing was needed across
+`distillation/` and `evaluation/` — none of it exercised until an actual
+second dataset existed to run against: `depth_input.py` gained
+`decode_arkit_depth` (ARKitScenes' plain-millimetre depth vs. SUN-RGB-D's
+bit-rotation — the exact prerequisite this plan's Phase 5 section already
+flagged), threaded via a new `--dataset` flag through
+`train_student.py`/`train_kd.py`/`zero_shot_inference.py`'s `build_image`;
+`build_teacher_cache.py`'s `dataset_version()` (a *required* cache-key
+field) was made dataset-aware after realizing an ARKitScenes cache built
+under the old hardcoded SUN-RGB-D version string would digest-collide with
+the real SUN-RGB-D cache; `evaluate.py` and `epoch_loop.py`'s
+`score_val_macro` both hardcoded SUN-RGB-D's 148-concept vocab for scoring
+*any* prediction, silently marking ARKitScenes' own answers (e.g.
+"washer") out-of-vocabulary — both gained a `canonical_objects_dir`
+override. All changes additive, defaults unchanged, verified via the full
+test suite (350 passed) and smoke tests of every affected code path
+(feature cache, logits cache, B3-shaped CE training, X2-shaped KD
+training, D0-shaped alignment, D0→D3 checkpoint chaining) before the real
+run.
+
+**Real, non-cosmetic finding along the way**: `recipe_library()`'s current
+`D0` declaration (and `stage_one()`, which `D3`/`D5` derive their
+alignment stage from) trains the vision merger alongside attention — a
+configuration measured on SUN-RGB-D and **rejected** as sub-chance
+(`align_curve_contrastive_merger_s17`, declining 25.84% -> 22.92%, below
+the 30.3% floor throughout). The checkpoint D4/D5/D6/D9 actually trained
+against (`align_curve_contrastive_s17`) was a different, earlier,
+attention-only run manually preserved and reused via `--parent-checkpoint`
+— not regenerated through today's `stage_one()`/D0 code, which would
+silently reproduce the rejected configuration. ARKitScenes has no such
+pre-existing checkpoint to borrow. **Author decision: run D0 attention-
+only** — a new `--trainable-modules` override on `train_kd.py` (applied
+*after* stage resolution; an earlier attempt applying it before was
+silently discarded by `stage_one()`'s own hardcoded surface, caught by
+smoke-testing before the real run). This is a standing gotcha for any
+*future* fresh SUN-RGB-D stage-F run too, not just ARKitScenes — the
+project's own working checkpoint predates a code change that was never
+reverted despite the rejection.
+
+**Phase 5 is the reduced ladder** the plan's own §6 text already scoped —
+not the full D1-D9 matrix run for SUN-RGB-D. Running: B1, B2 (zero-shot
+depth/RGB), B3, B5 (CE depth/RGB), X2 (CE+KD unaligned), D0 (alignment,
+attention-only), D3, D5 (CE-only / CE+KD on aligned vision) — one seed
+(17), same 10-epoch/patience-2/LoRA-rank-16 policy as every SUN-RGB-D row.
+Launched via `runs/kd_arkit/run_phase5.sh`. Tracked with the same ad-hoc
+`runs/<name>/resource_usage.json` convention D4-D9 used this session, not
+`evaluation/record_run.py`'s more elaborate `INDEX.md`-tracked system the
+*original* B1-X2 SUN-RGB-D numbers went through — that tool also hardcodes
+SUN-RGB-D's vocab/release paths and would need the same kind of
+parameterization before it could track ARKitScenes runs; deferred as a
+separate decision, not required to get real numbers now.
 
 ## 8. Decisions needed
 

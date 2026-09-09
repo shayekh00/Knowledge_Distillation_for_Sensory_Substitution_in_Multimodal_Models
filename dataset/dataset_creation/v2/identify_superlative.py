@@ -17,7 +17,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from generator_common import answer_appears_in_question, load_templates, render_question, run_generator  # noqa: E402
+from generator_common import (  # noqa: E402
+    answer_appears_in_question, load_templates, parse_dataset_arg, render_question, run_generator)
 
 TEMPLATES_BY_VARIANT = {
     "closest_camera": load_templates("identify_superlative_closest_camera.txt"),
@@ -94,4 +95,4 @@ def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_log
 
 
 if __name__ == "__main__":
-    run_generator("identify_superlative", generate_candidates_for_scene, seed_offset=3)
+    run_generator("identify_superlative", generate_candidates_for_scene, seed_offset=3, dataset=parse_dataset_arg())

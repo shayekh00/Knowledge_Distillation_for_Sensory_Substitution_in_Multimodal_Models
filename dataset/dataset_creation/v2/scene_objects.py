@@ -76,7 +76,8 @@ def resolve_scene_objects(scene: dict, synonym_map: dict, canonical_vocab: dict,
       object_index, raw_name, concept, display_name, category, is_structural,
       in_vocab, area_frac, centroid_x, centroid_y, depth_median_m,
       depth_valid_frac, is_valid_polygon, touches_border, is_cropped_sliver,
-      eligible, reference_eligible
+      eligible, reference_eligible, polygon_xy (None unless the source
+      record carries one, e.g. ARKitScenes — see left_right.py)
 
     `eligible` = valid polygon, in canonical vocab, non-structural,
     area_frac >= min_area_frac, and not a frame-cropped sliver. This is the
@@ -127,6 +128,7 @@ def resolve_scene_objects(scene: dict, synonym_map: dict, canonical_vocab: dict,
             "is_cropped_sliver": cropped_sliver,
             "eligible": eligible,
             "reference_eligible": reference_eligible,
+            "polygon_xy": obj.get("polygon_xy"),
         })
     return resolved
 

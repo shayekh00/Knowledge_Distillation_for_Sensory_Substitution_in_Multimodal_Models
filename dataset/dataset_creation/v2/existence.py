@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generator_common import (  # noqa: E402
     load_config,
     load_templates,
+    parse_dataset_arg,
     render_question,
     run_generator,
 )
@@ -168,4 +169,4 @@ def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_log
 
 
 if __name__ == "__main__":
-    run_generator("existence", generate_candidates_for_scene, seed_offset=1)
+    run_generator("existence", generate_candidates_for_scene, seed_offset=1, dataset=parse_dataset_arg())

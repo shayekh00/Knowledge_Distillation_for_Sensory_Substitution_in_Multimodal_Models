@@ -29,17 +29,20 @@ from balance import (  # noqa: E402
     cap_answer_share_per_group,
     cap_distinct_types_per_image,
     cap_majority_share,
+    cap_with_floor,
     dedup_one_row_per_image,
     dedup_one_row_per_image_targeted,
     stratified_pair_subsample,
     stratified_subsample,
 )
-from generator_common import CANDIDATE_COLUMNS, CANDIDATES_DIR, DATA_DIR, load_config  # noqa: E402
+from generator_common import (  # noqa: E402
+    ARKIT_CANDIDATES_DIR, CANDIDATE_COLUMNS, CANDIDATES_DIR, DATA_DIR, load_config)
 from question_only import evaluate_question_type  # noqa: E402
 from scene_objects import DATASET_DIR  # noqa: E402
 
 REPO_ROOT = os.path.dirname(DATA_DIR)
 RELEASE_DIR = os.path.join(REPO_ROOT, "release", "VQA-SUNRGBD-v2", "rule_based")
+ARKIT_RELEASE_DIR = os.path.join(REPO_ROOT, "release", "VQA-ARKitScenes-v1", "rule_based")
 BUILD_LOG_DIR = os.path.join(REPO_ROOT, "build_log")
 
 QUESTION_TYPES = [
@@ -53,12 +56,23 @@ MAX_TYPES_PER_IMAGE_VAL_TEST = 4
 RELEASE_COLUMNS = ["question_id"] + CANDIDATE_COLUMNS
 
 
-def load_candidates(question_type: str, split: str) -> pd.DataFrame:
-    df = pd.read_csv(os.path.join(CANDIDATES_DIR, f"{question_type}.csv"), dtype={"answer": str})
+def load_candidates(question_type: str, split: str, candidates_dir: str = CANDIDATES_DIR) -> pd.DataFrame:
+    df = pd.read_csv(os.path.join(candidates_dir, f"{question_type}.csv"), dtype={"answer": str})
     return df[df["split"] == split].reset_index(drop=True)
 
 
-def balance_for_split(question_type: str, df: pd.DataFrame, split: str, rng: random.Random) -> pd.DataFrame:
+def balance_for_split(question_type: str, df: pd.DataFrame, split: str, rng: random.Random,
+                      dataset: str = "sunrgbd") -> pd.DataFrame:
+    # SUN-RGB-D's fixed answer-balance caps are calibrated for pools of
+    # thousands; on ARKitScenes' much smaller pools they can legitimately
+    # trim a type to zero rows, which — via Rule 6.4's shared-minimum split
+    # size below — would silently empty every OTHER type's val/test out
+    # along with it. min_keep=1 falls back to the uncapped pool exactly
+    # when (and only when) the strict cap would otherwise collapse it to
+    # nothing (author decision, arkitscenes_plan.md §6 Phase 3, 2026-09-08).
+    # 0 for sunrgbd is a no-op: cap_with_floor never overrides a real cap.
+    min_keep = 1 if dataset == "arkitscenes" else 0
+
     if question_type == "existence":
         df = df.copy()
         df["_balance_group"] = df["evidence"].map(
@@ -91,18 +105,20 @@ def balance_for_split(question_type: str, df: pd.DataFrame, split: str, rng: ran
         df["_balance_group"] = df["evidence"].map(
             lambda serialized: json.loads(serialized)["anchor_concept"]
         )
-        df = cap_answer_share_per_group(
+        capped = cap_answer_share_per_group(
             df,
             answer_column="answer",
             group_column="_balance_group",
             max_share=NEAREST_CONDITIONAL_MAX_SHARE,
             rng=rng,
         )
+        df = cap_with_floor(capped, df, min_keep)
 
     if split == "train" or df.empty:
         return df
     if question_type in ("identify_superlative", "nearest_object"):
-        return cap_majority_share(df, "answer", OPEN_VOCAB_MAX_SHARE, rng)
+        capped = cap_majority_share(df, "answer", OPEN_VOCAB_MAX_SHARE, rng)
+        return cap_with_floor(capped, df, min_keep)
     if question_type in BINARY_BALANCED_TYPES:
         return balance_binary(df, "answer", rng)
     return df  # relative_depth: already ~50/50 by construction at generation time
@@ -111,17 +127,18 @@ def balance_for_split(question_type: str, df: pd.DataFrame, split: str, rng: ran
 SPLIT_SEED_OFFSETS = {"train": 10, "val": 11, "test": 12}  # fixed, not Python's randomized hash()
 
 
-def build_split(split: str, config: dict) -> dict:
+def build_split(split: str, config: dict, candidates_dir: str = CANDIDATES_DIR,
+                release_dir: str = RELEASE_DIR, dataset: str = "sunrgbd") -> dict:
     joint_rng = random.Random(f"{config['seed']}:p3:{split}:joint")
 
     per_type_frames = {}
     for question_type in QUESTION_TYPES:
-        raw = load_candidates(question_type, split)
+        raw = load_candidates(question_type, split, candidates_dir)
         selection_rng = random.Random(
             f"{config['seed']}:p3:{split}:{question_type}"
         )
         per_type_frames[question_type] = balance_for_split(
-            question_type, raw, split, selection_rng
+            question_type, raw, split, selection_rng, dataset
         )
 
     if split in ("val", "test"):
@@ -160,8 +177,8 @@ def build_split(split: str, config: dict) -> dict:
     ).reset_index(drop=True)
     combined.insert(0, "question_id", [f"{split}_{i:06d}" for i in range(len(combined))])
 
-    os.makedirs(RELEASE_DIR, exist_ok=True)
-    output_path = os.path.join(RELEASE_DIR, f"{split}.csv")
+    os.makedirs(release_dir, exist_ok=True)
+    output_path = os.path.join(release_dir, f"{split}.csv")
     combined[RELEASE_COLUMNS].to_csv(output_path, index=False)
 
     return {
@@ -314,11 +331,26 @@ def run_sanity_checks(split_results: dict, random_state: int = 42) -> dict:
 
 
 def main() -> None:
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--dataset", default="sunrgbd", choices=["sunrgbd", "arkitscenes"],
+                        help="'sunrgbd' (default) is the original behaviour: data/candidates/, "
+                             "release/VQA-SUNRGBD-v2/rule_based/. 'arkitscenes' reads "
+                             "data/candidates_arkit/ and writes "
+                             "release/VQA-ARKitScenes-v1/rule_based/.")
+    args = parser.parse_args()
+    candidates_dir = ARKIT_CANDIDATES_DIR if args.dataset == "arkitscenes" else CANDIDATES_DIR
+    release_dir = ARKIT_RELEASE_DIR if args.dataset == "arkitscenes" else RELEASE_DIR
+    report_name = "p3_report_arkit.json" if args.dataset == "arkitscenes" else "p3_report.json"
+
     config = load_config()
-    split_results = {split: build_split(split, config) for split in ("train", "val", "test")}
+    split_results = {split: build_split(split, config, candidates_dir, release_dir, args.dataset)
+                     for split in ("train", "val", "test")}
     checks = run_sanity_checks(split_results, random_state=config["seed"])
 
     report = {
+        "dataset": args.dataset,
         "per_split": {
             split: {"total_items": result["total_items"], "per_type_counts": result["per_type_counts"]}
             for split, result in split_results.items()
@@ -328,12 +360,12 @@ def main() -> None:
         "question_only_baselines": checks["question_only"],
     }
     os.makedirs(BUILD_LOG_DIR, exist_ok=True)
-    with open(os.path.join(BUILD_LOG_DIR, "p3_report.json"), "w") as report_file:
+    with open(os.path.join(BUILD_LOG_DIR, report_name), "w") as report_file:
         json.dump(report, report_file, indent=2)
 
     print(json.dumps(report, indent=2))
     if checks["failures"]:
-        raise SystemExit(f"P3 sanity checks failed: {len(checks['failures'])} failure(s), see build_log/p3_report.json")
+        raise SystemExit(f"P3 sanity checks failed: {len(checks['failures'])} failure(s), see build_log/{report_name}")
 
 
 if __name__ == "__main__":

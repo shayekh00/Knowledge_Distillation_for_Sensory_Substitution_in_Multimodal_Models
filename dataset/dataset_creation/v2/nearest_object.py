@@ -18,7 +18,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from depth_utils import backproject_to_camera_frame, load_intrinsics, load_intrinsics_file  # noqa: E402
-from generator_common import answer_appears_in_question, load_templates, render_question, run_generator  # noqa: E402
+from generator_common import (  # noqa: E402
+    answer_appears_in_question, load_templates, parse_dataset_arg, render_question, run_generator)
 from scene_objects import DATASET_DIR, scene_dir_absolute, true_instance_counts  # noqa: E402
 
 TEMPLATES = load_templates("nearest_object.txt")
@@ -95,4 +96,4 @@ def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_log
 
 
 if __name__ == "__main__":
-    run_generator("nearest_object", generate_candidates_for_scene, seed_offset=5)
+    run_generator("nearest_object", generate_candidates_for_scene, seed_offset=5, dataset=parse_dataset_arg())

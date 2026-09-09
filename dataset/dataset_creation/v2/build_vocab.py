@@ -151,6 +151,7 @@ CATEGORY_AND_STRUCTURAL = {
     "phone": ("electronics", False), "telephone": ("electronics", False),
     "remotecontrol": ("electronics", False), "fan": ("electronics", False), "microwave": ("electronics", False),
     "oven": ("electronics", False), "refrigerator": ("electronics", False), "dishwasher": ("electronics", False),
+    "washer": ("electronics", False),
     "stove": ("electronics", False), "projector": ("electronics", False), "screen": ("electronics", False),
     "desktop": ("electronics", False), "machine": ("electronics", False), "device": ("electronics", False),
 
@@ -221,15 +222,68 @@ def load_seg37_concepts(synonym_map: dict) -> set:
     return concepts
 
 
+# ARKitScenes' own fixed 3DOD annotation taxonomy — the direct analogue of
+# seg37 for this dataset (arkitscenes_plan.md, Phase 3 vocab decision,
+# 2026-09-08): these 17 raw names are exactly what ARKitScenes' annotations
+# use, so unlike seg37 there is no name-format mismatch to bridge here. Author
+# decision (same date): always-include rather than a lower frequency
+# threshold or accepting the narrower vocabulary — at this corpus's actual
+# scale (1,071 frames, well under the plan's original 2,500-5,000 assumption)
+# 12 of these 17 do not clear FREQUENCY_THRESHOLD=100 on their own.
+ARKITSCENES_TARGET_RAW_NAMES = [
+    "shelf", "cabinet", "table", "toilet", "fireplace", "sofa", "chair",
+    "stool", "bathtub", "bed", "sink", "refrigerator", "washer", "stove",
+    "oven", "tv_monitor", "dishwasher",
+]
+
+
+def load_arkitscenes_target_concepts(synonym_map: dict) -> set:
+    concepts = set()
+    for raw_name in ARKITSCENES_TARGET_RAW_NAMES:
+        normalized = normalize_raw_name(raw_name)
+        concepts.add(synonym_map.get(normalized, normalized))
+    return concepts
+
+
 def display_name_for(concept: str) -> str:
     return DISPLAY_NAME_OVERRIDES.get(concept, concept)
 
 
 def main() -> None:
-    synonym_map = load_synonyms(SYNONYMS_PATH)
-    seg37_concepts = load_seg37_concepts(synonym_map)
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--dataset", default="sunrgbd", choices=["sunrgbd", "arkitscenes"],
+                        help="'sunrgbd' (default) is byte-for-byte the original behaviour: "
+                             "scene_index.jsonl, the seg37 always-include union, data/vocab/ "
+                             "outputs. 'arkitscenes' reads scene_index_arkit.jsonl, always-"
+                             "includes ARKITSCENES_TARGET_RAW_NAMES instead of seg37 (that "
+                             "file does not exist for this dataset and the name-format "
+                             "mismatch it exists to bridge does not apply here), and writes "
+                             "to data/vocab_arkit/ so the curated SUN-RGB-D vocab files are "
+                             "never touched.")
+    args = parser.parse_args()
 
-    records = [json.loads(line) for line in open(SCENE_INDEX_PATH)]
+    if args.dataset == "arkitscenes":
+        scene_index_path = os.path.join(DATA_DIR, "index", "scene_index_arkit.jsonl")
+        vocab_dir = os.path.join(DATA_DIR, "vocab_arkit")
+        canonical_objects_path = os.path.join(vocab_dir, "canonical_objects.csv")
+        review_queue_path = os.path.join(vocab_dir, "vocab_review_queue.csv")
+        typical_area_path = os.path.join(vocab_dir, "concept_typical_area.json")
+        report_path = os.path.join(BUILD_LOG_DIR, "p1_vocab_report_arkit.json")
+    else:
+        scene_index_path = SCENE_INDEX_PATH
+        vocab_dir = os.path.join(DATA_DIR, "vocab")
+        canonical_objects_path = CANONICAL_OBJECTS_PATH
+        review_queue_path = REVIEW_QUEUE_PATH
+        typical_area_path = TYPICAL_AREA_PATH
+        report_path = os.path.join(BUILD_LOG_DIR, "p1_vocab_report.json")
+
+    synonym_map = load_synonyms(SYNONYMS_PATH)
+    seg37_concepts = (load_arkitscenes_target_concepts(synonym_map) if args.dataset == "arkitscenes"
+                      else load_seg37_concepts(synonym_map))
+
+    records = [json.loads(line) for line in open(scene_index_path)]
 
     concept_frequency = {}
     concept_normalized_variants = {}
@@ -285,8 +339,8 @@ def main() -> None:
         for concept, fracs in visible_area_fracs_by_concept.items()
         if len(fracs) >= MIN_SAMPLES_FOR_TYPICAL_AREA
     }
-    os.makedirs(os.path.dirname(TYPICAL_AREA_PATH), exist_ok=True)
-    with open(TYPICAL_AREA_PATH, "w") as typical_area_file:
+    os.makedirs(os.path.dirname(typical_area_path), exist_ok=True)
+    with open(typical_area_path, "w") as typical_area_file:
         json.dump({
             "min_samples": MIN_SAMPLES_FOR_TYPICAL_AREA,
             "median_area_frac_by_concept": typical_area_by_concept,
@@ -299,17 +353,19 @@ def main() -> None:
             + ", ".join(sorted(missing_category))
         )
 
-    os.makedirs(os.path.join(DATA_DIR, "vocab"), exist_ok=True)
+    os.makedirs(vocab_dir, exist_ok=True)
     os.makedirs(BUILD_LOG_DIR, exist_ok=True)
 
-    with open(CANONICAL_OBJECTS_PATH, "w", newline="") as csv_file:
+    always_include_label = "target_class" if args.dataset == "arkitscenes" else "seg37"
+    with open(canonical_objects_path, "w", newline="") as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(["canonical_concept", "display_name", "category", "is_structural", "source", "frequency"])
         for concept in final_concepts:
             category, is_structural = CATEGORY_AND_STRUCTURAL[concept]
-            in_seg37 = concept in seg37_concepts
+            in_always_include = concept in seg37_concepts
             in_frequent = concept in frequent_concepts
-            source = "seg37+frequent" if (in_seg37 and in_frequent) else ("seg37" if in_seg37 else "frequent")
+            source = (f"{always_include_label}+frequent" if (in_always_include and in_frequent)
+                     else (always_include_label if in_always_include else "frequent"))
             writer.writerow([
                 concept, display_name_for(concept), category, is_structural,
                 source, concept_frequency.get(concept, 0),
@@ -323,7 +379,7 @@ def main() -> None:
         ),
         reverse=True,
     )
-    with open(REVIEW_QUEUE_PATH, "w", newline="") as csv_file:
+    with open(review_queue_path, "w", newline="") as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(["concept", "frequency", "raw_normalized_variants_seen"])
         for freq, concept in review_queue:
@@ -338,23 +394,24 @@ def main() -> None:
     coverage = covered_instances / total_instances if total_instances else 0.0
 
     report = {
+        "dataset": args.dataset,
         "total_object_instances": total_instances,
         "unique_normalized_names": len(concept_frequency) + len(EXCLUDED_CONCEPTS),
         "final_canonical_concepts": len(final_concepts),
-        "from_seg37_only": len(seg37_concepts - frequent_concepts),
+        f"from_{always_include_label}_only": len(seg37_concepts - frequent_concepts),
         "from_frequency_only": len(frequent_concepts - seg37_concepts),
         "from_both": len(seg37_concepts & frequent_concepts),
         "excluded_placeholder_concepts": sorted(EXCLUDED_CONCEPTS),
         "review_queue_size": len(review_queue),
         "instance_coverage_fraction": round(coverage, 4),
     }
-    with open(os.path.join(BUILD_LOG_DIR, "p1_vocab_report.json"), "w") as report_file:
+    with open(report_path, "w") as report_file:
         json.dump(report, report_file, indent=2)
 
     print(json.dumps(report, indent=2))
-    print(f"\nCanonical vocabulary written: {CANONICAL_OBJECTS_PATH} ({len(final_concepts)} concepts)")
-    print(f"Review queue written: {REVIEW_QUEUE_PATH} ({len(review_queue)} concepts, freq 50-99)")
-    print(f"Typical area table written: {TYPICAL_AREA_PATH} "
+    print(f"\nCanonical vocabulary written: {canonical_objects_path} ({len(final_concepts)} concepts)")
+    print(f"Review queue written: {review_queue_path} ({len(review_queue)} concepts, freq 50-99)")
+    print(f"Typical area table written: {typical_area_path} "
           f"({len(typical_area_by_concept)} / {len(final_concepts)} concepts with "
           f">={MIN_SAMPLES_FOR_TYPICAL_AREA} non-touching samples)")
     if coverage < 0.90:

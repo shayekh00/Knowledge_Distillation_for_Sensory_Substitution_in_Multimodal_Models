@@ -150,6 +150,12 @@ def project_and_score_object(obj: dict, R_cam_to_world: np.ndarray, t_cam_in_wor
         "depth_median_m": observed_median,
         "depth_valid_frac": depth_valid_frac,
         "touches_border": touches_border,
+        # The clipped 2D hull itself, not just its derived stats — SUN RGB-D
+        # generators needing a real polygon (left_right.py's IoU overlap
+        # gate) rebuild one from the raw annotation JSON, which has no
+        # ARKitScenes equivalent; storing it here lets that generator use it
+        # directly instead (arkitscenes_plan.md §6 Phase 3).
+        "polygon_xy": [[float(x), float(y)] for x, y in clipped.exterior.coords],
     }
 
 

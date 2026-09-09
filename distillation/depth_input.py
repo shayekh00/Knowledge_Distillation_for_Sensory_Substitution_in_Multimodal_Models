@@ -48,6 +48,26 @@ def decode_metric_depth(depth_path: str, clip_max_m: float = DEFAULT_CLIP_MAX_M)
     return decode_raw_depth(raw, clip_max_m)
 
 
+def decode_arkit_depth(depth_path: str, clip_max_m: float = DEFAULT_CLIP_MAX_M) -> np.ndarray:
+    """Decode an ARKitScenes ``lowres_depth`` PNG to metres.
+
+    ARKitScenes stores depth as plain uint16 millimetres — no bit-rotation
+    (that trick is a SUN-RGB-D-specific encoding quirk `decode_raw_depth`
+    above exists to undo; applying it here would scramble every value).
+    Must stay byte-identical to
+    ``dataset_creation/v2/build_index_arkit.py``'s own decode (the one
+    behind every gold answer in this dataset, `depth_m = raw / 1000.0`,
+    unclipped there since it only feeds occlusion scoring) up to the clip
+    this student-facing path additionally applies — same DEFAULT_CLIP_MAX_M
+    ceiling as SUN-RGB-D, since nothing about ARKitScenes' indoor scenes
+    suggests a different one is warranted (arkitscenes_plan.md §6 Phase 5).
+    `tests/test_depth_input.py` asserts agreement on real frames.
+    """
+    raw = np.array(Image.open(depth_path), dtype=np.uint16)
+    metres = raw.astype(np.float32) / 1000.0
+    return np.clip(metres, 0.0, clip_max_m)
+
+
 def decode_raw_depth(raw: np.ndarray, clip_max_m: float = DEFAULT_CLIP_MAX_M) -> np.ndarray:
     """The rotation itself, separated so it can be tested on synthetic values.
 

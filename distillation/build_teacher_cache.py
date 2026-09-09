@@ -72,7 +72,25 @@ def prompt_signature(processor) -> str:
     return hashlib.sha256(rendered.encode()).hexdigest()[:16]
 
 
-def dataset_version() -> str:
+def dataset_version(dataset: str = "sunrgbd") -> str:
+    """Part of the cache key (a *required* CacheKey field, cache.py), so two
+    datasets must never produce the same string here — a coincidence would
+    make their caches indistinguishable and liable to silently mix rows
+    under one directory. "sunrgbd" (default) is unchanged: `manifest.json`'s
+    "version" (built by build_release_artifacts.py). ARKitScenes has no such
+    manifest yet (build_release_artifacts.py's own RELEASE_DIR/naming
+    parameterization is still unaudited — arkitscenes_plan.md §6 Phase 5),
+    so this reads the frozen version tag directly from its FROZEN_*.json
+    instead of blocking cache-building on that separate, non-content-
+    affecting documentation step."""
+    if dataset == "arkitscenes":
+        import glob
+        release_dir = os.path.join(PROJECT_ROOT, "release", "VQA-ARKitScenes-v1")
+        frozen_files = sorted(glob.glob(os.path.join(release_dir, "FROZEN_*.json")))
+        if not frozen_files:
+            raise SystemExit(f"No FROZEN_*.json in {release_dir} — freeze the release first.")
+        with open(max(frozen_files, key=os.path.getmtime), encoding="utf-8") as handle:
+            return json.load(handle)["version"]
     with open(os.path.join(PROJECT_ROOT, "release", "VQA-SUNRGBD-v2", "manifest.json"),
              encoding="utf-8") as handle:
         return json.load(handle)["version"]
@@ -129,6 +147,16 @@ def main() -> None:
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--teacher", default="Qwen/Qwen3.5-9B")
     parser.add_argument("--split", default="train", choices=["train", "val", "test"])
+    parser.add_argument("--dataset", choices=["sunrgbd", "arkitscenes"], default="sunrgbd",
+                        help="Which dataset_version() feeds the cache key (a required "
+                             "field, cache.py) — the two datasets must never collide on "
+                             "it. Does not by itself pick the release CSV; pass "
+                             "--release-csv for that when --dataset arkitscenes.")
+    parser.add_argument("--release-csv",
+                        help="Override the frozen release {split}.csv (e.g. "
+                             "release/VQA-ARKitScenes-v1/rule_based/train.csv for "
+                             "--dataset arkitscenes). Defaults to "
+                             "load_rows()'s own SUN-RGB-D default.")
     parser.add_argument("--top-k", type=int, default=4096)
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--limit", type=int,
@@ -176,7 +204,7 @@ def main() -> None:
     teacher_revision = getattr(AutoConfig.from_pretrained(args.teacher), "_commit_hash", None)
 
     key = CacheKey({
-        "dataset_version": dataset_version(),
+        "dataset_version": dataset_version(args.dataset),
         "split": args.split,
         "teacher_model": args.teacher,
         "teacher_revision": teacher_revision,
@@ -205,7 +233,7 @@ def main() -> None:
         # run declares, signal_kind="generated_text" — built independently by
         # build_teacher_generation_cache.py, verified here rather than trusted.
         generation_key = CacheKey({
-            "dataset_version": dataset_version(),
+            "dataset_version": dataset_version(args.dataset),
             "split": args.split,
             "teacher_model": args.teacher,
             "teacher_revision": teacher_revision,
@@ -221,7 +249,7 @@ def main() -> None:
     print(f"cache directory: {directory}", flush=True)
     print(json.dumps(key.describe(), indent=2), flush=True)
 
-    rows = load_rows(args.split, args.limit)
+    rows = load_rows(args.split, args.limit, csv_path=args.release_csv)
     requested = len(rows)
     resumed = 0
     if not args.overwrite:

@@ -2,6 +2,14 @@
 
 Both are the outputs of ``dataset/dataset_creation/v2/build_index.py`` and the
 original SUNRGBD release; this module never writes to them.
+
+ARKitScenes records carry their own projected-hull polygon per object
+(``polygon_xy``, ``build_index_arkit.py`` — the same field
+``left_right.py``'s IoU gate uses instead of re-deriving one) directly in
+the scene index, since its raw ``*_3dod_annotation.json`` has no SUN-RGB-D-
+shaped ``frames[0]["polygon"]`` to read (arkitscenes_plan.md §6 Phase 4).
+``polygons_for`` prefers that when present rather than attempting the
+SUN-RGB-D-specific raw-annotation parse.
 """
 from __future__ import annotations
 
@@ -28,6 +36,14 @@ class SceneRecord:
     rgb_path: Path
     annotation_path: Path
     object_names: list[str]
+    # Both fields below are keyed by each object's own `object_index` (not
+    # list position): unlike SUN-RGB-D, ARKitScenes' indexer drops objects
+    # that fail the visibility/occlusion gates, so a kept object's position
+    # in `object_names` above is not reliably its original index — that
+    # list only works by position because SUN-RGB-D never drops a mid-list
+    # object. New code should prefer `object_names_by_index`.
+    object_names_by_index: dict[int, str]
+    object_polygons_xy: dict[int, list[list[float]]]
 
 
 class SceneIndex:
@@ -52,6 +68,13 @@ class SceneIndex:
                         rgb_path=dataset_root / row["rgb_path"],
                         annotation_path=dataset_root / row["annotation_path"],
                         object_names=[obj["raw_name"] for obj in row["objects"]],
+                        object_names_by_index={
+                            obj["object_index"]: obj["raw_name"] for obj in row["objects"]
+                        },
+                        object_polygons_xy={
+                            obj["object_index"]: obj["polygon_xy"]
+                            for obj in row["objects"] if obj.get("polygon_xy")
+                        },
                     )
 
     def get(self, image_id: str) -> SceneRecord | None:
@@ -70,7 +93,21 @@ class SceneIndex:
         block reviewing the underlying question.
         """
         record = self.get(image_id)
-        if record is None or not record.annotation_path.is_file():
+        if record is None:
+            return []
+        if record.object_polygons_xy:
+            polygons = []
+            for object_index, polygon_xy in record.object_polygons_xy.items():
+                if object_indices is not None and object_index not in object_indices:
+                    continue
+                name = record.object_names_by_index.get(object_index, "")
+                polygons.append(ScenePolygon(
+                    object_index=object_index, name=name,
+                    x=[point[0] for point in polygon_xy],
+                    y=[point[1] for point in polygon_xy],
+                ))
+            return polygons
+        if not record.annotation_path.is_file():
             return []
         try:
             annotation = json.loads(record.annotation_path.read_text(encoding="utf-8"))
@@ -113,6 +150,6 @@ class SceneIndex:
         normalized_targets = {name.lower().replace("_", " ").strip() for name in mentioned_names}
         return {
             index
-            for index, raw_name in enumerate(record.object_names)
+            for index, raw_name in record.object_names_by_index.items()
             if raw_name.lower().replace("_", " ").strip() in normalized_targets
         }

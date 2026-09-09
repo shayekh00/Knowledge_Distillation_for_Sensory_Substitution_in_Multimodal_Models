@@ -160,3 +160,36 @@ def test_score_val_macro_default_release_dir_is_the_frozen_release():
     from evaluate import RELEASE_DIR
     import inspect
     assert inspect.signature(epoch_loop.score_val_macro).parameters["release_dir"].default == RELEASE_DIR
+
+
+def test_canonical_objects_dir_override_is_used_instead_of_the_default_vocab(monkeypatch):
+    """The other half of the same class of bug `release_dir` fixes: scoring
+    ARKitScenes predictions against SUN-RGB-D's 148-concept vocab would mark
+    ARKitScenes' own answers (e.g. 'washer', not in that vocab) out-of-
+    vocabulary (arkitscenes_plan.md §6 Phase 5). `canonical_objects_dir`
+    lets a caller point at the matching vocab instead of the default."""
+    import pandas as pd
+    import distillation.epoch_loop as epoch_loop
+
+    seen_dirs = []
+    gold = pd.DataFrame({"question_id": ["q0"], "answer": ["washer"]})
+
+    monkeypatch.setattr(epoch_loop, "load_release_split", lambda split, release_dir: gold)
+    monkeypatch.setattr(epoch_loop, "load_synonyms", lambda *a, **k: {})
+    monkeypatch.setattr(epoch_loop, "load_canonical_vocab",
+                        lambda path: seen_dirs.append(path) or set())
+    monkeypatch.setattr(epoch_loop, "score_predictions", lambda *a, **k: pd.DataFrame())
+    monkeypatch.setattr(epoch_loop, "macro_accuracy", lambda *a, **k: 0.5)
+
+    epoch_loop.score_val_macro([("q0", "washer")], split="val",
+                               canonical_objects_dir="data/vocab_arkit")
+
+    assert seen_dirs == [os.path.join("data/vocab_arkit", "canonical_objects.csv")]
+
+
+def test_score_val_macro_default_canonical_objects_dir_is_the_sunrgbd_vocab():
+    import distillation.epoch_loop as epoch_loop
+    from evaluate import VOCAB_DIR
+    import inspect
+    assert (inspect.signature(epoch_loop.score_val_macro)
+           .parameters["canonical_objects_dir"].default == VOCAB_DIR)

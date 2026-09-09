@@ -92,7 +92,8 @@ def generate_val_predictions(model, processor, rows, images, prompt_style="terse
     return predictions
 
 
-def score_val_macro(predictions, split: str = "val", release_dir: str = RELEASE_DIR) -> float:
+def score_val_macro(predictions, split: str = "val", release_dir: str = RELEASE_DIR,
+                    canonical_objects_dir: str = VOCAB_DIR) -> float:
     """Score `[(question_id, prediction), ...]` exactly as `evaluate.py`
     scores any prediction file, and return the macro accuracy.
 
@@ -121,10 +122,18 @@ def score_val_macro(predictions, split: str = "val", release_dir: str = RELEASE_
     without it, "smaller than the frozen split" and "partial coverage of the
     frozen split" are indistinguishable to this function, and only one of them
     is actually a problem.
+
+    `canonical_objects_dir` is the same kind of override for the *other*
+    dataset-specific input: SUN-RGB-D's 148-concept vocab does not contain
+    ARKitScenes' own answers (e.g. "washer"), so scoring one dataset's
+    predictions against the other's vocab would mark correct answers
+    out-of-vocabulary (arkitscenes_plan.md §6 Phase 5). `synonyms.csv` is
+    always read from `VOCAB_DIR` regardless — it is shared across datasets.
     """
     gold = load_release_split(split, release_dir)
     synonym_map = load_synonyms(os.path.join(VOCAB_DIR, "synonyms.csv"))
-    canonical_vocab = load_canonical_vocab(os.path.join(VOCAB_DIR, "canonical_objects.csv"))
+    canonical_vocab = load_canonical_vocab(
+        os.path.join(canonical_objects_dir, "canonical_objects.csv"))
     frame = pd.DataFrame(predictions, columns=["question_id", "prediction"])
     if len(frame) < len(gold):
         print(f"  !! PARTIAL COVERAGE: {len(frame)} predictions scored against "

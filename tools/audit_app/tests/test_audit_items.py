@@ -11,6 +11,8 @@ def _scene_index_with_one_scene(object_names: list[str]) -> SceneIndex:
         image_width=100, image_height=100,
         rgb_path=Path("rgb.jpg"), annotation_path=Path("does-not-exist.json"),
         object_names=object_names,
+        object_names_by_index=dict(enumerate(object_names)),
+        object_polygons_xy={},
     )
     return index
 

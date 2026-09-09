@@ -77,6 +77,15 @@ def main() -> None:
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--teacher", default="Qwen/Qwen3.5-9B")
     parser.add_argument("--split", default="train", choices=["train", "val", "test"])
+    parser.add_argument("--dataset", choices=["sunrgbd", "arkitscenes"], default="sunrgbd",
+                        help="Which dataset_version() feeds the cache key, and (only "
+                             "when --modality depth) which depth decoder build_image "
+                             "uses. Does not by itself pick the release CSV; pass "
+                             "--release-csv for that when --dataset arkitscenes.")
+    parser.add_argument("--release-csv",
+                        help="Override the frozen release {split}.csv (e.g. "
+                             "release/VQA-ARKitScenes-v1/rule_based/train.csv for "
+                             "--dataset arkitscenes).")
     parser.add_argument("--modality", default="rgb", choices=["rgb", "depth"],
                         help="The teacher's view. Default rgb — the study's premise "
                              "is that the teacher sees what the student cannot.")
@@ -103,7 +112,7 @@ def main() -> None:
     transform = ("PIL RGB, processor default resize" if args.modality == "rgb"
                  else f"metric depth -> {args.representation}, processor default resize")
     key = CacheKey({
-        "dataset_version": dataset_version(),
+        "dataset_version": dataset_version(args.dataset),
         "split": args.split,
         "teacher_model": args.teacher,
         "teacher_revision": teacher_revision,
@@ -122,7 +131,7 @@ def main() -> None:
     print(f"cache directory: {directory}", flush=True)
     print(json.dumps(key.describe(), indent=2), flush=True)
 
-    all_rows = load_rows(args.split)
+    all_rows = load_rows(args.split, csv_path=args.release_csv)
     images = distinct_images(all_rows)
     if args.limit:
         images = images[:args.limit]
@@ -140,7 +149,7 @@ def main() -> None:
     done = 0
     for start in range(0, len(images), args.batch_size):
         batch_rows = images[start:start + args.batch_size]
-        pil = [build_image(row, args.modality, args.representation) for row in batch_rows]
+        pil = [build_image(row, args.modality, args.representation, args.dataset) for row in batch_rows]
         encoded = processor.image_processor(images=pil, return_tensors="pt")
         pixel_values = encoded["pixel_values"].to("cuda:0", torch.bfloat16)
         grid_thw = encoded["image_grid_thw"].to("cuda:0")

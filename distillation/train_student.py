@@ -40,7 +40,8 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from distillation.depth_input import decode_metric_depth, depth_to_student_input  # noqa: E402
+from distillation.depth_input import (  # noqa: E402
+    decode_arkit_depth, decode_metric_depth, depth_to_student_input)
 from distillation.epoch_loop import (  # noqa: E402
     EarlyStopper,
     generate_val_predictions,
@@ -63,12 +64,20 @@ def load_rows(split: str, limit: int | None = None, csv_path: str | None = None)
     return rows[:limit] if limit else rows
 
 
-def build_image(row, modality: str, representation: str):
+def build_image(row, modality: str, representation: str, dataset: str = "sunrgbd"):
+    """`dataset` picks the depth decoder (irrelevant for modality="rgb"):
+    "sunrgbd" (default) is byte-for-byte the original behaviour
+    (`decode_metric_depth`'s bit-rotation, A2). "arkitscenes" uses
+    `decode_arkit_depth` instead — ARKitScenes' plain-millimetre depth
+    encoding is not SUN-RGB-D's, so applying the bit-rotation to it would
+    scramble every value rather than just decode it (arkitscenes_plan.md
+    §6 Phase 5's prerequisite check, `tests/test_depth_input.py`)."""
     from PIL import Image
     dataset_dir = os.path.join(PROJECT_ROOT, "dataset")
     if modality == "rgb":
         return Image.open(os.path.join(dataset_dir, row["image_path"])).convert("RGB")
-    metres = decode_metric_depth(os.path.join(dataset_dir, row["depth_path"]))
+    decode = decode_arkit_depth if dataset == "arkitscenes" else decode_metric_depth
+    metres = decode(os.path.join(dataset_dir, row["depth_path"]))
     return Image.fromarray(depth_to_student_input(metres, representation))
 
 
@@ -152,6 +161,12 @@ def main() -> None:
     parser.add_argument("--model", default="Qwen/Qwen3.5-0.8B")
     parser.add_argument("--recipe", default="B3")
     parser.add_argument("--modality", choices=["depth", "rgb"], default="depth")
+    parser.add_argument("--dataset", choices=["sunrgbd", "arkitscenes"], default="sunrgbd",
+                        help="Picks the depth decoder for --modality depth (irrelevant "
+                             "for rgb): sunrgbd's bit-rotation vs. arkitscenes' plain-"
+                             "millimetre PNGs (arkitscenes_plan.md §6 Phase 5). Does not "
+                             "select which release CSV to read — use --train-csv/--val-csv "
+                             "for that, same as the LOSO override.")
     parser.add_argument("--representation", choices=["replicated", "gradient"],
                         default="replicated")
     parser.add_argument("--seed", type=int, default=17)
@@ -248,7 +263,7 @@ def main() -> None:
     # Precomputed once: images do not change across epochs, and re-decoding
     # them every epoch's validation pass would be pure waste.
     val_rows = load_rows("val", args.val_limit, csv_path=args.val_csv)
-    val_images = [build_image(row, args.modality, args.representation) for row in val_rows]
+    val_images = [build_image(row, args.modality, args.representation, args.dataset) for row in val_rows]
     stopper = EarlyStopper(max_epochs=args.epochs, patience=args.patience)
 
     order = list(range(len(rows)))
@@ -267,7 +282,7 @@ def main() -> None:
             for index in order[start:start + args.batch_size]:
                 row = rows[index]
                 try:
-                    images.append(build_image(row, args.modality, args.representation))
+                    images.append(build_image(row, args.modality, args.representation, args.dataset))
                     chunk.append(row)
                 except Exception as error:               # unreadable frame, bad row
                     skipped += 1
@@ -318,6 +333,8 @@ def main() -> None:
         # losses" — a stopping decision is exactly that comparison one level up).
         predictions = generate_val_predictions(model, processor, val_rows, val_images)
         score_kwargs = {"release_dir": args.val_release_dir} if args.val_release_dir else {}
+        if args.dataset == "arkitscenes":
+            score_kwargs["canonical_objects_dir"] = os.path.join(PROJECT_ROOT, "data", "vocab_arkit")
         val_macro = score_val_macro(predictions, split="val", **score_kwargs)
         epoch_dir = os.path.join(args.out, f"epoch_{epoch}")
         os.makedirs(epoch_dir, exist_ok=True)

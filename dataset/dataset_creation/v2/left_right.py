@@ -23,7 +23,7 @@ import sys
 from shapely.geometry import Polygon
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from generator_common import load_templates, render_question, run_generator  # noqa: E402
+from generator_common import load_templates, parse_dataset_arg, render_question, run_generator  # noqa: E402
 from scene_objects import DATASET_DIR, true_instance_counts  # noqa: E402
 
 TEMPLATES = load_templates("left_right.txt")
@@ -100,8 +100,20 @@ def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_log
         drop_logger.log(scene["image_id"], "INSUFFICIENT_SINGLE_INSTANCE_OBJECTS")
         return []
 
-    annotation_absolute_path = os.path.join(DATASET_DIR, scene["annotation_path"])
-    polygons_by_index = _polygons_by_object_index(annotation_absolute_path)
+    # `polygon_xy` is the projected 2D hull ARKitScenes objects already carry
+    # per-object (build_index_arkit.py computes it anyway, to clip/score
+    # visibility); SUN RGB-D records have no such field, since P0's index
+    # only stores area/centroid, so they fall back to rebuilding polygons
+    # from the raw annotation JSON as before. Checked once per scene (every
+    # object in a scene comes from the same indexer) rather than per object.
+    if any(obj.get("polygon_xy") for obj in resolved_objects):
+        polygons_by_index = {
+            obj["object_index"]: Polygon(obj["polygon_xy"])
+            for obj in resolved_objects if obj.get("polygon_xy")
+        }
+    else:
+        annotation_absolute_path = os.path.join(DATASET_DIR, scene["annotation_path"])
+        polygons_by_index = _polygons_by_object_index(annotation_absolute_path)
     image_width = scene["image_width"]
 
     candidates = []
@@ -147,4 +159,4 @@ def generate_candidates_for_scene(scene, resolved_objects, rng, config, drop_log
 
 
 if __name__ == "__main__":
-    run_generator("left_right", generate_candidates_for_scene, seed_offset=6)
+    run_generator("left_right", generate_candidates_for_scene, seed_offset=6, dataset=parse_dataset_arg())

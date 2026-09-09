@@ -23,6 +23,7 @@ from depth_utils import decode_sunrgbd_depth  # noqa: E402
 
 from distillation.depth_input import (  # noqa: E402
     DEFAULT_CLIP_MAX_M,
+    decode_arkit_depth,
     decode_metric_depth,
     decode_raw_depth,
     depth_statistics,
@@ -33,6 +34,8 @@ from distillation.depth_input import (  # noqa: E402
 
 RELEASE_TEST_CSV = os.path.join(PROJECT_ROOT, "release", "VQA-SUNRGBD-v2",
                                 "rule_based", "test.csv")
+ARKIT_RELEASE_TEST_CSV = os.path.join(PROJECT_ROOT, "release", "VQA-ARKitScenes-v1",
+                                      "rule_based", "test.csv")
 DATASET_DIR = os.path.join(PROJECT_ROOT, "dataset")
 
 
@@ -55,6 +58,25 @@ def sample_depth_paths(per_sensor=2):
 
 CORPUS = sample_depth_paths()
 needs_corpus = pytest.mark.skipif(not CORPUS, reason="SUN RGB-D imagery not unpacked")
+
+
+def sample_arkit_depth_paths(limit=8):
+    """A handful of real ARKitScenes depth frames, or [] when absent."""
+    if not os.path.isfile(ARKIT_RELEASE_TEST_CSV):
+        return []
+    chosen = []
+    with open(ARKIT_RELEASE_TEST_CSV) as handle:
+        for row in csv.DictReader(handle):
+            path = os.path.join(DATASET_DIR, row["depth_path"])
+            if os.path.isfile(path) and path not in chosen:
+                chosen.append(path)
+            if len(chosen) >= limit:
+                break
+    return chosen
+
+
+ARKIT_CORPUS = sample_arkit_depth_paths()
+needs_arkit_corpus = pytest.mark.skipif(not ARKIT_CORPUS, reason="ARKitScenes imagery not unpacked")
 
 
 # ---------------------------------------------------------------------------
@@ -97,6 +119,41 @@ def test_agrees_with_the_v2_generator_decoder_on_every_sensor():
         ours = decode_metric_depth(path)
         theirs = decode_sunrgbd_depth(path, DEFAULT_CLIP_MAX_M)
         assert np.array_equal(ours, theirs), f"decoder drift on {sensor}: {path}"
+
+
+@needs_arkit_corpus
+def test_decode_arkit_depth_agrees_with_build_index_arkit_on_real_frames():
+    """build_index_arkit.py's own decode is inline (`raw / 1000.0`, no
+    bit-rotation, unclipped since it only feeds occlusion scoring) rather
+    than an importable function like decode_sunrgbd_depth above — the exact
+    formula is replicated here, then clipped, to prove decode_arkit_depth
+    matches the decoder behind every ARKitScenes gold answer up to that
+    clip (arkitscenes_plan.md §6 Phase 5's prerequisite check)."""
+    for path in ARKIT_CORPUS:
+        raw = np.array(_open_uint16(path), dtype=np.uint16)
+        theirs = np.clip(raw.astype(np.float32) / 1000.0, 0.0, DEFAULT_CLIP_MAX_M)
+        ours = decode_arkit_depth(path)
+        assert np.array_equal(ours, theirs), f"decoder drift: {path}"
+
+
+@needs_arkit_corpus
+def test_decode_arkit_depth_is_not_bit_rotated_like_sunrgbd():
+    """The one failure mode this function exists to prevent: applying
+    SUN-RGB-D's bit-rotation to ARKitScenes' plain-millimetre depth would
+    scramble values rather than just scale them — the two decoders must
+    disagree on real ARKitScenes frames whenever the raw value isn't a
+    multiple of 8 (where the rotation degenerates to a harmless divide-by-8,
+    §7.3's own note on `decode_raw_depth`)."""
+    disagreements = 0
+    for path in ARKIT_CORPUS:
+        if not np.array_equal(decode_arkit_depth(path), decode_metric_depth(path)):
+            disagreements += 1
+    assert disagreements > 0, "expected the two decoders to differ on real, non-multiple-of-8 depth"
+
+
+def _open_uint16(path):
+    from PIL import Image
+    return Image.open(path)
 
 
 @needs_corpus

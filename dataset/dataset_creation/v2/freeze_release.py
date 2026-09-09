@@ -61,6 +61,46 @@ TRACKED_INPUTS = [
     os.path.join(PIPELINE_DIR, "question_only.py"),
     os.path.join(PIPELINE_DIR, "build_release.py"),
 ]
+
+ARKIT_RELEASE_ROOT = os.path.join(REPO_ROOT, "release", "VQA-ARKitScenes-v1")
+ARKIT_RULE_BASED_DIR = os.path.join(ARKIT_RELEASE_ROOT, "rule_based")
+# ARKitScenes' own analogue of TRACKED_INPUTS above: the split (train/val/
+# test membership) lives in scene_index_arkit.jsonl's own `split` field
+# rather than separate splits/*.txt files (assign_split_arkit.py, not
+# build_index.py's official-allsplit logic), there is no scene-type
+# co-occurrence table (ARKitScenes' 3DOD metadata carries no room-type
+# field — every record's scene_type is "unknown"), and the vocab/index
+# come from data/vocab_arkit/ and scene_index_arkit.jsonl. Templates,
+# synonyms.csv, and every P2/P3 pipeline module are shared with SUN-RGB-D
+# and tracked identically.
+ARKIT_TRACKED_INPUTS = [
+    os.path.join(DATA_DIR, "config.yaml"),
+    os.path.join(DATA_DIR, "vocab", "synonyms.csv"),
+    os.path.join(DATA_DIR, "vocab_arkit", "canonical_objects.csv"),
+    os.path.join(DATA_DIR, "vocab_arkit", "concept_typical_area.json"),
+    os.path.join(DATA_DIR, "index", "manifest_arkit_split.json"),
+    os.path.join(DATA_DIR, "index", "scene_index_arkit.jsonl"),
+    os.path.join(DATA_DIR, "templates", "existence.txt"),
+    os.path.join(DATA_DIR, "templates", "identify_superlative_closest_camera.txt"),
+    os.path.join(DATA_DIR, "templates", "identify_superlative_farthest_camera.txt"),
+    os.path.join(DATA_DIR, "templates", "relative_depth.txt"),
+    os.path.join(DATA_DIR, "templates", "nearest_object.txt"),
+    os.path.join(DATA_DIR, "templates", "left_right.txt"),
+    os.path.join(PIPELINE_DIR, "build_index_arkit.py"),
+    os.path.join(PIPELINE_DIR, "assign_split_arkit.py"),
+    os.path.join(PIPELINE_DIR, "vocab.py"),
+    os.path.join(PIPELINE_DIR, "scene_objects.py"),
+    os.path.join(PIPELINE_DIR, "depth_utils.py"),
+    os.path.join(PIPELINE_DIR, "generator_common.py"),
+    os.path.join(PIPELINE_DIR, "existence.py"),
+    os.path.join(PIPELINE_DIR, "identify_superlative.py"),
+    os.path.join(PIPELINE_DIR, "relative_depth.py"),
+    os.path.join(PIPELINE_DIR, "nearest_object.py"),
+    os.path.join(PIPELINE_DIR, "left_right.py"),
+    os.path.join(PIPELINE_DIR, "balance.py"),
+    os.path.join(PIPELINE_DIR, "question_only.py"),
+    os.path.join(PIPELINE_DIR, "build_release.py"),
+]
 RELEASE_FILES = ["train.csv", "val.csv", "test.csv"]
 
 
@@ -72,9 +112,14 @@ VOLATILE_MANIFEST_FIELDS = {"built_at_utc"}
 
 def sha256_of(path: str) -> str:
     basename = os.path.basename(path)
-    if basename == "manifest.json":
+    # Matched by pattern, not the exact SUN-RGB-D filename, so ARKitScenes'
+    # manifest_arkit_split.json (which carries the same volatile
+    # built_at_utc field) and scene_index_arkit.jsonl (the same
+    # environment-dependent float precision) get the identical treatment
+    # without a --dataset branch down here.
+    if basename.startswith("manifest") and basename.endswith(".json"):
         return _sha256_of_manifest(path)
-    if basename == "scene_index.jsonl":
+    if basename.endswith(".jsonl"):
         return _sha256_of_scene_index(path)
     digest = hashlib.sha256()
     with open(path, "rb") as file_handle:
@@ -153,20 +198,21 @@ def row_count(path: str) -> int:
         return sum(1 for _ in csv_file) - 1  # minus header
 
 
-def build_manifest(version: str) -> dict:
-    missing = [path for path in TRACKED_INPUTS if not os.path.exists(path)]
+def build_manifest(version: str, tracked_inputs: list = TRACKED_INPUTS,
+                   rule_based_dir: str = RULE_BASED_DIR) -> dict:
+    missing = [path for path in tracked_inputs if not os.path.exists(path)]
     if missing:
         raise SystemExit("Cannot freeze: missing input file(s):\n  " + "\n  ".join(missing))
 
     release_hashes = {}
     for filename in RELEASE_FILES:
-        path = os.path.join(RULE_BASED_DIR, filename)
+        path = os.path.join(rule_based_dir, filename)
         if not os.path.exists(path):
             raise SystemExit(f"Cannot freeze: {path} does not exist — run build_release.py first.")
         release_hashes[filename] = {"sha256": sha256_of(path), "rows": row_count(path)}
 
     input_hashes = {
-        os.path.relpath(path, REPO_ROOT): sha256_of(path) for path in TRACKED_INPUTS
+        os.path.relpath(path, REPO_ROOT): sha256_of(path) for path in tracked_inputs
     }
 
     return {
@@ -182,8 +228,8 @@ def build_manifest(version: str) -> dict:
     }
 
 
-def verify(version: str) -> None:
-    frozen_path = os.path.join(RELEASE_ROOT, f"FROZEN_{version}.json")
+def verify(version: str, release_root: str = RELEASE_ROOT, rule_based_dir: str = RULE_BASED_DIR) -> None:
+    frozen_path = os.path.join(release_root, f"FROZEN_{version}.json")
     if not os.path.exists(frozen_path):
         raise SystemExit(f"No frozen manifest at {frozen_path}")
     with open(frozen_path) as frozen_file:
@@ -191,7 +237,7 @@ def verify(version: str) -> None:
 
     problems = []
     for filename, recorded in frozen["release_files"].items():
-        path = os.path.join(RULE_BASED_DIR, filename)
+        path = os.path.join(rule_based_dir, filename)
         if not os.path.exists(path):
             problems.append(f"{filename}: file is missing")
             continue
@@ -222,26 +268,34 @@ def main() -> None:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--version", help="Freeze the current release under this version tag, e.g. v1.0")
     group.add_argument("--verify", help="Verify the current release still matches this frozen version")
+    parser.add_argument("--dataset", default="sunrgbd", choices=["sunrgbd", "arkitscenes"],
+                        help="'sunrgbd' (default) freezes/verifies release/VQA-SUNRGBD-v2/. "
+                             "'arkitscenes' freezes/verifies release/VQA-ARKitScenes-v1/.")
     args = parser.parse_args()
+    if args.dataset == "arkitscenes":
+        release_root, rule_based_dir, tracked_inputs = ARKIT_RELEASE_ROOT, ARKIT_RULE_BASED_DIR, ARKIT_TRACKED_INPUTS
+    else:
+        release_root, rule_based_dir, tracked_inputs = RELEASE_ROOT, RULE_BASED_DIR, TRACKED_INPUTS
 
     if args.verify:
-        verify(args.verify)
+        verify(args.verify, release_root, rule_based_dir)
         return
 
     version = args.version
-    target_path = os.path.join(RELEASE_ROOT, f"FROZEN_{version}.json")
+    target_path = os.path.join(release_root, f"FROZEN_{version}.json")
     if os.path.exists(target_path):
         raise SystemExit(f"{target_path} already exists — versions are immutable once frozen. "
                           f"Use a new version tag.")
 
-    manifest = build_manifest(version)
+    manifest = build_manifest(version, tracked_inputs, rule_based_dir)
     with open(target_path, "w") as target_file:
         json.dump(manifest, target_file, indent=2, sort_keys=True)
 
     print(f"Frozen as {version} -> {target_path}")
     for filename, info in manifest["release_files"].items():
         print(f"  {filename}: {info['rows']:6d} rows  sha256={info['sha256'][:16]}...")
-    print(f"\nVerify any time with:\n  python dataset/dataset_creation/v2/freeze_release.py --verify {version}")
+    print(f"\nVerify any time with:\n  python dataset/dataset_creation/v2/freeze_release.py --verify {version} "
+          f"--dataset {args.dataset}")
 
 
 if __name__ == "__main__":
