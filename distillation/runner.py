@@ -504,6 +504,14 @@ def recipe_library(top_k: int = 4096) -> dict:
         "D7": RecipeConfig(recipe="D7", stage="joint", use_ce=True, kd_objective="xtoken",
                            use_loca=True, feature_objective="contrastive", top_k=top_k,
                            trainable_modules=("language_attention", "vision_attention")),
+        # D7's raw-KD twin: identical joint alignment+CE+KD recipe, only
+        # use_loca flips to False. Added experiment_protocol.md §13 2026-09-10
+        # because D7 had no raw-KD counterpart in the matrix — every other
+        # LoCa-vs-raw comparison (D4/D5, X2/D2) holds stage fixed and only
+        # toggles use_loca, and D7 was the one row missing that twin.
+        "D7r": RecipeConfig(recipe="D7r", stage="joint", use_ce=True, kd_objective="xtoken",
+                            use_loca=False, feature_objective="contrastive", top_k=top_k,
+                            trainable_modules=("language_attention", "vision_attention")),
         "D8": RecipeConfig(recipe="D8", stage="S2", use_ce=True, kd_objective="xtoken",
                            use_loca=True, feature_objective="cosine", top_k=top_k),
         # §8.1's strict label-access rule (no CE, no LoCa, no gold prefixes) is

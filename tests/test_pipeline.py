@@ -421,11 +421,24 @@ def test_contrastive_recipe_requires_a_negative_bank():
 
 def test_recipe_library_covers_the_matrix_rows():
     library = recipe_library()
-    for row in ("B3", "B4", "D0", "D1", "D3", "D4", "D5", "D6", "D7", "D8", "D9",
+    for row in ("B3", "B4", "D0", "D1", "D3", "D4", "D5", "D6", "D7", "D7r", "D8", "D9",
                 "X0", "X1", "X2", "X3", "X5"):
         assert row in library, f"matrix row {row} missing from the library"
     assert library["X3"].use_ce is False
     assert library["X2"].kd_objective == "xtoken"
+
+
+def test_d7r_is_d7s_raw_kd_twin():
+    """D7r exists solely to isolate D7's use_loca choice: same joint stage,
+    same trainable surface, same feature objective — only use_loca differs."""
+    library = recipe_library()
+    d7, d7r = library["D7"], library["D7r"]
+    assert d7r.stage == d7.stage == "joint"
+    assert d7r.trainable_modules == d7.trainable_modules
+    assert d7r.feature_objective == d7.feature_objective
+    assert d7r.kd_objective == d7.kd_objective
+    assert d7.use_loca is True
+    assert d7r.use_loca is False
 
 
 def test_d7_is_joint_not_two_stage():
