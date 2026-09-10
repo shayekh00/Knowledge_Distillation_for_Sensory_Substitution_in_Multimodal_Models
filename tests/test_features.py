@@ -329,11 +329,14 @@ def test_stage_one_is_feature_alignment_only_on_a_vision_surface():
     assert one.stage == "F"
     assert one.feature_objective == "cosine"      # the row's own objective, kept
     assert one.use_ce is False and one.kd_objective == "none" and one.use_loca is False
-    # Both the vision attention and the merger (the model's own vision->language
-    # projector) are trainable in stage one — author decision 2026-09-07, so the
-    # alignment loss can reshape the vision->language interface itself, not just
-    # what happens upstream of it.
-    assert one.trainable_modules == ("vision_attention", "vision_merger")
+    # vision_attention only, not +vision_merger: a merger-trainable, feature-
+    # only F stage was measured and rejected as sub-chance
+    # (align_curve_contrastive_merger_s17, 25.84% -> 22.92%,
+    # experiment_protocol.md 2026-09-07 changelog); stage_one()'s default was
+    # reverted to match on 2026-09-09 (see its docstring). stage_one_p() below
+    # keeps the merger trainable — that combination (feature + raw KD) was not
+    # the one rejected.
+    assert one.trainable_modules == ("vision_attention",)
     one.assert_trainable_surface_can_learn()
 
 

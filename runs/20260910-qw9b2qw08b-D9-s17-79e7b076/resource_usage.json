@@ -1,0 +1,245 @@
+{
+  "resources": {
+    "recipe": "D9",
+    "model": "Qwen/Qwen3.5-0.8B",
+    "teacher": "Qwen/Qwen3.5-9B",
+    "modality": "depth",
+    "seed": 17,
+    "epochs": 10,
+    "examples_seen": 76390,
+    "examples_skipped": 0,
+    "optimizer_steps": 4775,
+    "learning_rate": 2e-05,
+    "accumulation": 4,
+    "batch_size": 4,
+    "effective_batch": 16,
+    "gradient_checkpointing": false,
+    "lora_rank": 16,
+    "elapsed_minutes": 124.21,
+    "examples_per_second": 10.25,
+    "peak_vram_gb": 13.63,
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "pilot": false,
+    "cache_digest": "eaa1f21e5c0f8f58",
+    "distillation_mode": "xtoken",
+    "projected_minutes_full_train_epoch": 24.8,
+    "max_epochs": 10,
+    "patience": 2,
+    "epochs_run": 5,
+    "best_epoch": 2,
+    "best_val_macro": 0.4787692807708327,
+    "best_reading_epoch": null,
+    "stopped_on": "patience",
+    "stage": "S2",
+    "parent_checkpoint": "runs/kd/align_curve_contrastive_s17/preserved/epoch_1"
+  },
+  "recipe_config": {
+    "recipe": "D9",
+    "stage": "S2",
+    "seed": 17,
+    "use_ce": false,
+    "kd_objective": "xtoken",
+    "feature_objective": "none",
+    "use_loca": false,
+    "lambda_ce": 1.0,
+    "lambda_kd": 1.0,
+    "lambda_feature": 0.0,
+    "kd_temperature": 1.0,
+    "contrastive_temperature": 0.07,
+    "loca_alpha": 0.8,
+    "top_k": 4096,
+    "xtoken_mapping_hash": null,
+    "trainable_modules": [
+      "language_attention"
+    ],
+    "lora_rank": 16,
+    "pilot": false,
+    "parent_checkpoint": "runs/kd/align_curve_contrastive_s17/preserved/epoch_1",
+    "notes": "stage two (S2) of D9, from runs/kd/align_curve_contrastive_s17/preserved/epoch_1"
+  },
+  "history": [
+    {
+      "step": 250,
+      "examples": 4000,
+      "kd": 0.6125155647583306,
+      "total": 0.6125155647583306,
+      "examples_per_second": 11.943705114031987,
+      "peak_vram_gb": 12.852242432
+    },
+    {
+      "step": 500,
+      "examples": 8000,
+      "kd": 0.4881622939202935,
+      "total": 0.4881622939202935,
+      "examples_per_second": 11.954513379337538,
+      "peak_vram_gb": 13.634084864
+    },
+    {
+      "step": 750,
+      "examples": 12000,
+      "kd": 0.4445524838268757,
+      "total": 0.4445524838268757,
+      "examples_per_second": 11.9547121487845,
+      "peak_vram_gb": 13.634084864
+    },
+    {
+      "step": 1000,
+      "examples": 16002,
+      "kd": 0.4386842938011641,
+      "total": 0.4386842938011641,
+      "examples_per_second": 10.342420839986374,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 1250,
+      "examples": 20002,
+      "kd": 0.42808733450993897,
+      "total": 0.42808733450993897,
+      "examples_per_second": 10.628135453929527,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 1500,
+      "examples": 24002,
+      "kd": 0.40792297476902606,
+      "total": 0.40792297476902606,
+      "examples_per_second": 10.734769498625116,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 1750,
+      "examples": 28002,
+      "kd": 0.4028984863255173,
+      "total": 0.4028984863255173,
+      "examples_per_second": 10.88181108047864,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 2000,
+      "examples": 32004,
+      "kd": 0.3947498126217833,
+      "total": 0.3947498126217833,
+      "examples_per_second": 10.272438532160145,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 2250,
+      "examples": 36004,
+      "kd": 0.3942086073867977,
+      "total": 0.3942086073867977,
+      "examples_per_second": 10.42639376989391,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 2500,
+      "examples": 40004,
+      "kd": 0.3763723185919225,
+      "total": 0.3763723185919225,
+      "examples_per_second": 10.560398063078178,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 2750,
+      "examples": 44004,
+      "kd": 0.37591775971092284,
+      "total": 0.37591775971092284,
+      "examples_per_second": 10.671522722033819,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 3000,
+      "examples": 48006,
+      "kd": 0.3738296741096826,
+      "total": 0.3738296741096826,
+      "examples_per_second": 10.281144536575612,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 3250,
+      "examples": 52006,
+      "kd": 0.36977953402046115,
+      "total": 0.36977953402046115,
+      "examples_per_second": 10.391490884271795,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 3500,
+      "examples": 56006,
+      "kd": 0.35276781022362413,
+      "total": 0.35276781022362413,
+      "examples_per_second": 10.490818276268417,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 3750,
+      "examples": 60006,
+      "kd": 0.35932223627343773,
+      "total": 0.35932223627343773,
+      "examples_per_second": 10.578205273167391,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 4001,
+      "examples": 64008,
+      "kd": 0.3522172296656059,
+      "total": 0.3522172296656059,
+      "examples_per_second": 10.303855837226566,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 4251,
+      "examples": 68008,
+      "kd": 0.36002221865113826,
+      "total": 0.36002221865113826,
+      "examples_per_second": 10.388775047337662,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 4501,
+      "examples": 72008,
+      "kd": 0.33359507289901374,
+      "total": 0.33359507289901374,
+      "examples_per_second": 10.465613373781668,
+      "peak_vram_gb": 13.634904064
+    },
+    {
+      "step": 4751,
+      "examples": 76008,
+      "kd": 0.35096420121565464,
+      "total": 0.35096420121565464,
+      "examples_per_second": 10.534617137606347,
+      "peak_vram_gb": 13.634904064
+    }
+  ],
+  "val_history": [
+    {
+      "epoch": 0,
+      "val_macro": 0.45318930922394773
+    },
+    {
+      "epoch": 1,
+      "val_macro": 0.460707918400844
+    },
+    {
+      "epoch": 2,
+      "val_macro": 0.4787692807708327
+    },
+    {
+      "epoch": 3,
+      "val_macro": 0.4787086839831362
+    },
+    {
+      "epoch": 4,
+      "val_macro": 0.47752969605433576
+    }
+  ],
+  "corrections": [
+    {
+      "date": "2026-09-09T20:35:51+00:00",
+      "field": "resources.pilot / recipe_config.pilot",
+      "old_value": true,
+      "new_value": false,
+      "reason": "'pilot' was left at RecipeConfig's default (True) because --confirmatory was never passed on the training command line for this run. The run itself was produced under confirmatory conditions throughout: 4090 GPU, bf16 teacher cache (see checkpoints_scratch/teacher_cache/*/cache_key.json -- every D4-D9 cache key reads precision=bfloat16), full 15,278-row train split, seed 17, the same 10-epoch/patience-2/LoRA-rank-16 policy every confirmatory B3/B5/X2 row used. Nothing about training conditions differed from a confirmatory row -- only the CLI flag that labels it did. Corrected so record_run.py's check_pilot_agreement (evaluation/record_run.py) reflects the true experimental conditions rather than a CLI omission, per the same corrections-not-silent-overwrite pattern already used in this project for the G1 freeze_release.py hash fix (experiment_protocol.md, 2026-09-06 changelog row)."
+    }
+  ]
+}

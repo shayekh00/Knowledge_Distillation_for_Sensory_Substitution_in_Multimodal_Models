@@ -130,6 +130,26 @@ class RecipeConfig:
         every KD row's run-id hash — `record_run.build_configuration` folds
         `resolved()` into the id, so a new field would silently orphan X2's
         completed run.
+
+        `trainable_modules` is `vision_attention` only, **not**
+        `+vision_merger`. The merger was made trainable here by author
+        decision on 2026-09-07 (the merger is the model's own vision->language
+        projector, not part of the frozen pretrained decoder, so leaving it
+        fixed caps how much a pure feature-alignment loss can reshape the
+        vision->language interface) and measured the same day:
+        `align_curve_contrastive_merger_s17` — merger trainable, feature-only,
+        no KD term — fell *below the chance floor* (25.84% -> 22.92% across
+        its curve) and was rejected (experiment_protocol.md 2026-09-07
+        changelog). This function's default was reverted to match that
+        rejection on 2026-09-09, once it was noticed that D4/D5/D9's actual
+        parent checkpoint (`align_curve_contrastive_s17`, attention-only, run
+        *before* the merger experiment and manually preserved via
+        `--parent-checkpoint`) was never regenerated through this function —
+        so a fresh call to it silently reproduced the rejected configuration
+        rather than the one that actually worked. `stage_one_p()` below is
+        unaffected and correctly keeps the merger trainable: D6's real
+        `stage_P` run combines the feature term with a small raw-KD term, and
+        that combination was not rejected — only the feature-alone case was.
         """
         if self.feature_objective == "none":
             raise ValueError(
@@ -138,16 +158,7 @@ class RecipeConfig:
         return replace(
             self, stage="F", use_ce=False, kd_objective="none", use_loca=False,
             top_k=None, lambda_ce=0.0, lambda_kd=0.0,
-            # Author decision, 2026-09-07: the merger is the model's own
-            # vision->language projector, not part of the frozen pretrained
-            # decoder — leaving it fixed caps how much the alignment loss can
-            # actually reshape the vision->language interface, versus only
-            # reshaping what happens *before* the merger. Verified the merger's
-            # LoRA targets (`linear_fc1`/`linear_fc2`) are distinct from the 12
-            # vision blocks' identically-named MLP layers before adding this —
-            # a suffix-style match would have silently trained all 12 alongside
-            # the merger asked for.
-            trainable_modules=("vision_attention", "vision_merger"),
+            trainable_modules=("vision_attention",),
             parent_checkpoint=None,
             notes=f"stage one (F) of {self.recipe}: {self.feature_objective} alignment")
 
@@ -459,9 +470,14 @@ def recipe_library(top_k: int = 4096) -> dict:
         # checkpoint byte-identical in behaviour to the base model. §8.2's
         # stage-F definition ("selected vision parameters update; projector and
         # language parameters frozen") is what this now declares.
+        # trainable_modules is deliberately vision_attention only (not
+        # +vision_merger) -- see stage_one()'s docstring below for why: a
+        # pure feature-only F stage with the merger trainable was measured
+        # and rejected as sub-chance (align_curve_contrastive_merger_s17,
+        # 25.84% -> 22.92%, experiment_protocol.md 2026-09-07 changelog).
         "D0": RecipeConfig(recipe="D0", stage="F", use_ce=False,
                            feature_objective="contrastive",
-                           trainable_modules=("vision_attention", "vision_merger")),
+                           trainable_modules=("vision_attention",)),
         "D1": RecipeConfig(recipe="D1", stage="S2", use_ce=True, kd_objective="xtoken",
                            top_k=top_k),
         "D2": RecipeConfig(recipe="D2", stage="S2", use_ce=True, kd_objective="xtoken",
@@ -494,26 +510,23 @@ def recipe_library(top_k: int = 4096) -> dict:
         # a *data-path* requirement this config cannot enforce by itself: the
         # gold answer column must be removed before the training/cache
         # interface and replaced by a teacher-generated prefix. The code path
-        # for that now exists (2026-09-08): build_teacher_generation_cache.py
-        # produces the teacher's own free completions, build_teacher_cache.py
+        # for that (2026-09-08): build_teacher_generation_cache.py produces
+        # the teacher's own free completions, build_teacher_cache.py
         # --prefix-source teacher_generated caches top-K logits over them
         # instead of gold, train_student.build_batch_with_answers builds
         # batches from any {question_id: text} mapping (not just row["answer"])
         # and train_kd.py strips the gold "answer" column from every row before
-        # this recipe touches them. What remains before this can actually run
-        # is not code — it is the two GPU cache-building passes themselves
-        # (a free-generation pass over the full train split, then a logits
-        # pass over that generated text), neither of which has been run. Like
-        # D4, this reuses D5's stage-F checkpoint
-        # (runs/kd/align_curve_contrastive_s17/preserved/epoch_1) — the
-        # alignment stage does not touch answer text at all, so it needs no
-        # variant of its own.
+        # this recipe touches them. Like D4, this reuses D5's stage-F
+        # checkpoint (runs/kd/align_curve_contrastive_s17/preserved/epoch_1)
+        # — the alignment stage does not touch answer text at all, so it
+        # needs no variant of its own.
         "D9": RecipeConfig(recipe="D9", stage="S2", use_ce=False, kd_objective="xtoken",
                            feature_objective="contrastive", top_k=top_k,
-                           notes="Code path ready (2026-09-08); not run — needs "
-                                 "build_teacher_generation_cache.py then "
-                                 "build_teacher_cache.py --prefix-source teacher_generated "
-                                 "run first. See experiment_protocol.md §8.1"),
+                           notes="Run 2026-09-08 (runs/kd/run_d9.sh): both cache passes "
+                                 "complete (15,278/15,278 train rows each), trained to "
+                                 "best val macro 47.88% at epoch 2 (5 epochs run, "
+                                 "patience 2). Recorded confirmatory 2026-09-09 via "
+                                 "evaluation/record_run.py. See experiment_protocol.md §8.1"),
         # Distillation-mode ladder
         "X0": RecipeConfig(recipe="X0", stage="S2", use_ce=True, kd_objective="sequence"),
         "X1": RecipeConfig(recipe="X1", stage="S2", use_ce=True, kd_objective="candidate"),

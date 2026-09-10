@@ -1,0 +1,317 @@
+{
+  "resources": {
+    "recipe": "D6",
+    "model": "Qwen/Qwen3.5-0.8B",
+    "teacher": "Qwen/Qwen3.5-9B",
+    "modality": "depth",
+    "seed": 17,
+    "epochs": 10,
+    "examples_seen": 91668,
+    "examples_skipped": 0,
+    "optimizer_steps": 5730,
+    "learning_rate": 2e-05,
+    "accumulation": 4,
+    "batch_size": 4,
+    "effective_batch": 16,
+    "gradient_checkpointing": false,
+    "lora_rank": 16,
+    "elapsed_minutes": 150.64,
+    "examples_per_second": 10.142,
+    "peak_vram_gb": 14.48,
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "pilot": false,
+    "cache_digest": "0462bee1d6f00444",
+    "distillation_mode": "xtoken",
+    "projected_minutes_full_train_epoch": 25.1,
+    "max_epochs": 10,
+    "patience": 2,
+    "epochs_run": 6,
+    "best_epoch": 3,
+    "best_val_macro": 0.5349514893154386,
+    "best_reading_epoch": null,
+    "stopped_on": "patience",
+    "stage": "S2",
+    "parent_checkpoint": "runs/kd/D6_s17/stage_P"
+  },
+  "recipe_config": {
+    "recipe": "D6",
+    "stage": "S2",
+    "seed": 17,
+    "use_ce": true,
+    "kd_objective": "xtoken",
+    "feature_objective": "none",
+    "use_loca": true,
+    "lambda_ce": 1.0,
+    "lambda_kd": 1.0,
+    "lambda_feature": 0.0,
+    "kd_temperature": 1.0,
+    "contrastive_temperature": 0.07,
+    "loca_alpha": 0.8,
+    "top_k": 4096,
+    "xtoken_mapping_hash": null,
+    "trainable_modules": [
+      "language_attention"
+    ],
+    "lora_rank": 16,
+    "pilot": false,
+    "parent_checkpoint": "runs/kd/D6_s17/stage_P",
+    "notes": "stage two (S2) of D6, from runs/kd/D6_s17/stage_P"
+  },
+  "history": [
+    {
+      "step": 250,
+      "examples": 4000,
+      "ce": 1.0313376161009074,
+      "loca_gold_found_rate": 1.0,
+      "kd": 1.0751163927912712,
+      "total": 2.106454009830952,
+      "examples_per_second": 11.729064451234382,
+      "peak_vram_gb": 13.706582016
+    },
+    {
+      "step": 500,
+      "examples": 8000,
+      "ce": 0.9789858033359051,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8363064215928316,
+      "total": 1.8152922228574753,
+      "examples_per_second": 11.751185100637507,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 750,
+      "examples": 12000,
+      "ce": 0.9338431841433048,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.7918686449676752,
+      "total": 1.72571183013916,
+      "examples_per_second": 11.748807436817986,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 1000,
+      "examples": 16002,
+      "ce": 0.9327207190113944,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.7791039893677184,
+      "total": 1.711824706979803,
+      "examples_per_second": 10.23295386440205,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 1250,
+      "examples": 20002,
+      "ce": 0.9247492049634457,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.7578325886577367,
+      "total": 1.6825817936062812,
+      "examples_per_second": 10.501949533322264,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 1500,
+      "examples": 24002,
+      "ce": 0.9020480430424214,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.7376852058023214,
+      "total": 1.6397332497239112,
+      "examples_per_second": 10.690171095349264,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 1750,
+      "examples": 28002,
+      "ce": 0.8932291283607483,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.7328739156723022,
+      "total": 1.6261030433773995,
+      "examples_per_second": 10.827332974777999,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 2000,
+      "examples": 32004,
+      "ce": 0.8876313802960155,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.7192279262083037,
+      "total": 1.6068593065936367,
+      "examples_per_second": 10.224401863000846,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 2250,
+      "examples": 36004,
+      "ce": 0.8897715910971165,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.7166076117902994,
+      "total": 1.6063792023658752,
+      "examples_per_second": 10.372748324324464,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 2500,
+      "examples": 40004,
+      "ce": 0.8644096135795116,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.6962500093281269,
+      "total": 1.5606596242785453,
+      "examples_per_second": 10.492810254921212,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 2750,
+      "examples": 44004,
+      "ce": 0.8648927501142025,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.6979695248454809,
+      "total": 1.562862272322178,
+      "examples_per_second": 10.591920075225909,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 3000,
+      "examples": 48006,
+      "ce": 0.8698806881487786,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.691541619353242,
+      "total": 1.5614223087822403,
+      "examples_per_second": 10.21689611060925,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 3250,
+      "examples": 52006,
+      "ce": 0.8596739784777164,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.6878033683598042,
+      "total": 1.547477344572544,
+      "examples_per_second": 10.31869119458322,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 3500,
+      "examples": 56006,
+      "ce": 0.842257898658514,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.6714476301521063,
+      "total": 1.5137055293917656,
+      "examples_per_second": 10.40686598212887,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 3750,
+      "examples": 60006,
+      "ce": 0.8482053105831147,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.6773370747715235,
+      "total": 1.5255423876643182,
+      "examples_per_second": 10.484273214008955,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 4001,
+      "examples": 64008,
+      "ce": 0.8414384230867132,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.6652606124584968,
+      "total": 1.5066990349199865,
+      "examples_per_second": 10.20939853630446,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 4251,
+      "examples": 68008,
+      "ce": 0.84011195230484,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.6714101162850856,
+      "total": 1.5115220675468444,
+      "examples_per_second": 10.287334242011264,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 4501,
+      "examples": 72008,
+      "ce": 0.8182623170316219,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.656565192207694,
+      "total": 1.4748275095224381,
+      "examples_per_second": 10.35763274868689,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 4751,
+      "examples": 76008,
+      "ce": 0.8393824620842933,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.6665559744387866,
+      "total": 1.5059384357333183,
+      "examples_per_second": 10.420724323659014,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 5001,
+      "examples": 80010,
+      "ce": 0.8228902929312699,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.649772079674514,
+      "total": 1.4726623711171565,
+      "examples_per_second": 10.206572259486462,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 5251,
+      "examples": 84010,
+      "ce": 0.8199204666614532,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.6517811525464058,
+      "total": 1.4717016164660455,
+      "examples_per_second": 10.26913348300178,
+      "peak_vram_gb": 14.478035968
+    },
+    {
+      "step": 5501,
+      "examples": 88010,
+      "ce": 0.801311175197363,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.6460591773539781,
+      "total": 1.44737035125494,
+      "examples_per_second": 10.326163346761922,
+      "peak_vram_gb": 14.478035968
+    }
+  ],
+  "val_history": [
+    {
+      "epoch": 0,
+      "val_macro": 0.5069846275090935
+    },
+    {
+      "epoch": 1,
+      "val_macro": 0.5186339272168956
+    },
+    {
+      "epoch": 2,
+      "val_macro": 0.5169128081713682
+    },
+    {
+      "epoch": 3,
+      "val_macro": 0.5349514893154386
+    },
+    {
+      "epoch": 4,
+      "val_macro": 0.5326345027201359
+    },
+    {
+      "epoch": 5,
+      "val_macro": 0.5344255758392054
+    }
+  ],
+  "corrections": [
+    {
+      "date": "2026-09-09T20:35:51+00:00",
+      "field": "resources.pilot / recipe_config.pilot",
+      "old_value": true,
+      "new_value": false,
+      "reason": "'pilot' was left at RecipeConfig's default (True) because --confirmatory was never passed on the training command line for this run. The run itself was produced under confirmatory conditions throughout: 4090 GPU, bf16 teacher cache (see checkpoints_scratch/teacher_cache/*/cache_key.json -- every D4-D9 cache key reads precision=bfloat16), full 15,278-row train split, seed 17, the same 10-epoch/patience-2/LoRA-rank-16 policy every confirmatory B3/B5/X2 row used. Nothing about training conditions differed from a confirmatory row -- only the CLI flag that labels it did. Corrected so record_run.py's check_pilot_agreement (evaluation/record_run.py) reflects the true experimental conditions rather than a CLI omission, per the same corrections-not-silent-overwrite pattern already used in this project for the G1 freeze_release.py hash fix (experiment_protocol.md, 2026-09-06 changelog row)."
+    }
+  ]
+}

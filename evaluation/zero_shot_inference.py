@@ -110,6 +110,14 @@ def main() -> None:
                              "captures truncated reasoning instead of an answer.")
     parser.add_argument("--adapter", help="LoRA adapter directory to load on top of "
                         "the base model. Without it this is a zero-shot run.")
+    parser.add_argument("--parent-adapter", help="Stage-F/-P adapter directory to merge "
+                        "into the base weights *before* --adapter is applied, for a "
+                        "two-stage (F/P -> S2) run. Must mirror train_kd.py's own "
+                        "`if config.parent_checkpoint: ... merge_and_unload()` composition "
+                        "(distillation/train_kd.py) exactly, or --adapter alone silently "
+                        "evaluates a model that never received its stage-one alignment — "
+                        "the S2 adapter's weights only mean what they mean on top of the "
+                        "merged parent, not on top of the raw pretrained base.")
     parser.add_argument("--quantize", choices=["none", "nf4", "int8"], default="none")
     parser.add_argument("--dtype", default="bfloat16")
     args = parser.parse_args()
@@ -142,6 +150,11 @@ def main() -> None:
 
     processor = AutoProcessor.from_pretrained(args.model)
     model = AutoModelForImageTextToText.from_pretrained(args.model, **load_kwargs)
+    if args.parent_adapter:
+        from peft import PeftModel
+        model = PeftModel.from_pretrained(model, args.parent_adapter)
+        model = model.merge_and_unload()
+        print(f"merged parent adapter {args.parent_adapter}", flush=True)
     if args.adapter:
         from peft import PeftModel
         model = PeftModel.from_pretrained(model, args.adapter)

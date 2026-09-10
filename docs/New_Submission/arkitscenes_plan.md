@@ -718,3 +718,19 @@ separate decision, not required to get real numbers now.
    That result already exists; it does not substitute for ARKitScenes'
    cross-*dataset* (as opposed to cross-*sensor*) transfer question (Phase 6),
    which needs the real second dataset to answer at all.
+5. **Decided (2026-09-08): the current paper submission proceeds on SUN-RGB-D
+   alone; ARKitScenes is not included as a reported second dataset for now.**
+   Reasoning: Phase 5's exploratory ladder (single seed, ~33-42-item val set)
+   came back contradicting the core hypothesis — D5 (CE+KD, aligned) scored
+   30.95%, below D3 (CE-only, aligned) at 40.95% — and that result is not yet
+   distinguishable from small-N noise (see §6's Phase 5 writeup). Phase 4's
+   human audit of the release also never ran. Reporting either an unaudited
+   dataset or a single-seed result that undercuts the method's own claim
+   would weaken the submission rather than strengthen it. This does not
+   retire the ARKitScenes track — the code, v1.0 release, and Phase 5 code
+   path all stay in the repo (Phase 5's own run artifacts kept local/
+   gitignored, not committed) — it is deferred past this submission. Should
+   the author want to revisit it later: rerun D0/D3/D5 with a second seed
+   first (cheap, ~15-20 GPU-minutes total per §6) to see whether the CE-vs-KD
+   gap is real, then decide whether Phase 4 audit + Phase 6 transfer are
+   worth the remaining time before any future resubmission.
