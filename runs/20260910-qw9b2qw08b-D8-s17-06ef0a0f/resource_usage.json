@@ -1,0 +1,352 @@
+{
+  "resources": {
+    "recipe": "D8",
+    "model": "Qwen/Qwen3.5-0.8B",
+    "teacher": "Qwen/Qwen3.5-9B",
+    "modality": "depth",
+    "seed": 17,
+    "epochs": 10,
+    "examples_seen": 106946,
+    "examples_skipped": 0,
+    "optimizer_steps": 6685,
+    "learning_rate": 2e-05,
+    "accumulation": 4,
+    "batch_size": 4,
+    "effective_batch": 16,
+    "gradient_checkpointing": false,
+    "lora_rank": 16,
+    "elapsed_minutes": 175.14,
+    "examples_per_second": 10.177,
+    "peak_vram_gb": 14.48,
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "pilot": false,
+    "cache_digest": "0462bee1d6f00444",
+    "distillation_mode": "xtoken",
+    "projected_minutes_full_train_epoch": 25.0,
+    "max_epochs": 10,
+    "patience": 2,
+    "epochs_run": 7,
+    "best_epoch": 4,
+    "best_val_macro": 0.37221067465089713,
+    "best_reading_epoch": null,
+    "stopped_on": "patience",
+    "stage": "S2",
+    "parent_checkpoint": "runs/kd/align_curve_cosine_s17/preserved/epoch_0"
+  },
+  "recipe_config": {
+    "recipe": "D8",
+    "stage": "S2",
+    "seed": 17,
+    "use_ce": true,
+    "kd_objective": "xtoken",
+    "feature_objective": "none",
+    "use_loca": true,
+    "lambda_ce": 1.0,
+    "lambda_kd": 1.0,
+    "lambda_feature": 0.0,
+    "kd_temperature": 1.0,
+    "contrastive_temperature": 0.07,
+    "loca_alpha": 0.8,
+    "top_k": 4096,
+    "xtoken_mapping_hash": null,
+    "trainable_modules": [
+      "language_attention"
+    ],
+    "lora_rank": 16,
+    "pilot": false,
+    "parent_checkpoint": "runs/kd/align_curve_cosine_s17/preserved/epoch_0",
+    "notes": "stage two (S2) of D8, from runs/kd/align_curve_cosine_s17/preserved/epoch_0"
+  },
+  "history": [
+    {
+      "step": 250,
+      "examples": 4000,
+      "ce": 1.3000621472895146,
+      "loca_gold_found_rate": 1.0,
+      "kd": 1.3473991048038005,
+      "total": 2.647461254954338,
+      "examples_per_second": 11.787453333997886,
+      "peak_vram_gb": 13.704413696
+    },
+    {
+      "step": 500,
+      "examples": 8000,
+      "ce": 1.12395728546381,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.9886601087599993,
+      "total": 2.112617392063141,
+      "examples_per_second": 11.809413910454756,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 750,
+      "examples": 12000,
+      "ce": 1.096309348076582,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.9583367555141449,
+      "total": 2.05464610517025,
+      "examples_per_second": 11.805299620371095,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 1000,
+      "examples": 16002,
+      "ce": 1.0923863678545385,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.9379656872638574,
+      "total": 2.030352057931902,
+      "examples_per_second": 10.294725546153908,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 1250,
+      "examples": 20002,
+      "ce": 1.095687133193016,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.9253169677257538,
+      "total": 2.021004100739956,
+      "examples_per_second": 10.554557589845697,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 1500,
+      "examples": 24002,
+      "ce": 1.0658429948091508,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8901443547457457,
+      "total": 1.9559873521924018,
+      "examples_per_second": 10.74080978595019,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 1750,
+      "examples": 28002,
+      "ce": 1.068070662766695,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8991554337888956,
+      "total": 1.9672260963320731,
+      "examples_per_second": 10.87270158952212,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 2000,
+      "examples": 32004,
+      "ce": 1.0632171975923228,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8810199388822952,
+      "total": 1.9442371369956375,
+      "examples_per_second": 10.269889349426466,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 2250,
+      "examples": 36004,
+      "ce": 1.0755879346132278,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8836488023847342,
+      "total": 1.959236737370491,
+      "examples_per_second": 10.416442518382889,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 2500,
+      "examples": 40004,
+      "ce": 1.0449026692211627,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8564322389960289,
+      "total": 1.9013349075913428,
+      "examples_per_second": 10.535461617598267,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 2750,
+      "examples": 44004,
+      "ce": 1.0474279206097126,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8656280801743269,
+      "total": 1.913056000649929,
+      "examples_per_second": 10.633102635483375,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 3000,
+      "examples": 48006,
+      "ce": 1.058892691796357,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8609867808106658,
+      "total": 1.9198794780553996,
+      "examples_per_second": 10.25889389121418,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 3250,
+      "examples": 52006,
+      "ce": 1.0483675107359887,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8498360778540373,
+      "total": 1.8982035917639732,
+      "examples_per_second": 10.360993035820425,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 3500,
+      "examples": 56006,
+      "ce": 1.031152825653553,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8322544931620359,
+      "total": 1.8634073229432107,
+      "examples_per_second": 10.449449695042457,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 3750,
+      "examples": 60006,
+      "ce": 1.0451222459077836,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8507112853229046,
+      "total": 1.8958335334658623,
+      "examples_per_second": 10.527197387739795,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 4001,
+      "examples": 64008,
+      "ce": 1.0442554431480842,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8404140231849907,
+      "total": 1.8846694689530592,
+      "examples_per_second": 10.253587362793803,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 4251,
+      "examples": 68008,
+      "ce": 1.0398589940965175,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8339734901934862,
+      "total": 1.873832483291626,
+      "examples_per_second": 10.330098324044268,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 4501,
+      "examples": 72008,
+      "ce": 1.0201941627264022,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8243704395294189,
+      "total": 1.8445646031498908,
+      "examples_per_second": 10.398925437356231,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 4751,
+      "examples": 76008,
+      "ce": 1.0449311015009881,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8404712088704109,
+      "total": 1.8854023119211196,
+      "examples_per_second": 10.46141787113257,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 5001,
+      "examples": 80010,
+      "ce": 1.0313472119899658,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8238734147854737,
+      "total": 1.8552206276537297,
+      "examples_per_second": 10.245582171169078,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 5251,
+      "examples": 84010,
+      "ce": 1.0269408228695394,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8156788834333419,
+      "total": 1.8426197064518928,
+      "examples_per_second": 10.307623620674349,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 5501,
+      "examples": 88010,
+      "ce": 1.0192377849519252,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8204467905461789,
+      "total": 1.8396845747232438,
+      "examples_per_second": 10.364275330423895,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 5751,
+      "examples": 92012,
+      "ce": 1.025908737660169,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8155023361687417,
+      "total": 1.8414110724147146,
+      "examples_per_second": 10.185302911236063,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 6001,
+      "examples": 96012,
+      "ce": 1.030294546097517,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8192251661270857,
+      "total": 1.849519711792469,
+      "examples_per_second": 10.241326344283253,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 6251,
+      "examples": 100012,
+      "ce": 1.0200798240303994,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8097885846793652,
+      "total": 1.8298684068918227,
+      "examples_per_second": 10.294243648875879,
+      "peak_vram_gb": 14.47988736
+    },
+    {
+      "step": 6501,
+      "examples": 104012,
+      "ce": 1.015238030999899,
+      "loca_gold_found_rate": 1.0,
+      "kd": 0.8127592182010412,
+      "total": 1.8279972488880158,
+      "examples_per_second": 10.342156811782477,
+      "peak_vram_gb": 14.47988736
+    }
+  ],
+  "val_history": [
+    {
+      "epoch": 0,
+      "val_macro": 0.3368689225770686
+    },
+    {
+      "epoch": 1,
+      "val_macro": 0.3449742577343873
+    },
+    {
+      "epoch": 2,
+      "val_macro": 0.35249351898766534
+    },
+    {
+      "epoch": 3,
+      "val_macro": 0.35144865752148424
+    },
+    {
+      "epoch": 4,
+      "val_macro": 0.37221067465089713
+    },
+    {
+      "epoch": 5,
+      "val_macro": 0.36144380855683045
+    },
+    {
+      "epoch": 6,
+      "val_macro": 0.3647367908056043
+    }
+  ]
+}
