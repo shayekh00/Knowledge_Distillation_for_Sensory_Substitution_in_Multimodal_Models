@@ -1,0 +1,5 @@
+{"question_id": "test_000004", "annotator_id": "solo", "own_answer": "no", "verdict": "incorrect", "notes": "", "answered_at_utc": "2026-09-11T00:17:50.063961+00:00", "own_answer_raw": "no"}
+{"question_id": "test_000010", "annotator_id": "solo", "own_answer": "no", "verdict": "incorrect", "notes": "", "answered_at_utc": "2026-09-11T00:17:58.724275+00:00", "own_answer_raw": "no"}
+{"question_id": "test_000010", "annotator_id": "solo", "own_answer": "no", "verdict": "incorrect", "notes": "", "answered_at_utc": "2026-09-11T00:17:59.148195+00:00", "own_answer_raw": "no"}
+{"question_id": "test_000014", "annotator_id": "solo", "own_answer": "right", "verdict": "incorrect", "notes": "", "answered_at_utc": "2026-09-11T00:18:32.852150+00:00", "own_answer_raw": "right"}
+{"question_id": "test_000010", "annotator_id": "solo", "own_answer": "no", "verdict": "incorrect", "notes": "", "answered_at_utc": "2026-09-11T00:19:59.690064+00:00", "own_answer_raw": "no"}

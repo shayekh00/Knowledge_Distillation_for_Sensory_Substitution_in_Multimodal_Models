@@ -36,7 +36,7 @@ import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -50,6 +50,8 @@ from tools.audit_app.audit_store import (
     load_responses,
     progress_for,
 )
+from tools.audit_app.arkit_rotation import (
+    rotate_image, rotate_points, rotated_dimensions, rotation_index_for)
 from tools.audit_app.scene_index import SceneIndex
 from tools.audit_app.spelling import candidate_answers_for, correct_spelling
 
@@ -207,6 +209,13 @@ def get_model_summary():
     return {"available": True, "by_type": by_type}
 
 
+def _arkit_rotation_for(scene) -> int:
+    """0 for every non-ARKitScenes image (SUN-RGB-D is never rotated).
+    `image_id` is `{video_id}/{frame_timestamp}` for ARKitScenes records."""
+    frame_timestamp = scene.image_id.rsplit("/", 1)[-1]
+    return rotation_index_for(scene.rgb_path, frame_timestamp)
+
+
 @app.get("/api/image/{image_id:path}")
 def get_image(image_id: str):
     scene = SCENE_INDEX.get(image_id)
@@ -214,7 +223,23 @@ def get_image(image_id: str):
         raise HTTPException(404, f"Unknown image_id: {image_id!r}")
     if not scene.rgb_path.is_file():
         raise HTTPException(404, f"RGB file missing on disk: {scene.rgb_path}")
-    return FileResponse(str(scene.rgb_path), media_type="image/jpeg")
+    # no-store: the URL for a given image_id never changes, so without this a
+    # browser silently keeps serving whatever orientation it cached before the
+    # rotation fix landed -- which looks exactly like the fix not working.
+    no_cache = {"Cache-Control": "no-store, must-revalidate"}
+    rotation = _arkit_rotation_for(scene)
+    if rotation == 0:
+        return FileResponse(str(scene.rgb_path), media_type="image/jpeg",
+                            headers=no_cache)
+    # Display-only rectification (module docstring) -- rotate in memory,
+    # never touching the file on disk or anything the training/eval
+    # pipeline reads.
+    from io import BytesIO
+    from PIL import Image
+    buffer = BytesIO()
+    rotate_image(Image.open(scene.rgb_path), rotation).save(buffer, format="PNG")
+    return Response(content=buffer.getvalue(), media_type="image/png",
+                    headers=no_cache)
 
 
 @app.get("/api/polygons/{image_id:path}")
@@ -224,14 +249,13 @@ def get_polygons(image_id: str, objects: str = ""):
         raise HTTPException(404, f"Unknown image_id: {image_id!r}")
     object_indices = {int(token) for token in objects.split(",") if token.strip() != ""}
     polygons = SCENE_INDEX.polygons_for(image_id, object_indices or None)
-    return {
-        "image_width": scene.image_width,
-        "image_height": scene.image_height,
-        "polygons": [
-            {"object_index": polygon.object_index, "name": polygon.name, "x": polygon.x, "y": polygon.y}
-            for polygon in polygons
-        ],
-    }
+    rotation = _arkit_rotation_for(scene)
+    width, height = rotated_dimensions(scene.image_width, scene.image_height, rotation)
+    result = []
+    for polygon in polygons:
+        x, y = rotate_points(polygon.x, polygon.y, scene.image_width, scene.image_height, rotation)
+        result.append({"object_index": polygon.object_index, "name": polygon.name, "x": x, "y": y})
+    return {"image_width": width, "image_height": height, "polygons": result}
 
 
 @app.get("/api/annotators")

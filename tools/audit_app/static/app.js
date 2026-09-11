@@ -30,14 +30,14 @@ async function init() {
   localStorage.setItem("vqa_audit_annotator_id", state.annotatorId);
   el("annotator-input").value = state.annotatorId;
 
-  const status = await fetchJSON("/api/status");
+  const status = await fetchJSON("api/status");
   if (!status.items_loaded) {
     el("status-banner").textContent = status.load_error;
     el("status-banner").classList.remove("hidden");
     return;
   }
 
-  const { items, model_hints_loaded } = await fetchJSON("/api/items");
+  const { items, model_hints_loaded } = await fetchJSON("api/items");
   state.items = items;
   state.modelHintsLoaded = Boolean(model_hints_loaded);
   populateTypeFilter(items);
@@ -97,7 +97,7 @@ async function loadAnnotatorState() {
     applyFilters();
     return;
   }
-  state.responses = await fetchJSON(`/api/responses?annotator=${encodeURIComponent(state.annotatorId)}`);
+  state.responses = await fetchJSON(`api/responses?annotator=${encodeURIComponent(state.annotatorId)}`);
   await refreshProgress();
   applyFilters();
 }
@@ -161,7 +161,7 @@ function renderModelHint(item) {
 async function renderModelSummary() {
   const box = el("model-summary");
   if (!box) return;
-  const summary = await fetchJSON("/api/model_summary");
+  const summary = await fetchJSON("api/model_summary");
   if (!summary.available) {
     box.innerHTML = "";
     return;
@@ -233,7 +233,7 @@ async function renderCurrentItem() {
   renderModelHint(item);
 
   el("image-loading").classList.remove("hidden");
-  el("rgb-image").src = `/api/image/${item.image_id}`;
+  el("rgb-image").src = `api/image/${item.image_id}`;
   loadOverlay(item);
 
   const existing = state.responses[item.question_id];
@@ -284,9 +284,21 @@ function renderSavedIndicator(saved) {
 
 function loadOverlay(item) {
   const objectsParam = (item.evidence_object_indices || []).join(",");
-  fetchJSON(`/api/polygons/${item.image_id}?objects=${objectsParam}`)
+  // A frame the scene index no longer contains 404s here, and an <img> that
+  // 404s never fires onload -- so without this the "loading..." placeholder
+  // stays up forever and the item looks hung rather than broken. Say what
+  // actually happened instead.
+  el("rgb-image").onerror = () => {
+    el("image-loading").textContent =
+      `image unavailable — ${item.image_id} is not in the current scene index ` +
+      `(stale audit sample: re-draw it from the current release)`;
+    el("image-loading").classList.remove("hidden");
+    clearOverlay();
+  };
+  fetchJSON(`api/polygons/${item.image_id}?objects=${objectsParam}`)
     .then((data) => {
       el("rgb-image").onload = () => {
+        el("image-loading").textContent = "loading…";
         el("image-loading").classList.add("hidden");
         drawOverlay(data);
       };
@@ -384,7 +396,7 @@ async function saveResponse(verdict, ownAnswer) {
     verdict,
     notes: el("notes-input").value,
   };
-  const result = await fetchJSON("/api/response", {
+  const result = await fetchJSON("api/response", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -428,7 +440,7 @@ async function refreshProgress() {
     el("type-progress-list").innerHTML = "";
     return;
   }
-  const progress = await fetchJSON(`/api/progress?annotator=${encodeURIComponent(state.annotatorId)}`);
+  const progress = await fetchJSON(`api/progress?annotator=${encodeURIComponent(state.annotatorId)}`);
   el("progress-text").textContent = `${progress.answered} / ${progress.total} answered`;
   const pct = progress.total ? (100 * progress.answered) / progress.total : 0;
   el("progress-bar-fill").style.width = `${pct}%`;
@@ -445,7 +457,7 @@ async function refreshProgress() {
 // ── Stats panel ──────────────────────────────────────────────────────────
 
 async function openStats() {
-  const stats = await fetchJSON("/api/stats");
+  const stats = await fetchJSON("api/stats");
   const tbody = document.querySelector("#stats-table tbody");
   tbody.innerHTML = "";
   const pct = (value) => (value === null || value === undefined ? "—" : `${(value * 100).toFixed(1)}%`);

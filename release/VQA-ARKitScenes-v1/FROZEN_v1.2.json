@@ -1,0 +1,47 @@
+{
+  "frozen_at_utc": "2026-09-11T00:49:32.279412+00:00",
+  "note": "Any change to a tracked input or a rule_based/*.csv file invalidates this version. Bump `version` and re-freeze rather than editing in place. Verify with --verify.",
+  "release_files": {
+    "test.csv": {
+      "rows": 46,
+      "sha256": "e0349e23526cd02484923611caed4baae242352fc58ad3be3247585a3daf0d86"
+    },
+    "train.csv": {
+      "rows": 1540,
+      "sha256": "be71c7d8d7b1b7cfc587cdb05bcab459efcc78639f1ef19350f9670f48398fd7"
+    },
+    "val.csv": {
+      "rows": 92,
+      "sha256": "b8769eb516d3c67713a15a8f46b01cda3eefc6698e1ab8473f68ce5ea7e2867a"
+    }
+  },
+  "tracked_inputs": {
+    "data/config.yaml": "b26f1ed4db2ff718d2ddd3949508ef6587762e4d2928eea0a547d2033b64674e",
+    "data/index/manifest_arkit_split.json": "cd6c72f8f9d4881f4d822a01dbdf5573030b8aabc78297a93ae70c944d62a06c",
+    "data/index/scene_index_arkit.jsonl": "1d31893a7e473aff2f2d870d6330a1daadebbce0633c5de07643f9d098b4546c",
+    "data/templates/existence.txt": "88f0fd56b1439d8b9164add21f3e1db4e8619429500524c41643cf98cafc17bd",
+    "data/templates/identify_superlative_closest_camera.txt": "1c88d1967c16ba0d6587fdf53cb5a6a879cc06f49423fa1879a68841a3027b3b",
+    "data/templates/identify_superlative_farthest_camera.txt": "b26cc0df02ab27a502ef381dc7a314baa137b393e4db6291efe0481030f0fa42",
+    "data/templates/left_right.txt": "02db5aadfa5260c528372fc7acde6c0b9b6029cc4eed23fb5ab55d248f062dd9",
+    "data/templates/nearest_object.txt": "7d17c119aabcf4c8550a594297dc4c068ecb6bd0691345f00b71a11dec9d62c1",
+    "data/templates/relative_depth.txt": "f2d5ad8f5a9e2aa83397e2f4501cc2a15d29e8c28c1356b46f1de75f95dde514",
+    "data/vocab/synonyms.csv": "49fc2708e86211993451cf5c6d1fb5bd40b7fb17f7eadcc434c00e95635982e0",
+    "data/vocab_arkit/canonical_objects.csv": "89dd3ac399458dd7db4b82806963e83562ce6f06446397cab43af785e7804183",
+    "data/vocab_arkit/concept_typical_area.json": "9f9af898dad5336f15a7307139e3a7322955d737c7e1dc6eb8fbda9ef73cf073",
+    "dataset/dataset_creation/v2/assign_split_arkit.py": "ae1f6dd3d326bbf785db67b110eb1154813a5c378ed254d9fce37ac7718118af",
+    "dataset/dataset_creation/v2/balance.py": "7d40f2b46a1da0e00fd5a975c2685dc341d59eae38b5a626cae9fe4a38651041",
+    "dataset/dataset_creation/v2/build_index_arkit.py": "5a29ffba3e27603c00ee7883c6b2b674b1ba932ac69f9a45a909bac5431e8827",
+    "dataset/dataset_creation/v2/build_release.py": "8c8bb987ce7826342b9f506aab93db59520cef8edc79b993af8dd7759efe819f",
+    "dataset/dataset_creation/v2/depth_utils.py": "2b654acd9fc61a9e43827bc77b1b03782ac2322753c824203699c0da36c76141",
+    "dataset/dataset_creation/v2/existence.py": "3bfa0503e8d08721dfe5ef76e4b1a15754c69d909ea291a3da0aca287990caf3",
+    "dataset/dataset_creation/v2/generator_common.py": "cf993012187d2d00549e492408d1a4cd648beb17cb3ce71b09ecd9598ca901d9",
+    "dataset/dataset_creation/v2/identify_superlative.py": "06cb64244c0778a92d12fcc900052a74eba50d2be122f2511e220890e125e983",
+    "dataset/dataset_creation/v2/left_right.py": "35a42920ea0629e69426c75d9ea0fc5f0df127b01f8451fc2cf93fc4d1301d31",
+    "dataset/dataset_creation/v2/nearest_object.py": "134f039728af68d31e8528cd413aa055de55c167389ba7ce5c7ea69ba4cd0fdf",
+    "dataset/dataset_creation/v2/question_only.py": "088b19d238d42e5bdd72a5ff38187578e9da02831b907549d0606f749c8dd888",
+    "dataset/dataset_creation/v2/relative_depth.py": "50aff8d7468ed58b107f79086f27b4987af8ec8fa0a2fddc639f62aa1490004a",
+    "dataset/dataset_creation/v2/scene_objects.py": "116f58ef5a67821d73fc3188f40935219f0c18423336f22295041f0aadf4e9c0",
+    "dataset/dataset_creation/v2/vocab.py": "a6460c0fb3e4f6f2c7701396590fd2715e613dc111162243ff6358ac2247e110"
+  },
+  "version": "v1.2"
+}

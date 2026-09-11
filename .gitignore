@@ -79,3 +79,4 @@ runs/pilot/B3_depth_4090_profile/
 # yet confirmatory evidence (arkitscenes_plan.md §6); the pipeline that
 # produced them (run_phase5.sh) lives here too, kept local for now.
 runs/kd_arkit/
+runs/kd_arkit_v12/

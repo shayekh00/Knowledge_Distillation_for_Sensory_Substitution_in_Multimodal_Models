@@ -149,3 +149,38 @@ def test_object_record_matches_sun_rgbd_schema_keys():
         "touches_border",
     }
     assert expected_keys.issubset(record.keys())
+
+
+# --------------------------------------------------- pose convention (2026-09-11)
+
+def test_non_identity_pose_uses_the_world_to_camera_convention():
+    """Regression for the mis-projection every other test in this module is
+    blind to.
+
+    `.traj`'s rotation column is **world-to-camera** (`p_cam = R @ p_world + t`),
+    per Apple's own `TrajStringToMatrix`, which names it `r_w_to_p` and has to
+    invert it to obtain a camera pose. `world_to_camera` used to apply the
+    transpose form `R^T @ (p_world - t)` instead, which silently mis-placed
+    every projected box on real data (51 vs 92 corners landing in-frame on
+    Validation/42898862) — but is indistinguishable from the correct form when
+    R is the identity and t is zero, which is exactly what every test above
+    uses.
+
+    Construction: a 90-degree yaw puts the world point (1, 0, 0) on the camera's
+    optical axis at 2 m, so it must land exactly on the principal point. Under
+    the old transpose form the same point lands *behind* the camera (z = -2)
+    and the object would be dropped entirely — so this test cannot pass under
+    both conventions.
+    """
+    yaw_90 = np.array([[0.0, -1.0, 0.0],
+                       [1.0, 0.0, 0.0],
+                       [0.0, 0.0, 1.0]])
+    translation = np.array([0.0, -1.0, 2.0])
+    box = make_box(centroid=(1.0, 0.0, 0.0), half_size=0.25)
+
+    record = project_and_score_object(
+        box, yaw_90, translation, K, WIDTH, HEIGHT, uniform_depth(2.0))
+
+    assert record is not None, "box projected behind the camera: transpose convention is back"
+    assert record["centroid_x"] == pytest.approx(50.0, abs=1.0)
+    assert record["centroid_y"] == pytest.approx(50.0, abs=1.0)

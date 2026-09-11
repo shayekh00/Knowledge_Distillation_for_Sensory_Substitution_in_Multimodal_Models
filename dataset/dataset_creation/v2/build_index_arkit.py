@@ -95,7 +95,7 @@ def sample_frame_timestamps(intrinsics_dir: str, frames_per_scan: int) -> list:
     return [f[prefix_len:-len(".pincam")] for f in chosen]
 
 
-def project_and_score_object(obj: dict, R_cam_to_world: np.ndarray, t_cam_in_world: np.ndarray,
+def project_and_score_object(obj: dict, R_world_to_cam: np.ndarray, t_world_to_cam: np.ndarray,
                               K: np.ndarray, width: int, height: int,
                               depth_m: np.ndarray) -> dict | None:
     """Returns a fully-populated object record, or None if the object is not
@@ -103,7 +103,7 @@ def project_and_score_object(obj: dict, R_cam_to_world: np.ndarray, t_cam_in_wor
     obb = obj["segments"]["obbAligned"]
     corners_world = obb_corners_world(
         np.array(obb["centroid"]), np.array(obb["axesLengths"]), np.array(obb["normalizedAxes"]))
-    corners_camera = world_to_camera(corners_world, R_cam_to_world, t_cam_in_world)
+    corners_camera = world_to_camera(corners_world, R_world_to_cam, t_world_to_cam)
 
     if np.all(corners_camera[:, 2] <= 0):
         return None
@@ -180,7 +180,7 @@ def process_one_frame(video_id: str, frame_timestamp: str, frames_dir: str,
         drop_rows.append({"image_id": image_id, "object_index": None, "raw_name": None,
                           "reason_code": DROP_REASON["NO_POSE"], "detail": frame_timestamp})
         return None
-    R_cam_to_world, t_cam_in_world = poses[nearest_pose_ts]
+    R_world_to_cam, t_world_to_cam = poses[nearest_pose_ts]
 
     K, width, height = load_intrinsics_pincam(intrinsics_path)
     with Image.open(rgb_path) as rgb_image:
@@ -190,7 +190,7 @@ def process_one_frame(video_id: str, frame_timestamp: str, frames_dir: str,
     object_records = []
     for object_index, obj in enumerate(annotation["data"]):
         record = project_and_score_object(
-            obj, R_cam_to_world, t_cam_in_world, K, real_width, real_height, depth_m)
+            obj, R_world_to_cam, t_world_to_cam, K, real_width, real_height, depth_m)
         if record is None:
             continue  # not visible in this frame: omitted, see module docstring
         record["object_index"] = object_index

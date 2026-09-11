@@ -1,11 +1,11 @@
 {
   "dataset": "arkitscenes",
-  "total_object_instances": 1868,
+  "total_object_instances": 6732,
   "unique_normalized_names": 19,
   "final_canonical_concepts": 17,
-  "from_target_class_only": 12,
+  "from_target_class_only": 5,
   "from_frequency_only": 0,
-  "from_both": 5,
+  "from_both": 12,
   "excluded_placeholder_concepts": [
     "object",
     "unknown"

@@ -44,9 +44,14 @@ def load_intrinsics_pincam(path: str) -> tuple[np.ndarray, int, int]:
 
 def load_traj(path: str) -> dict:
     """.traj: one line per frame, `timestamp rx ry rz tx ty tz` (axis-angle
-    radians, translation metres). Returns {timestamp_str: (R, t)} where R
-    rotates a world-frame vector into the world's own basis as ARKit stored
-    it (camera-to-world orientation) and t is the camera's world position."""
+    radians, translation metres). Returns {timestamp_str: (R, t)}.
+
+    `R`/`t` are the **world-to-camera** transform (`p_cam = R @ p_world + t`),
+    matching what Apple's own `TrajStringToMatrix` calls `r_w_to_p`/`t_w_to_p`
+    before it inverts them. The docstring here previously claimed the opposite
+    (camera-to-world); that error propagated into `world_to_camera` and
+    silently mis-projected every ARKitScenes box — see that function's own
+    note, corrected 2026-09-11."""
     poses = {}
     with open(path) as handle:
         for line in handle:
@@ -61,13 +66,32 @@ def load_traj(path: str) -> dict:
     return poses
 
 
-def world_to_camera(points_world: np.ndarray, R_cam_to_world: np.ndarray,
-                    t_cam_in_world: np.ndarray) -> np.ndarray:
-    """`.traj` stores the camera's own pose in world frame (camera-to-world):
-    a point fixed to the camera at local coords p transforms to world as
-    `R @ p + t`. To go the other way (world point -> camera-frame
-    coordinates), invert: `R^T @ (p_world - t)`."""
-    return (R_cam_to_world.T @ (points_world - t_cam_in_world).T).T
+def world_to_camera(points_world: np.ndarray, R_world_to_cam: np.ndarray,
+                    t_world_to_cam: np.ndarray) -> np.ndarray:
+    """World point -> camera-frame coordinates: `R @ p_world + t`.
+
+    **Corrected 2026-09-11.** This previously read `R^T @ (p_world - t)`, on
+    the docstring's claim that `.traj`'s rotation column is a *camera-to-world*
+    pose. It is not. Apple's own loader builds the very same matrix from the
+    same angle-axis column and names it `r_w_to_p` — world-to-phone — then
+    assembles `extrinsics = [R|t]` and only reaches camera-to-world by
+    inverting the whole 4x4 (`Rt = np.linalg.inv(extrinsics)`,
+    `ARKitScenes/threedod/benchmark_scripts/utils/tenFpsDataLoader.py`
+    `TrajStringToMatrix`). So `R` here is already world-to-camera and must be
+    applied directly, not transposed.
+
+    Measured on a real frame (Validation/42898862, ts 196391.024, 32 annotated
+    boxes) the old form put 51 of the projected corners inside the image and
+    left every object partially clipped against x=0; the corrected form puts
+    92 inside with objects landing cleanly 8-of-8, and the rendered hulls sit
+    on the actual furniture instead of piling into a strip down the left edge.
+
+    Not caught earlier because every test in
+    `dataset/dataset_creation/v2/tests/test_build_index_arkit.py` places the
+    camera at the world origin with identity rotation, where `R^T @ (p - t)`
+    and `R @ p + t` are the same function — see that module's own docstring.
+    """
+    return (R_world_to_cam @ points_world.T).T + t_world_to_cam
 
 
 def obb_corners_world(centroid: np.ndarray, axes_lengths: np.ndarray,
@@ -128,7 +152,7 @@ def check_one_scan(scan_dir: str, video_id: str) -> dict:
         pose_ts = nearest_timestamp(pose_timestamps, float(frame_timestamp))
         if abs(float(pose_ts) - float(frame_timestamp)) > 0.05:
             continue  # no close-enough pose for this frame; skip rather than misattribute
-        R_cam_to_world, t_cam_in_world = poses[pose_ts]
+        R_world_to_cam, t_world_to_cam = poses[pose_ts]
 
         depth_path = os.path.join(depth_dir, f"{video_id}_{frame_timestamp}.png")
         if not os.path.isfile(depth_path):
@@ -141,7 +165,7 @@ def check_one_scan(scan_dir: str, video_id: str) -> dict:
             axes_lengths = np.array(obb["axesLengths"])
             normalized_axes = np.array(obb["normalizedAxes"])
             corners_world = obb_corners_world(centroid, axes_lengths, normalized_axes)
-            corners_camera = world_to_camera(corners_world, R_cam_to_world, t_cam_in_world)
+            corners_camera = world_to_camera(corners_world, R_world_to_cam, t_world_to_cam)
 
             if np.all(corners_camera[:, 2] <= 0):
                 continue  # wholly behind the camera
