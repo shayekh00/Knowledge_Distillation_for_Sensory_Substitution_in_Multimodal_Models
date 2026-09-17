@@ -223,7 +223,8 @@ def snap_to_answer_space(prediction: str, answer_space: str, question_type: str,
 
 def score_predictions(gold: pd.DataFrame, predictions: pd.DataFrame,
                       synonym_map: dict, canonical_vocab: dict,
-                      constrained: bool = False) -> list[TypeScore]:
+                      constrained: bool = False,
+                      closed_types: tuple[str, ...] = CLOSED_TYPES) -> list[TypeScore]:
     """Per-type exact-match accuracy, and macro-F1 for the closed types.
 
     An item with no prediction counts as wrong rather than being dropped:
@@ -248,7 +249,7 @@ def score_predictions(gold: pd.DataFrame, predictions: pd.DataFrame,
             is_correct = has_prediction and answers_agree(
                 prediction, row["answer"], question_type, synonym_map, canonical_vocab)
             correct += int(is_correct)
-            if question_type in CLOSED_TYPES:
+            if question_type in closed_types:
                 gold_labels.append(target_label(question_type, row))
                 # A prediction that is wrong or absent still needs a label for
                 # F1; mapping it to the gold label's complement would fake a
@@ -266,7 +267,7 @@ def score_predictions(gold: pd.DataFrame, predictions: pd.DataFrame,
             # defines, so the <invalid> sentinel is never itself scored.
             macro_f1=(float(f1_score(gold_labels, predicted_labels,
                                      labels=sorted(set(gold_labels)), average="macro",
-                                     zero_division=0)) if question_type in CLOSED_TYPES else None),
+                                     zero_division=0)) if question_type in closed_types else None),
         ))
     return scores
 
@@ -477,6 +478,10 @@ def main() -> None:
                         "'washer') out-of-vocabulary. synonyms.csv is always read "
                         "from data/vocab/ regardless — it is shared across datasets "
                         "(build_vocab.py's own --dataset flag does the same).")
+    parser.add_argument("--synonyms-dir", default=VOCAB_DIR,
+                        help="Directory holding synonyms.csv; use data/vocab_m3fd for M³FD.")
+    parser.add_argument("--dataset", choices=["sunrgbd", "arkitscenes", "m3fd"], default="sunrgbd",
+                        help="Sets M³FD's four declared answer spaces as closed for macro-F1.")
     parser.add_argument("--constrained", action="store_true",
                         help="Snap each prediction onto its row's answer space.")
     parser.add_argument("--baselines-only", action="store_true")
@@ -489,7 +494,7 @@ def main() -> None:
     if not args.predictions and not args.baselines_only:
         raise SystemExit("Pass --predictions, or --baselines-only for the baseline table.")
 
-    synonym_map = load_synonyms(os.path.join(VOCAB_DIR, "synonyms.csv"))
+    synonym_map = load_synonyms(os.path.join(args.synonyms_dir, "synonyms.csv"))
     canonical_vocab = load_canonical_vocab(
         os.path.join(args.canonical_objects_dir, "canonical_objects.csv"))
     gold = load_release_split(args.split, args.release_dir)
@@ -509,8 +514,9 @@ def main() -> None:
             examples = ", ".join(str(item) for item in id_report["unexpected_examples"])
             print(f"warning: {id_report['n_unexpected']} predicted question_id(s) are not in "
                   f"the '{args.split}' split and were ignored: {examples}", file=sys.stderr)
+        closed_types = tuple(sorted(gold["question_type"].unique())) if args.dataset == "m3fd" else CLOSED_TYPES
         scores = score_predictions(gold, predictions, synonym_map, canonical_vocab,
-                                   args.constrained)
+                                   args.constrained, closed_types)
         check_reported_aggregates(scores, macro_accuracy(scores))
 
     report = render_markdown(scores, baselines, args.split, args.constrained, args.model_name)

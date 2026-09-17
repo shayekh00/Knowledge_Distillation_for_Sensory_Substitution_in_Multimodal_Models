@@ -52,13 +52,14 @@ from distillation.losses import IGNORE_INDEX, masked_cross_entropy  # noqa: E402
 PROMPT_SUFFIX = "Answer in one or two words. No explanation."
 
 
-def load_rows(split: str, limit: int | None = None, csv_path: str | None = None) -> list:
+def load_rows(split: str, limit: int | None = None, csv_path: str | None = None,
+              dataset: str = "sunrgbd") -> list:
     """`csv_path` overrides the frozen release CSV for this split — used only by
     ladder-external analyses (e.g. a leave-one-source-out split) that must read
     a derived, non-frozen file instead of `release/VQA-SUNRGBD-v2/rule_based/`,
     which G1 requires stay untouched."""
-    path = csv_path or os.path.join(PROJECT_ROOT, "release", "VQA-SUNRGBD-v2",
-                        "rule_based", f"{split}.csv")
+    release_name = "VQA-M3FD-Thermal-v1" if dataset == "m3fd" else "VQA-SUNRGBD-v2"
+    path = csv_path or os.path.join(PROJECT_ROOT, "release", release_name, "rule_based", f"{split}.csv")
     with open(path, encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
     return rows[:limit] if limit else rows
@@ -74,6 +75,11 @@ def build_image(row, modality: str, representation: str, dataset: str = "sunrgbd
     §6 Phase 5's prerequisite check, `tests/test_depth_input.py`)."""
     from PIL import Image
     dataset_dir = os.path.join(PROJECT_ROOT, "dataset")
+    if modality == "thermal":
+        if dataset != "m3fd":
+            raise ValueError("thermal modality requires --dataset m3fd")
+        # This branch intentionally names neither rgb_path nor annotation_path.
+        return Image.open(os.path.join(dataset_dir, row["thermal_path"])).convert("RGB")
     if modality == "rgb":
         return Image.open(os.path.join(dataset_dir, row["image_path"])).convert("RGB")
     decode = decode_arkit_depth if dataset == "arkitscenes" else decode_metric_depth
@@ -160,8 +166,8 @@ def main() -> None:
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--model", default="Qwen/Qwen3.5-0.8B")
     parser.add_argument("--recipe", default="B3")
-    parser.add_argument("--modality", choices=["depth", "rgb"], default="depth")
-    parser.add_argument("--dataset", choices=["sunrgbd", "arkitscenes"], default="sunrgbd",
+    parser.add_argument("--modality", choices=["depth", "rgb", "thermal"], default="depth")
+    parser.add_argument("--dataset", choices=["sunrgbd", "arkitscenes", "m3fd"], default="sunrgbd",
                         help="Picks the depth decoder for --modality depth (irrelevant "
                              "for rgb): sunrgbd's bit-rotation vs. arkitscenes' plain-"
                              "millimetre PNGs (arkitscenes_plan.md §6 Phase 5). Does not "
@@ -235,7 +241,7 @@ def main() -> None:
     random.seed(args.seed)
     torch.manual_seed(args.seed)
 
-    rows = load_rows("train", args.limit, csv_path=args.train_csv)
+    rows = load_rows("train", args.limit, csv_path=args.train_csv, dataset=args.dataset)
     print(f"{len(rows)} training rows; recipe={args.recipe}; modality={args.modality}",
           flush=True)
 
@@ -262,7 +268,7 @@ def main() -> None:
 
     # Precomputed once: images do not change across epochs, and re-decoding
     # them every epoch's validation pass would be pure waste.
-    val_rows = load_rows("val", args.val_limit, csv_path=args.val_csv)
+    val_rows = load_rows("val", args.val_limit, csv_path=args.val_csv, dataset=args.dataset)
     val_images = [build_image(row, args.modality, args.representation, args.dataset) for row in val_rows]
     stopper = EarlyStopper(max_epochs=args.epochs, patience=args.patience)
 
@@ -335,6 +341,9 @@ def main() -> None:
         score_kwargs = {"release_dir": args.val_release_dir} if args.val_release_dir else {}
         if args.dataset == "arkitscenes":
             score_kwargs["canonical_objects_dir"] = os.path.join(PROJECT_ROOT, "data", "vocab_arkit")
+        elif args.dataset == "m3fd":
+            score_kwargs["canonical_objects_dir"] = os.path.join(PROJECT_ROOT, "data", "vocab_m3fd")
+            score_kwargs.setdefault("release_dir", os.path.join(PROJECT_ROOT, "release", "VQA-M3FD-Thermal-v1", "rule_based"))
         val_macro = score_val_macro(predictions, split="val", **score_kwargs)
         epoch_dir = os.path.join(args.out, f"epoch_{epoch}")
         os.makedirs(epoch_dir, exist_ok=True)

@@ -1,0 +1,7 @@
+concept,display_name,category,is_structural
+person,person,traffic,0
+car,car,traffic,0
+bus,bus,traffic,0
+motorcycle,motorcycle,traffic,0
+truck,truck,traffic,0
+lamp,lamp,street_furniture,0
