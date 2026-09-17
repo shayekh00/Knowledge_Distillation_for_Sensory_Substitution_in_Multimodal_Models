@@ -1,0 +1,287 @@
+{
+  "resources": {
+    "recipe": "JKD",
+    "model": "Qwen/Qwen3.5-0.8B",
+    "teacher": "Qwen/Qwen3.5-9B",
+    "modality": "depth",
+    "seed": 17,
+    "epochs": 10,
+    "examples_seen": 91668,
+    "examples_skipped": 0,
+    "optimizer_steps": 5730,
+    "learning_rate": 2e-05,
+    "accumulation": 4,
+    "batch_size": 4,
+    "effective_batch": 16,
+    "gradient_checkpointing": false,
+    "lora_rank": 16,
+    "elapsed_minutes": 171.25,
+    "examples_per_second": 8.922,
+    "peak_vram_gb": 17.97,
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "pilot": false,
+    "cache_digest": "0462bee1d6f00444",
+    "distillation_mode": "xtoken",
+    "projected_minutes_full_train_epoch": 28.5,
+    "max_epochs": 10,
+    "patience": 2,
+    "epochs_run": 6,
+    "best_epoch": 3,
+    "best_val_macro": 0.5473725691843363,
+    "best_reading_epoch": null,
+    "stopped_on": "patience",
+    "stage": "joint",
+    "parent_checkpoint": null
+  },
+  "recipe_config": {
+    "recipe": "JKD",
+    "stage": "joint",
+    "seed": 17,
+    "use_ce": true,
+    "kd_objective": "xtoken",
+    "feature_objective": "none",
+    "use_loca": false,
+    "lambda_ce": 1.0,
+    "lambda_kd": 1.0,
+    "lambda_feature": 1.0,
+    "kd_temperature": 1.0,
+    "contrastive_temperature": 0.07,
+    "loca_alpha": 0.8,
+    "top_k": 4096,
+    "xtoken_mapping_hash": null,
+    "trainable_modules": [
+      "language_attention",
+      "vision_attention"
+    ],
+    "lora_rank": 16,
+    "pilot": false,
+    "parent_checkpoint": null,
+    "notes": ""
+  },
+  "history": [
+    {
+      "step": 250,
+      "examples": 4000,
+      "ce": 0.9849112279415131,
+      "kd": 0.6353222099337726,
+      "total": 1.6202334399223328,
+      "examples_per_second": 10.176880519818246,
+      "peak_vram_gb": 17.390726656
+    },
+    {
+      "step": 500,
+      "examples": 8000,
+      "ce": 0.8568461415246129,
+      "kd": 0.511913185082376,
+      "total": 1.3687593270540237,
+      "examples_per_second": 10.185315124534137,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 750,
+      "examples": 12000,
+      "ce": 0.7953763694241643,
+      "kd": 0.45979604442976413,
+      "total": 1.2551724146604537,
+      "examples_per_second": 10.179458418691649,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 1000,
+      "examples": 16002,
+      "ce": 0.7895214707478062,
+      "kd": 0.458424316903392,
+      "total": 1.2479457875023354,
+      "examples_per_second": 9.000381531894078,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 1250,
+      "examples": 20002,
+      "ce": 0.7747633066028357,
+      "kd": 0.44102142870239913,
+      "total": 1.215784736379981,
+      "examples_per_second": 9.208754350820149,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 1500,
+      "examples": 24002,
+      "ce": 0.7431754913404583,
+      "kd": 0.421869328038767,
+      "total": 1.1650448206067086,
+      "examples_per_second": 9.354657127711345,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 1750,
+      "examples": 28002,
+      "ce": 0.7303257332965731,
+      "kd": 0.4097865327168256,
+      "total": 1.1401122653484344,
+      "examples_per_second": 9.457761180782166,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 2000,
+      "examples": 32004,
+      "ce": 0.7229454339808458,
+      "kd": 0.40239302027639334,
+      "total": 1.1253384544954195,
+      "examples_per_second": 8.99073622169242,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 2250,
+      "examples": 36004,
+      "ce": 0.7194074568897486,
+      "kd": 0.40765355487167837,
+      "total": 1.127061012789607,
+      "examples_per_second": 9.106040219845818,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 2500,
+      "examples": 40004,
+      "ce": 0.6927142494171857,
+      "kd": 0.3813711100835353,
+      "total": 1.0740853610783816,
+      "examples_per_second": 9.198190818091712,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 2750,
+      "examples": 44004,
+      "ce": 0.6835224347859621,
+      "kd": 0.3817427754998207,
+      "total": 1.0652652080655098,
+      "examples_per_second": 9.27451743055319,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 3000,
+      "examples": 48006,
+      "ce": 0.6877687142363617,
+      "kd": 0.3780622529377649,
+      "total": 1.0658309673304325,
+      "examples_per_second": 8.981710231850338,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 3250,
+      "examples": 52006,
+      "ce": 0.6743670492842794,
+      "kd": 0.3810476821660995,
+      "total": 1.0554147337675095,
+      "examples_per_second": 9.060516653169218,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 3500,
+      "examples": 56006,
+      "ce": 0.654177859917283,
+      "kd": 0.35630772439949215,
+      "total": 1.0104855824485421,
+      "examples_per_second": 9.128900596183776,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 3750,
+      "examples": 60006,
+      "ce": 0.6555183855555952,
+      "kd": 0.3628900087401271,
+      "total": 1.0184083942845463,
+      "examples_per_second": 9.189022920690718,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 4001,
+      "examples": 64008,
+      "ce": 0.6497467346787155,
+      "kd": 0.35681834774413757,
+      "total": 1.0065650840798814,
+      "examples_per_second": 8.975542177549615,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 4251,
+      "examples": 68008,
+      "ce": 0.6439397424980998,
+      "kd": 0.36811435749940574,
+      "total": 1.0120541009306907,
+      "examples_per_second": 9.036186960914542,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 4501,
+      "examples": 72008,
+      "ce": 0.6145124281048775,
+      "kd": 0.33957720684818926,
+      "total": 0.9540896336138248,
+      "examples_per_second": 9.090608959790224,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 4751,
+      "examples": 76008,
+      "ce": 0.6365998755283654,
+      "kd": 0.35335504940431567,
+      "total": 0.9899549233391881,
+      "examples_per_second": 9.13967620371553,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 5001,
+      "examples": 80010,
+      "ce": 0.6174030914664507,
+      "kd": 0.3397269127936987,
+      "total": 0.9571300022951611,
+      "examples_per_second": 8.972529598277188,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 5251,
+      "examples": 84010,
+      "ce": 0.6211437452696263,
+      "kd": 0.35093887440674004,
+      "total": 0.9720826206952333,
+      "examples_per_second": 9.021472183025146,
+      "peak_vram_gb": 17.967492096
+    },
+    {
+      "step": 5501,
+      "examples": 88010,
+      "ce": 0.5854347529448569,
+      "kd": 0.33101416073925793,
+      "total": 0.9164489123523235,
+      "examples_per_second": 9.065881170913018,
+      "peak_vram_gb": 17.967492096
+    }
+  ],
+  "val_history": [
+    {
+      "epoch": 0,
+      "val_macro": 0.5065940130399837
+    },
+    {
+      "epoch": 1,
+      "val_macro": 0.5322160826948057
+    },
+    {
+      "epoch": 2,
+      "val_macro": 0.5467626459104602
+    },
+    {
+      "epoch": 3,
+      "val_macro": 0.5473725691843363
+    },
+    {
+      "epoch": 4,
+      "val_macro": 0.5431654111113955
+    },
+    {
+      "epoch": 5,
+      "val_macro": 0.5466786258204142
+    }
+  ]
+}

@@ -512,6 +512,47 @@ def recipe_library(top_k: int = 4096) -> dict:
         "D7r": RecipeConfig(recipe="D7r", stage="joint", use_ce=True, kd_objective="xtoken",
                             use_loca=False, feature_objective="contrastive", top_k=top_k,
                             trainable_modules=("language_attention", "vision_attention")),
+        # ------------------------------------------------------------------
+        # The J grid: D7r's 2x2 attribution ablation (experiment_protocol.md
+        # §13, 2026-09-16).
+        #
+        # D7r's headline is +11.8 test points over B3 — but B3 (and X2, and
+        # every other recorded control) trains `language_attention` only,
+        # while D7r trains `language_attention` **and** `vision_attention`.
+        # That confounds the method with the size of its trainable surface: a
+        # reader cannot tell how much of the 11.8 is distillation and how much
+        # is simply more adaptable parameters. These three rows hold D7r's
+        # surface (and stage, seed, data, prompt, epoch/patience policy, LoRA
+        # rank and learning rate) fixed and toggle only the two ingredients
+        # the method claims:
+        #
+        #     feature alignment   raw output KD   row
+        #     no                  no              J0      (matched CE control)
+        #     no                  yes             JKD     ("J-KD")
+        #     yes                 no              JFEAT   ("J-Feature")
+        #     yes                 yes             D7r     (the full method)
+        #
+        # Ids are hyphen-free because `cache.RUN_ID_PATTERN` allows only
+        # `[A-Za-z0-9]+` in a run id's recipe field; the protocol's table
+        # names J-KD / J-Feature map onto JKD / JFEAT.
+        #
+        # J0 is *not* a duplicate of B3. B3 is "depth CE on the permitted
+        # language surface"; J0 is "depth CE on D7r's surface". Both are
+        # legitimate CE controls and they answer different questions, so
+        # neither replaces the other.
+        "J0": RecipeConfig(recipe="J0", stage="joint", use_ce=True,
+                           trainable_modules=("language_attention", "vision_attention")),
+        "JKD": RecipeConfig(recipe="JKD", stage="joint", use_ce=True, kd_objective="xtoken",
+                            use_loca=False, top_k=top_k,
+                            trainable_modules=("language_attention", "vision_attention")),
+        # `stage="joint"` matters here for the same reason it does on D7/D7r:
+        # `is_two_stage()` would otherwise force this row through F->S2
+        # chaining, which would freeze vision in the answer stage and stop
+        # being surface-matched to D7r — the exact confound this grid exists
+        # to remove.
+        "JFEAT": RecipeConfig(recipe="JFEAT", stage="joint", use_ce=True,
+                              feature_objective="contrastive",
+                              trainable_modules=("language_attention", "vision_attention")),
         "D8": RecipeConfig(recipe="D8", stage="S2", use_ce=True, kd_objective="xtoken",
                            use_loca=True, feature_objective="cosine", top_k=top_k),
         # §8.1's strict label-access rule (no CE, no LoCa, no gold prefixes) is

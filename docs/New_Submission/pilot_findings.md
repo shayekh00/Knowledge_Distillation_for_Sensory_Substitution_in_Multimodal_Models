@@ -786,6 +786,95 @@ direction, which is weak corroboration but not a substitute for a second seed.
 
 ---
 
+## 17. The J grid: separating D7r's method from D7r's trainable surface
+
+D7r's headline was +11.8 test points over B3. But B3 (and every other recorded
+control — X2, D2, D4–D9) trains `language_attention` only, while D7r trains
+`language_attention` **and** `vision_attention` — 96 LoRA tensors against B3's
+48. That is a real confound, not a stylistic gap: §4 obliges "identical
+trainable-module masks," and B3 does not satisfy it against D7r. The J grid
+(`experiment_protocol.md` §8.0/§13, 2026-09-16) is a matched 2×2 built to
+separate the two effects, run under conditions identical to D7r in every
+respect except which loss terms are summed:
+
+| Row | Feature align | Raw output KD | Best epoch | Val macro | Test macro |
+|---|---|---|---:|---:|---:|
+| `J0` | no | no | 5 (of 8) | 54.51% | **53.06%** |
+| `JKD` | no | yes | 3 (of 6) | 54.74% | **54.05%** |
+| `JFEAT` | yes | no | 2 (of 5) | 54.49% | **53.23%** |
+| `D7r` | yes | yes | 6 (of 9) | 57.06% | **55.39%** |
+
+All four share the identical 96-tensor LoRA surface (verified against the
+saved adapters, not merely declared), rank 16/alpha 32/dropout 0.05, seed 17,
+shuffled data order (confirmed by bit-identical step-1 CE across J0/JKD/JFEAT:
+2.167545258998871), the `terse` prompt, lr 2e-5, batch 4/effective-batch 16,
+and the 10-epoch/patience-2 policy. J0/JFEAT never touch a KD term; JKD/D7r
+read the same `topk_logits_0462bee1d6f00444` cache; JFEAT/D7r read the same
+`pooled_features_683d9c59eac4a6d9` cache and negative bank (255 distinct
+scenes).
+
+**The four contrasts this grid was built to answer** (paired cluster bootstrap
+by scene group, `sequence_id`, 10,000 replicates, test split, `n=12,463`
+items / 3,401 groups):
+
+| Contrast | Diff | 95% CI | Clears §5.1's 2-pt bar? |
+|---|---:|---|---|
+| **D7r − J0** (complete method vs. matched CE) | **+2.32 pts** | [+1.63, +3.02] | Yes, at the point estimate — but the interval's lower bound (1.63) sits *under* the bar |
+| **D7r − JFEAT** (does output KD add value after alignment?) | +2.16 pts | [+1.53, +2.79] | Yes |
+| **D7r − JKD** (does alignment add value beyond output KD?) | +1.34 pts | [+0.75, +1.91] | **No** |
+| J0 − B3 (surface effect alone, both CE-only) | +9.46 pts | [+8.58, +10.38] | Yes |
+
+**Each ingredient's own effect, isolated against the matched CE control:**
+
+| Contrast | Diff | 95% CI |
+|---|---:|---|
+| JKD − J0 (raw KD alone) | +0.99 pt | [+0.33, +1.64] |
+| JFEAT − J0 (feature alignment alone) | +0.17 pt | [−0.50, +0.82] (**includes zero**) |
+| JKD − JFEAT | +0.82 pt | [+0.21, +1.46] |
+
+**Reading these together, plainly:**
+
+1. **Roughly 80% of the original +11.8-point headline was the trainable
+   surface, not distillation.** The properly matched effect size is D7r − J0
+   = +2.32 points — real (its interval excludes zero) but an order of
+   magnitude smaller than the confounded B3 comparison implied. `runs/kd/j_grid/`'s
+   own numbers make this unambiguous: J0 alone (CE, no teacher signal at all)
+   already scores 53.06%, 9.46 points above B3, purely from the extra vision
+   LoRA surface.
+2. **Feature alignment shows no detectable independent effect.** JFEAT vs. J0
+   is statistically indistinguishable from the matched CE control (CI
+   [−0.50, +0.82], includes zero) — the same null result §12 already
+   anticipates for a feature-transfer variant that "matches" its baseline.
+3. **Output KD carries essentially the entire measured gain.** D7r − JFEAT
+   (+2.16, clears the bar) is nearly identical in size to D7r − J0 (+2.32) —
+   adding output KD on top of alignment recovers almost all of the complete
+   method's advantage over a bare CE baseline, which is only possible if
+   alignment itself was contributing very little.
+4. **Feature alignment's marginal contribution once output KD is already
+   present (D7r − JKD, +1.34 pts) is statistically real (CI excludes zero) but
+   falls below this study's own 2-point practical bar**, the same bar used
+   everywhere else in this protocol to separate a measurable effect from one
+   that merits a headline claim. Combined with point 2 (JFEAT ≈ J0) and the
+   shape of point 3, three independent readings of the same question all
+   point the same way: **feature alignment is not earning an equal billing
+   with output KD in the method's central claim**, whatever a bare
+   CI-excludes-zero reading of the D7r − JKD contrast alone would suggest.
+   The §13 amendment that added this grid predeclared a rule keyed to "within
+   noise," worded before this ambiguity was visible; it is flagged rather than
+   silently resolved — see `experiment_protocol.md` §13.1.
+
+**What this changes, and what it doesn't.** H1 (§1) is still supported: a
+properly matched depth-only CE baseline is still beaten, with a confidence
+interval that excludes zero. What changes is the magnitude (2.3 points, not
+11.8) and the internal story (output KD does the real work; contrastive
+feature alignment's role is marginal at best, on three independent measures).
+Neither of §12's "beats only zero-shot" or "CE matches the full pipeline"
+outcome rows is triggered — the honest middle case the table doesn't
+explicitly name is the one that occurred: a real but much smaller gain, with
+one of the method's two claimed ingredients not clearly pulling its weight.
+
+---
+
 ## Open
 
 *Updated 2026-09-07 after the multi-epoch CE-vs-KD result (§10.2).*

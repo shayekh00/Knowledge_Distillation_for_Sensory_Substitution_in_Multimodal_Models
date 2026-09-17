@@ -422,6 +422,7 @@ def test_contrastive_recipe_requires_a_negative_bank():
 def test_recipe_library_covers_the_matrix_rows():
     library = recipe_library()
     for row in ("B3", "B4", "D0", "D1", "D3", "D4", "D5", "D6", "D7", "D7r", "D8", "D9",
+                "J0", "JKD", "JFEAT",
                 "X0", "X1", "X2", "X3", "X5"):
         assert row in library, f"matrix row {row} missing from the library"
     assert library["X3"].use_ce is False
@@ -439,6 +440,59 @@ def test_d7r_is_d7s_raw_kd_twin():
     assert d7r.kd_objective == d7.kd_objective
     assert d7.use_loca is True
     assert d7r.use_loca is False
+
+
+def test_j_grid_is_a_matched_2x2_around_d7r():
+    """The J grid answers "is D7r's gain the method, or just a bigger trainable
+    surface?" — which it can only do if the surface, the stage, and every
+    switch *except* the two being toggled are identical to D7r's."""
+    library = recipe_library()
+    grid = {name: library[name] for name in ("J0", "JKD", "JFEAT", "D7r")}
+
+    for name, config in grid.items():
+        assert config.stage == "joint", name
+        assert config.use_ce is True, name
+        assert config.use_loca is False, name
+        assert config.lora_rank == library["D7r"].lora_rank, name
+        # The whole point: every cell trains the same parameters as D7r.
+        assert config.trainable_modules == ("language_attention", "vision_attention"), name
+        # A joint row must never be routed through the F->S2 machinery, which
+        # would freeze vision in the answer stage and break the match.
+        assert config.is_two_stage() is False, name
+
+    # The 2x2 itself: (feature alignment) x (raw output KD).
+    assert (grid["J0"].feature_objective, grid["J0"].kd_objective) == ("none", "none")
+    assert (grid["JKD"].feature_objective, grid["JKD"].kd_objective) == ("none", "xtoken")
+    assert (grid["JFEAT"].feature_objective, grid["JFEAT"].kd_objective) == (
+        "contrastive", "none")
+    assert (grid["D7r"].feature_objective, grid["D7r"].kd_objective) == (
+        "contrastive", "xtoken")
+
+    # Where a term is present it must be the *same* term D7r uses, not a
+    # differently-weighted or differently-tempered variant of it.
+    d7r = grid["D7r"]
+    for name in ("JKD", "D7r"):
+        assert grid[name].top_k == d7r.top_k, name
+        assert grid[name].lambda_kd == d7r.lambda_kd, name
+        assert grid[name].kd_temperature == d7r.kd_temperature, name
+    for name in ("JFEAT", "D7r"):
+        assert grid[name].lambda_feature == d7r.lambda_feature, name
+        assert grid[name].contrastive_temperature == d7r.contrastive_temperature, name
+
+
+def test_j0_is_not_b3_and_is_the_surface_matched_ce_control():
+    """B3 is CE on the language surface; J0 is CE on D7r's surface. They are
+    different controls, and collapsing them is the confound this grid removes."""
+    library = recipe_library()
+    b3, j0 = library["B3"], library["J0"]
+    assert b3.use_ce is j0.use_ce is True
+    assert b3.kd_objective == j0.kd_objective == "none"
+    assert b3.feature_objective == j0.feature_objective == "none"
+    assert "vision_attention" not in b3.trainable_modules
+    assert "vision_attention" in j0.trainable_modules
+    # CE reaches the vision surface through the language model, so unlike a
+    # pooled feature loss this needs no extra objective to be trainable.
+    j0.assert_trainable_surface_can_learn()
 
 
 def test_d7_is_joint_not_two_stage():

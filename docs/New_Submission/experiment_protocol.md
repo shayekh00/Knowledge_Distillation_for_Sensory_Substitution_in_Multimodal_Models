@@ -125,10 +125,36 @@ macro accuracy before the confirmatory test evaluation** — that is, the best
 matched depth-only CE student, not a zero-shot model and not a deliberately
 weakened baseline.
 
+**Amended 2026-09-16 (§13): the comparator set is `{B3, B4, J0}`, and the
+primary comparator is the strongest of them.** B3 and B4 train
+`language_attention` only, while the reported recipe D7r trains
+`language_attention` **and** `vision_attention` — so neither satisfies the
+"identical trainable-module masks" obligation below, and a comparison against
+either credits D7r with whatever its larger trainable surface is worth. `J0`
+(§8.0) is depth CE on D7r's exact surface and is the row that makes the
+obligation true rather than merely declared.
+
+**Resolved 2026-09-17 — the primary comparator is `J0`, by elimination.** B4
+was declared in `recipe_library()` but never run (2026-09-09 changelog row);
+B3 fails the mask-matching obligation (measured: B3's saved adapter has 48
+LoRA tensors, all `language_attention`; D7r's has 96, split evenly
+vision/language). `J0` is the only row in the comparator set that satisfies
+§4's own rule, so it is the primary comparator as a mechanical consequence of
+that rule, not a new choice. **The manuscript's primary reported effect size
+is therefore D7r − J0, not D7r − B3.** Measured: J0 test macro 53.06%; D7r −
+J0 = +2.32 points, 95% CI [+1.63, +3.02] (`runs/kd/confirmatory_recording/
+D7r_vs_J0_test_bootstrap.json`) — excludes zero, clears §5.1's 2-point bar at
+the point estimate, though the interval's own lower bound (1.63) sits under
+that bar. D7r − B3 (+11.8 points) is retained and reported beside it,
+explicitly labelled as the surface-confounded figure it is — not deleted, per
+§7.3's prohibition on silent omission. Full ablation in §8.0/§13 and
+`pilot_findings.md` §17.
+
 | Row | Recipe |
 |---|---|
 | B3 | Depth CE, jointly tuning the permitted vision/projector/language modules |
 | B4 | Depth CE in **both stages**, using the proposed stage schedule and trainable-module masks |
+| J0 | Depth CE on the reported recipe's own trainable surface (vision + language), §8.0 |
 
 B4 exists specifically so that extra optimization and staging cannot be credited
 to distillation.
@@ -335,6 +361,53 @@ teacher-forcing context during distillation.
 | D7r | Joint feature + CE + raw KD *(D7's LoCa-vs-raw twin, added §13 2026-09-10; **replaced D7 as the primary/reported recipe 2026-09-11** — within noise of D7 on val, then 55.4% vs. D7's 54.1% on its own one-shot test pass — §13)* | depth | ✅ | – | ✅ | ✅ | ✅ |
 | D8 | Cosine/MSE feature → S2: CE + LoCa KD | depth | ✅ | ✅ | ✅ | ✅ | ✅ |
 | D9 | F → S2: teacher-prefix raw KD only | depth | ❌ | ❌ | ❌ (teacher-generated) | ✅ | ✅ |
+| J0 | **Matched CE control on D7r's surface** — CE only, vision + language trainable *(§13, 2026-09-16; test 53.1%, +9.5 over B3 from surface alone, §13 2026-09-17)* | depth | ✅ | – | – | – | – |
+| J-KD (`JKD`) | CE + raw KD, vision + language trainable *(§13, 2026-09-16; test 54.1%, D7r−JKD +1.3 fails the 2-pt bar, §13 2026-09-17)* | depth | ✅ | – | ✅ | ✅ | – |
+| J-Feature (`JFEAT`) | CE + contrastive feature alignment, vision + language trainable *(§13, 2026-09-16; test 53.2%, statistically indistinguishable from J0, §13 2026-09-17)* | depth | ✅ | – | – | – | ✅ |
+
+### 8.0 The J grid — D7r's trainable-surface control (added §13, 2026-09-16)
+
+D7r is the only reported recipe that trains **`vision_attention` as well as
+`language_attention`**; B3, X2, and every other recorded single-stage control
+train `language_attention` alone. D7r's headline +11.8 points over B3 therefore
+confounds the method with the size of the surface it was allowed to adapt, and
+§4's "identical trainable-module masks" obligation is not satisfied by that
+pairing. J0/J-KD/J-Feature close it as a 2×2 on D7r's exact surface:
+
+| | **Raw output KD: no** | **Raw output KD: yes** |
+|---|---|---|
+| **Feature alignment: no** | `J0` — CE only | `JKD` — CE + raw X-Token KD |
+| **Feature alignment: yes** | `JFEAT` — CE + contrastive alignment | `D7r` — the full method |
+
+All four cells share, by construction and verified against D7r's own saved
+adapter: `stage="joint"`; LoRA surface
+`("language_attention", "vision_attention")` resolving to the identical 96
+LoRA tensors (48 vision + 48 language); rank 16 / alpha 32 / dropout 0.05;
+seed 17; the frozen v2.4 train split in identical shuffled order; the `terse`
+prompt; lr 2e-5; batch 4 / effective batch 16; 10 epochs max, patience 2, full
+val-split scoring every epoch; and the same bf16 teacher caches
+(`topk_logits_0462bee1d6f00444`, `pooled_features_683d9c59eac4a6d9`, top-K
+4096, 255 distinct-scene negatives). All four run through the one
+`train_kd.py`/`compose_loss` path, so a cell differs from D7r **only** in which
+loss terms are summed.
+
+**`J0` does not replace `B3`.** B3 is "depth CE on the permitted language
+surface" and stays in the record; J0 is "depth CE on D7r's surface". They
+answer different questions and both are reported.
+
+**Ids.** `cache.RUN_ID_PATTERN` admits only `[A-Za-z0-9]+` in a run id's recipe
+field, so the code and run ids use `JKD`/`JFEAT` for the `J-KD`/`J-Feature` of
+this table.
+
+**Contrasts this grid licenses** (each a paired scene-group bootstrap, §5):
+
+| Contrast | Question |
+|---|---|
+| D7r − J0 | Does the complete method beat a **properly matched** supervised baseline? |
+| D7r − J-Feature | Does raw output KD add value **after** feature alignment? |
+| D7r − J-KD | Does contrastive feature alignment add value **beyond** output KD? |
+| J-KD − J0, J-Feature − J0 | Each ingredient's own effect, and (with the above) the interaction |
+| J0 − B3 | How much of the +11.8 is trainable surface alone |
 
 ### 8.1 D9 label-access rule (strict)
 
@@ -704,6 +777,10 @@ confirmatory test result is observed must state what was already seen.
 | 2026-09-09/10 | §5, §11 | **Test split scored, once, for the primary set — G5 closes.** `evaluation/paired_bootstrap.py` written (paired cluster bootstrap by scene group `sequence_id`, 10,000 replicates, seed 20260905, full macro recomputed inside every draw, exactly as §5 predeclares — nothing was decided here, only implemented, and validated against val first where a wrong result costs nothing). Test predictions generated the same way as the val re-recording (`zero_shot_inference.py`, `--parent-adapter` composition for the two-stage rows) and registered via `record_run.py --confirmatory --split test` for B3, B5, X2, D4, D5, D6, D9, D7, in that order (D7 last, deliberately no different treatment than the rest). Results: B3 (primary comparator) 43.6%, B5 59.9%, X2 44.6%, D4 50.6%, D5 50.3%, D6 52.6%, D9 48.4%, **D7 (primary/reported recipe) 54.1%**. **D7 vs. B3: +10.5 points, 95% CI [+9.6, +11.4], excludes zero in all 10,000 replicates** — clears §5.1's threshold by a wide margin (`runs/kd/confirmatory_recording/D7_vs_B3_test_bootstrap.json`). Secondary pairwise CIs vs. B3 (all `runs/kd/confirmatory_recording/*_vs_B3_test_bootstrap.json`): D4 +7.0 [6.2,7.9], D5 +6.7 [5.8,7.6], D6 +9.0 [8.2,9.9], D9 +4.8 [4.0,5.7], X2 +1.0 [0.5,1.5] (statistically real but below the practical 2-point bar). D4-vs-D5 (raw vs. LoCa KD, same stage-F parent): +0.3 points, CI [-0.2,+0.8], **includes zero** — see G6 for what this does and does not resolve. D2/D8 will be test-scored in a follow-up pass once trained; this does not reopen the numbers or the D7 decision recorded here, since D2/D8's design was fixed before either had a test score (2026-09-09 "Settings locked" row). | Author instruction ("do all the steps") | Yes for this row's own content — it reports the test result the row exists to record. No prior decision in this protocol was made after seeing it: recipe (D7), comparator (B3), and the uncertainty method were all locked beforehand (2026-09-09 rows above) |
 | 2026-09-10 | §7, §8, §11 | **D2 and D8 trained (first time — not reruns) and test-scored — G6 closes.** D2 (S2: CE + LoCa X-Token KD, unaligned vision, the LoCa analogue of X2): 8 epochs, patience-stopped, best val 45.78% (epoch 5, 202.05 min); test 44.7%, **+1.1 point over B3** (CI [+0.5,+1.7], `runs/kd/confirmatory_recording/D2_vs_B3_test_bootstrap.json`) — essentially tied with X2's own +1.0, confirming the raw-vs-LoCa null finding holds unaligned as well as aligned. D8 (F(cosine)->S2, reusing the existing `align_curve_cosine_s17/preserved/epoch_0` stage-F checkpoint rather than retraining it): 7 epochs, patience-stopped, best val 37.22% (epoch 4, 175.14 min); test **36.3%, a *regression* of 7.3 points below B3** (CI [-8.2,-6.4], `runs/kd/confirmatory_recording/D8_vs_B3_test_bootstrap.json`) and 8.4 points below D2's unaligned baseline (CI [+7.5,+9.3], `D2_vs_D8_test_bootstrap.json`) — cosine alignment is not a weaker-but-viable alternative to contrastive, it actively hurts. Both trainings restarted clean from epoch 0 once mid-session (a session/VM restart killed D2 at ~8,000/15,278 examples into epoch 0 with no checkpoint saved yet — this project's own documented limitation, "no mid-epoch resume exists for S2"); the second attempt ran to completion with no further interruption, launched via `setsid`+`disown` and logging to `runs/kd/` (persistent project disk) rather than the session-scoped `/tmp` scratchpad the first attempt's driver script lived in, precisely because that scratchpad does not survive a session restart while the project directory does. | Author instruction ("do all the steps") | Yes for this row's own content, for the same reason as the row above — D2/D8's recipe and hyperparameters were fixed (2026-09-07/08 changelog rows) long before either had a test score |
 
+| 2026-09-16 | §4, §8 (new §8.0), §12 | **The J grid added: a matched 2×2 that separates D7r's method from D7r's trainable surface. Written and committed before any J row was trained.** The defect this answers is real and is the highest-priority threat to the headline: **D7r trains `vision_attention` + `language_attention`, while B3 and X2 — the recorded controls the +11.8 and +1.0 point figures are measured against — train `language_attention` only.** §4 already obliges "identical trainable-module masks. KD may not adapt a module that CE is forbidden to adapt," and the D7r-vs-B3 pairing does not satisfy it: some unknown share of +11.8 is 48 extra vision LoRA tensors, not distillation. §8.0 declares the 2×2 — `J0` (CE only), `JKD` (CE + raw X-Token KD), `JFEAT` (CE + contrastive alignment), `D7r` (both) — all on D7r's exact surface, stage, seed, data order, prompt, caches, epoch/patience policy, LoRA rank and learning rate, through the one `train_kd.py`/`compose_loss` path, so a cell differs from D7r only in which loss terms are summed. Verified before launch rather than asserted: all four adapters resolve to the **identical 96 LoRA tensors (48 vision + 48 language)** from the identical target regex at r16/alpha32/dropout0.05, and the three new rows' step-1 CE is bit-identical to each other's (2.167545258998871), confirming shared initialization, batching and shuffle order. Each row's distinguishing term was confirmed live in `training_metrics.csv` on a 32-row smoke pass before the real launch — `J0` logs `ce` alone with `total == ce`, `JKD` logs a nonzero `kd`, `JFEAT` logs a nonzero `feature` at the ln(256)=5.545 chance floor with `negative_scenes 255` — because "a term that appears active and is not" is this project's own documented failure mode (`compose_loss`'s docstring, the audit's B4 finding). 5 new/extended tests (`tests/test_pipeline.py`: the grid is matched on every switch except the two toggled, J0 is distinguishable from B3 and its surface is trainable under CE); full suite 260 passed. **§4's comparator set widened from `{B3, B4}` to `{B3, B4, J0}`.** **No learning-rate sweep is run for these rows, and that is the matched choice, not a shortcut**: §7.2 tunes CE first across 5e-6/1e-5/2e-5 (measured 40.72 / 40.95 / 42.81% val on B3, `pilot_findings.md` §10.2), and every D row including D7r inherited the selected 2e-5 without a row-specific sweep — giving the J rows a sweep D7r never had would *unmatch* the budget in the opposite direction. **Predeclared decision rules, fixed here before any J number exists, so that none of them can be chosen by its answer:** (1) each J row gets **exactly one** confirmatory test pass, whatever its val score says — no val gate, no second look, no ratchet toward whichever number is larger; (2) **D7r − J0 becomes the manuscript's primary effect size**, replacing D7r − B3, because §4's comparator rule selects the *strongest matched* CE student and J0 is the only CE row matched on the mask; D7r − B3 is retained and reported beside it as the surface-confounded figure it is, not deleted; (3) if D7r − J0 falls below §5.1's 2-point bar or its 95% paired interval includes zero, **§12's first outcome rule applies in full** — the manuscript claims adaptation to depth and must not claim distillation beats supervision, regardless of what D7r − B3 says; (4) if D7r − J-Feature is within noise, output KD is dropped from the central method claim, exactly as LoCa was on 2026-09-11; if D7r − J-KD is within noise, contrastive feature alignment is dropped; if both are, the method reduces to J0 and the paper is a benchmark/analysis paper per §12; (5) Holm correction applies across the §2.1 confirmatory family as usual, and the four grid contrasts are reported together — a cell is never quoted alone. | Author instruction: the D7r/B3 trainable-surface mismatch "may partly reflect giving D7r a larger trainable surface — not necessarily distillation. That is the highest-priority issue to resolve," with J0 called non-negotiable | **Yes, and this is the disclosure §13 requires: D7r test 55.4%, B3 test 43.6%, D7r−B3 +11.8 [+10.9,+12.7], and the complete G5/G6 test table (B5 59.9%, X2 44.6%, D2 44.7%, D4 50.6%, D5 50.3%, D6 52.6%, D7 54.1%, D8 36.3%, D9 48.4%) were all observed before this row was written. No J-row number of any kind exists at time of writing — the grid is a control added because the existing comparison is confounded, not a search for a larger difference, and rules (1)–(4) above are written to make that checkable rather than merely asserted.** |
+
+| 2026-09-17 | §4, §8.0, §12 | **The J grid completed and scored. D7r's real, matched effect size is +2.3 points over a fair CE baseline — not the +11.8 the confounded B3 comparison reported — and output KD, not contrastive feature alignment, is carrying essentially all of it.** Full results, method, and all bootstrap CIs in `pilot_findings.md` §17; only the conclusions and required claim changes are restated here. Test macro: J0 53.06%, JKD 54.05%, JFEAT 53.23%, D7r 55.39% (B3 43.60%, already recorded). Applying the three decision rules predeclared in the 2026-09-16 row, mechanically and in order: **(1)** one confirmatory test pass per row, taken — no row was re-looked-at after seeing its own val score. **(2)** comparator resolved to `J0` (§4, row above) — D7r − J0 = +2.32 pts, CI [+1.63, +3.02], excludes zero, clears the 2-point bar at the point estimate. §12's "beats only zero-shot" outcome row is **not** triggered — a properly matched CE baseline is still beaten — but the confidence interval's own lower bound (1.63) sits under the bar, so this is reported as a real, modest effect, not a comfortable margin. **(3)** D7r − JFEAT = +2.16 pts, CI [+1.53, +2.79], clears the bar → **not** within noise → output KD stays in the central method claim, confirmed necessary. D7r − JKD = +1.34 pts, CI [+0.75, +1.91] → excludes zero but **fails** the 2-point bar, and two independent supporting measures point the same direction: JFEAT − J0 = +0.17 pt, CI [−0.50, +0.82] (**includes zero** — feature alignment alone is statistically indistinguishable from the matched CE control), and D7r − JFEAT (+2.16) is nearly equal to D7r − J0 (+2.32), leaving little room for alignment to have contributed independently. **(4)** neither ingredient reduces to exactly zero, so the "method reduces to J0" case does not apply outright — but three of four readings agree that contrastive feature alignment is not earning equal billing with output KD, and this is flagged rather than silently decided (see §13.1, new item, below) because the 2026-09-16 rule's own wording ("within noise") is CI-shaped and technically not met by D7r − JKD's point estimate, even though the practical-significance reading this protocol uses everywhere else (§5.1's 2-point bar) says the opposite. **Required manuscript claim changes:** report D7r − J0 (+2.3 pts), not D7r − B3 (+11.8 pts), as the primary effect size, with D7r − B3 retained and explicitly labelled surface-confounded; describe output KD as the primary mechanism behind the measured gain; describe contrastive feature alignment as a secondary ingredient with a small, borderline-practical marginal contribution (D7r − JKD) and no detectable effect in isolation (JFEAT − J0) — not as a co-equal partner to output KD in the central method claim. LoCa was already dropped 2026-09-11 on the same class of evidence (raw KD matching LoCa everywhere tested); this is the same pattern applied to feature alignment against output KD, and the two findings compound: the reported method's real, defensible core is **CE + raw output KD** at roughly D7r's magnitude, with feature alignment as an optional, marginal addition the manuscript should not lean on. | Author instruction: run the grid ("This is three additional trainings, though J0 is non-negotiable") and answer the three named questions | **Yes — this row reports the result the grid exists to record, exactly as the 2026-09-16 row anticipated. No decision in §4/§8/§12 was made by choosing among rules after seeing these numbers: the comparator-resolution rule, the 2-pt-bar reading, and the "one test pass, no ratchet" rule were all fixed in the 2026-09-16 row, before any J-row number existed. The one thing not fully predetermined — how to read D7r − JKD's CI-excludes-zero-but-under-bar result against the "within noise" wording — is stated as an ambiguity in the earlier rule's drafting, not resolved by picking whichever reading favors a cleaner narrative, and is carried to §13.1 for author sign-off.** |
+
 ### 13.1 Open decisions awaiting author sign-off
 
 1. ~~**§9.5 teacher precision**~~ — **RESOLVED 2026-09-05: Option A.**
@@ -758,6 +835,31 @@ confirmatory test result is observed must state what was already seen.
    Nothing should run these three rows until this is settled: under (a) they are
    two-stage rows whose current definition is wrong, and under (b) they need a
    surface they do not currently declare. D0 is unaffected and is runnable now.
+
+6. **How to read D7r − JKD's result against the 2026-09-16 J-grid rule's
+   "within noise" wording — author sign-off needed.** That rule reads: "if D7r
+   − J-KD is within noise, contrastive feature alignment is dropped [from the
+   central method claim]." Measured 2026-09-17 (§13, `pilot_findings.md` §17):
+   D7r − JKD = +1.34 points, 95% CI [+0.75, +1.91] — the interval **excludes**
+   zero, so a literal CI-only reading of "within noise" does not fire, and the
+   rule as worded would keep feature alignment in the central claim. But the
+   same effect **fails** §5.1's 2-point practical bar that this protocol uses
+   everywhere else to separate a measurable effect from one that merits a
+   headline claim, and two independent supporting measures point the same way:
+   feature alignment alone (`JFEAT − J0`, +0.17 pt) has a CI that *does*
+   include zero, and `D7r − JFEAT` (+2.16 pts) is nearly equal to `D7r − J0`
+   (+2.32 pts), leaving little room for alignment to be doing independent work
+   inside the full method. At n=3,401 scene-group clusters, a small true effect
+   reaches "excludes zero" fairly easily — which is exactly why this protocol
+   pairs that criterion with a practical-magnitude bar rather than using it
+   alone, everywhere except in this one rule's own drafting. This was not
+   resolved silently in either direction: `pilot_findings.md` §17 and the
+   2026-09-17 §13 row above state both readings and recommend describing
+   feature alignment as a secondary, marginal ingredient rather than a
+   co-equal partner to output KD — but that recommendation is not binding
+   until the author signs off on which reading of the rule governs. **This
+   changes a manuscript claim, not a result**: no further training or
+   re-scoring is implied either way.
 
 ---
 
