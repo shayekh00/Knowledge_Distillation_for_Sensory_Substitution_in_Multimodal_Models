@@ -39,6 +39,29 @@ HIGHLIGHT_EVIDENCE_KEYS: dict[str, tuple[str, ...]] = {
     "nearest_object": ("anchor_concept",),
 }
 
+# M³FD's generator settled on shorter evidence keys than the SUN-RGB-D ones
+# above (`m3fd_candidates.py`: left_right stores "a"/"b", not
+# "a_concept"/"b_concept") and its `count` questions do name their object, so
+# that type highlights here where SUN-RGB-D's does not. `identify_superlative`
+# stays absent for the same reason as above and more sharply: its evidence key
+# is literally `winner`, which *is* the gold answer.
+M3FD_HIGHLIGHT_EVIDENCE_KEYS: dict[str, tuple[str, ...]] = {
+    "existence": ("concept",),
+    "count": ("concept",),
+    "left_right": ("a", "b"),
+}
+
+# Evidence keys naming a *concept* whose boxes should be outlined, per type.
+# `identify_superlative` deliberately outlines the runner-up as well as the
+# winner: the rule it encodes is a 1.20x area margin between exactly those two
+# boxes, so a reviewer cannot check it while seeing only one of them.
+M3FD_EVIDENCE_CONCEPT_KEYS: dict[str, tuple[str, ...]] = {
+    "existence": ("concept",),
+    "count": ("concept",),
+    "left_right": ("a", "b"),
+    "identify_superlative": ("winner",),
+}
+
 _NUMBER_WORDS = {
     "zero": "0", "one": "1", "two": "2", "three": "3",
     "four": "4", "five": "5", "six": "6",
@@ -74,6 +97,13 @@ class AuditItem:
     def scene_type(self) -> str | None:
         return self.row.get("scene_type")
 
+    @property
+    def sequence_id(self) -> str | None:
+        """M³FD's capture group — the unit its split is drawn on, and the only
+        provenance field its release rows carry in place of `sensor`."""
+        value = self.row.get("sequence_id")
+        return None if value is None else str(value)
+
     def to_public_dict(self) -> dict:
         """Item fields sent to the client, gold answer included: the audit
         workflow shows gold immediately alongside the question rather than
@@ -87,6 +117,7 @@ class AuditItem:
             "answer": self.answer,
             "sensor": self.sensor,
             "scene_type": self.scene_type,
+            "sequence_id": self.sequence_id,
             "evidence_object_indices": list(self.evidence_object_indices),
             "highlight_words": list(self.highlight_words),
         }
@@ -105,13 +136,18 @@ def _load_evidence_json(evidence_raw: object) -> object | None:
 
 
 def extract_highlight_words(
-    question_type: str, evidence_raw: object, concept_display_names: dict[str, str]
+    question_type: str,
+    evidence_raw: object,
+    concept_display_names: dict[str, str],
+    evidence_style: str = "sunrgbd",
 ) -> tuple[str, ...]:
     """Display names of the objects named in `question` itself, in evidence
     order, for the audit UI to bold (readability only — never reveals the
     answer for types like nearest_object where the answer object is not
     among the named keys, see HIGHLIGHT_EVIDENCE_KEYS)."""
-    keys = HIGHLIGHT_EVIDENCE_KEYS.get(question_type, ())
+    key_table = (M3FD_HIGHLIGHT_EVIDENCE_KEYS if evidence_style == "m3fd"
+                 else HIGHLIGHT_EVIDENCE_KEYS)
+    keys = key_table.get(question_type, ())
     if not keys:
         return ()
     parsed = _load_evidence_json(evidence_raw)
@@ -185,9 +221,60 @@ def _object_names_mentioned_in(question: str, candidate_names: set[str]) -> set[
     return mentioned
 
 
-def resolve_evidence_object_indices(
-    question: str, evidence_raw: object, scene_index: SceneIndex, image_id: str
+def _collect_m3fd_boxes(parsed: dict) -> list[list[float]]:
+    """Every box an M³FD evidence dict records, whatever key holds it.
+
+    `existence` stores a list under `boxes`; the other types store one box per
+    role under a `*_box` key (`a_box`, `b_box`, `winner_box`, `runner_up_box`).
+    """
+    boxes: list[list[float]] = []
+    for key, value in parsed.items():
+        if not isinstance(value, list):
+            continue
+        if key == "boxes" or key.endswith("boxes"):
+            boxes.extend(box for box in value if isinstance(box, list))
+        elif key.endswith("_box"):
+            boxes.append(value)
+    return [box for box in boxes if len(box) == 4 and all(isinstance(v, (int, float)) for v in box)]
+
+
+def _resolve_m3fd_evidence(
+    question_type: str, parsed: dict, scene_index: SceneIndex, image_id: str
 ) -> tuple[int, ...]:
+    """Object indices to outline for an M³FD question.
+
+    M³FD evidence never carries an object index (`m3fd_candidates.py` writes
+    concepts, boxes and margins), so the overlay is resolved the other way
+    round: match the recorded boxes back to the indexed ones, and fall back to
+    the concept the rule was about when a type records no box at all —
+    `count`, whose evidence is just `{"rule", "concept", "count"}` yet whose
+    reviewer most needs to see every box being counted.
+    """
+    by_box = scene_index.object_indices_matching_boxes(image_id, _collect_m3fd_boxes(parsed))
+    if by_box:
+        return tuple(sorted(by_box))
+    concepts = {
+        parsed[key] for key in M3FD_EVIDENCE_CONCEPT_KEYS.get(question_type, ())
+        if isinstance(parsed.get(key), str) and parsed[key]
+    }
+    if not concepts:
+        return ()
+    return tuple(sorted(scene_index.object_indices_matching_concepts(image_id, concepts)))
+
+
+def resolve_evidence_object_indices(
+    question: str,
+    evidence_raw: object,
+    scene_index: SceneIndex,
+    image_id: str,
+    question_type: str = "",
+    evidence_style: str = "sunrgbd",
+) -> tuple[int, ...]:
+    if evidence_style == "m3fd":
+        parsed = _load_evidence_json(evidence_raw)
+        if isinstance(parsed, dict):
+            return _resolve_m3fd_evidence(question_type, parsed, scene_index, image_id)
+        return ()
     parsed = _parse_evidence_indices(evidence_raw)
     if parsed is not None:
         return tuple(sorted(parsed))
@@ -199,7 +286,10 @@ def resolve_evidence_object_indices(
 
 
 def load_audit_items(
-    csv_path: Path, scene_index: SceneIndex, concept_display_names: dict[str, str] | None = None
+    csv_path: Path,
+    scene_index: SceneIndex,
+    concept_display_names: dict[str, str] | None = None,
+    evidence_style: str = "sunrgbd",
 ) -> list[AuditItem]:
     frame = pd.read_csv(csv_path, dtype={"question_id": str, "image_id": str})
     missing = [column for column in REQUIRED_COLUMNS if column not in frame.columns]
@@ -213,9 +303,11 @@ def load_audit_items(
         question_type = str(row["question_type"])
         evidence_raw = row.get("evidence")
         evidence = resolve_evidence_object_indices(
-            question, evidence_raw, scene_index, str(row["image_id"])
+            question, evidence_raw, scene_index, str(row["image_id"]),
+            question_type=question_type, evidence_style=evidence_style,
         )
-        highlight_words = extract_highlight_words(question_type, evidence_raw, concept_display_names)
+        highlight_words = extract_highlight_words(
+            question_type, evidence_raw, concept_display_names, evidence_style)
         items.append(AuditItem(
             question_id=str(row["question_id"]),
             image_id=str(row["image_id"]),

@@ -32,9 +32,11 @@ from pathlib import Path
 import pandas as pd
 
 from tools.audit_app.audit_store import VERDICTS, AuditResponse, append_response, load_responses
+from tools.audit_app.sources import active_source
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-AUDIT_DIR = Path(os.environ.get("AUDIT_DIR", PROJECT_ROOT / "audit"))
+SOURCE = active_source()
+AUDIT_DIR = Path(os.environ.get("AUDIT_DIR", SOURCE.audit_dir_path))
 AUDIT_ITEMS_CSV = AUDIT_DIR / "audit_items.csv"
 MODEL_ANSWERS_CSV = AUDIT_DIR / "model_answers.csv"
 RESPONSES_DIR = AUDIT_DIR / "responses"

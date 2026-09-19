@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VQA-SUNRGBD-v2 — Test Set Audit</title>
+<title>Test Set Audit</title>
 <link rel="stylesheet" href="static/styles.css">
 </head>
 <body>
 <header id="top-bar">
-  <h1>VQA-SUNRGBD-v2 audit</h1>
+  <!-- Both filled in from /api/status once the source is known, so the page
+       never claims to be auditing SUN-RGB-D while serving M³FD. -->
+  <h1 id="source-title">audit</h1>
   <div id="annotator-box">
     <label for="annotator-input">Reviewer ID</label>
     <input id="annotator-input" type="text" placeholder="solo" autocomplete="off">
@@ -58,8 +60,18 @@
 
     <p id="question-text"></p>
 
+    <!-- Multi-modality sources only (M³FD): the gold label must be true of the
+         thermal frame the student sees, and the RGB frame is the registration
+         cross-check the runbook asks for. Hidden entirely when a source has
+         one image per record. -->
+    <div id="modality-switch" class="hidden">
+      <span class="modality-label">Showing</span>
+      <div id="modality-buttons"></div>
+      <span class="hint" id="modality-hint"></span>
+    </div>
+
     <div id="image-wrap">
-      <img id="rgb-image" alt="scene RGB">
+      <img id="rgb-image" alt="scene image">
       <canvas id="overlay-canvas"></canvas>
       <div id="image-loading" class="hidden">loading…</div>
     </div>

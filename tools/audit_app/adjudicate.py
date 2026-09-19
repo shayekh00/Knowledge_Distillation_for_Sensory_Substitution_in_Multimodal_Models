@@ -54,6 +54,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 from tools.audit_app.agreement import answers_agree, canonical_answer_form
+from tools.audit_app.sources import active_source
 from tools.audit_app.model_pass import (
     DEFAULT_MODEL,
     _load_vocab_tables,
@@ -62,7 +63,8 @@ from tools.audit_app.model_pass import (
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATASET_DIR = PROJECT_ROOT / "dataset"
-AUDIT_DIR = Path(os.environ.get("AUDIT_DIR", PROJECT_ROOT / "audit"))
+SOURCE = active_source()
+AUDIT_DIR = Path(os.environ.get("AUDIT_DIR", SOURCE.audit_dir_path))
 AUDIT_ITEMS_CSV = AUDIT_DIR / "audit_items.csv"
 MODEL_ANSWERS_CSV = AUDIT_DIR / "model_answers.csv"
 ADJUDICATION_CSV = AUDIT_DIR / "adjudication.csv"

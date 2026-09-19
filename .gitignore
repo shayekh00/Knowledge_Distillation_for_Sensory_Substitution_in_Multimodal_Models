@@ -80,3 +80,12 @@ runs/pilot/B3_depth_4090_profile/
 # produced them (run_phase5.sh) lives here too, kept local for now.
 runs/kd_arkit/
 runs/kd_arkit_v12/
+
+# Synthetic M3FD smoke fixture (generated, never M3FD itself) — see docs/M3FD_THERMAL_VQA_RUNBOOK.md
+dataset/M3FD_SYNTHETIC_SMOKE/
+release/VQA-M3FD-Thermal-v1-SYNTHETIC-SMOKE/
+audit_m3fd_smoke/
+build_log/m3fd_smoke/
+data/index/*_m3fd_smoke.jsonl
+data/candidates_m3fd_smoke/
+dataset/.m3fd-download-parts/*

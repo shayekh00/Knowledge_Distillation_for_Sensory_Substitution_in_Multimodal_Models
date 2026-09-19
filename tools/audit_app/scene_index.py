@@ -10,11 +10,19 @@ the scene index, since its raw ``*_3dod_annotation.json`` has no SUN-RGB-D-
 shaped ``frames[0]["polygon"]`` to read (arkitscenes_plan.md §6 Phase 4).
 ``polygons_for`` prefers that when present rather than attempting the
 SUN-RGB-D-specific raw-annotation parse.
+
+M³FD records (``build_index_m3fd.py``) go one step further: they carry a
+second registered image (``thermal_path``) alongside ``rgb_path``, a
+``concept`` per object, and their geometry — ``image_width``/``image_height``,
+``polygon_xy``, ``thermal_box_xyxy`` — in the **thermal** frame, with the RGB
+frame's own size recorded separately as ``rgb_width``/``rgb_height``. The extra
+fields below are all optional, so a SUN-RGB-D or ARKitScenes index loads
+exactly as before.
 """
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -44,6 +52,37 @@ class SceneRecord:
     # object. New code should prefer `object_names_by_index`.
     object_names_by_index: dict[int, str]
     object_polygons_xy: dict[int, list[list[float]]]
+    # M³FD only; empty/None for every single-modality source (see module
+    # docstring). `object_concepts_by_index` is the canonical class the
+    # indexer assigned each box, which is what M³FD evidence names instead of
+    # an object index; `object_boxes_by_index` is that box in the thermal
+    # frame, which is how a box-valued evidence entry is matched back to it.
+    thermal_path: Path | None = None
+    rgb_width: int | None = None
+    rgb_height: int | None = None
+    object_concepts_by_index: dict[int, str] = field(default_factory=dict)
+    object_boxes_by_index: dict[int, list[float]] = field(default_factory=dict)
+
+    def image_path(self, modality: str) -> Path | None:
+        """The file for one display modality, or None if this record has none.
+
+        `image_width`/`image_height` describe the *default* modality's frame
+        (thermal for M³FD, RGB everywhere else) — use `frame_size_for` rather
+        than assuming they apply to whichever image is on screen.
+        """
+        if modality == "thermal":
+            return self.thermal_path
+        return self.rgb_path
+
+    def frame_size_for(self, modality: str) -> tuple[int, int]:
+        """Pixel dimensions of `modality`'s own frame.
+
+        The indexed geometry lives in the default modality's frame, so drawing
+        it over the other one means rescaling by the ratio of these two sizes.
+        """
+        if modality == "rgb" and self.rgb_width and self.rgb_height:
+            return self.rgb_width, self.rgb_height
+        return self.image_width, self.image_height
 
 
 class SceneIndex:
@@ -75,6 +114,19 @@ class SceneIndex:
                             obj["object_index"]: obj["polygon_xy"]
                             for obj in row["objects"] if obj.get("polygon_xy")
                         },
+                        thermal_path=(
+                            dataset_root / row["thermal_path"] if row.get("thermal_path") else None
+                        ),
+                        rgb_width=row.get("rgb_width"),
+                        rgb_height=row.get("rgb_height"),
+                        object_concepts_by_index={
+                            obj["object_index"]: obj["concept"]
+                            for obj in row["objects"] if obj.get("concept")
+                        },
+                        object_boxes_by_index={
+                            obj["object_index"]: obj["thermal_box_xyxy"]
+                            for obj in row["objects"] if obj.get("thermal_box_xyxy")
+                        },
                     )
 
     def get(self, image_id: str) -> SceneRecord | None:
@@ -100,7 +152,12 @@ class SceneIndex:
             for object_index, polygon_xy in record.object_polygons_xy.items():
                 if object_indices is not None and object_index not in object_indices:
                     continue
-                name = record.object_names_by_index.get(object_index, "")
+                # Label with the canonical concept where the indexer assigned
+                # one (M³FD): that is the vocabulary the question and the gold
+                # answer are written in, so "person" is what a reviewer needs
+                # to see on the box, not the source's raw "People".
+                name = (record.object_concepts_by_index.get(object_index)
+                        or record.object_names_by_index.get(object_index, ""))
                 polygons.append(ScenePolygon(
                     object_index=object_index, name=name,
                     x=[point[0] for point in polygon_xy],
@@ -153,3 +210,46 @@ class SceneIndex:
             for index, raw_name in record.object_names_by_index.items()
             if raw_name.lower().replace("_", " ").strip() in normalized_targets
         }
+
+    def object_indices_matching_concepts(self, image_id: str, concepts: set[str]) -> set[int]:
+        """Object indices whose canonical `concept` is one of `concepts`.
+
+        M³FD evidence names the class it reasoned about, not the box's index
+        (``m3fd_candidates.py``), and the canonical class is not always the
+        raw annotation name — the source writes "People" where the vocabulary
+        says `person`. So this matches the indexer's assigned concept rather
+        than the raw name `object_indices_matching_names` compares.
+        """
+        record = self.get(image_id)
+        if record is None:
+            return set()
+        normalized_targets = {concept.lower().replace("_", " ").strip() for concept in concepts}
+        return {
+            index
+            for index, concept in record.object_concepts_by_index.items()
+            if concept.lower().replace("_", " ").strip() in normalized_targets
+        }
+
+    def object_indices_matching_boxes(
+        self, image_id: str, boxes: list[list[float]], tolerance: float = 0.5
+    ) -> set[int]:
+        """Object indices whose thermal box matches one of `boxes`.
+
+        The boxes an M³FD evidence entry carries were copied straight out of
+        this same index, so they should agree to the bit; `tolerance` (half a
+        pixel) only absorbs the float round-trip through the release CSV's
+        JSON. A box that matches nothing is skipped rather than guessed at —
+        an overlay must never invent evidence the generator did not record.
+        """
+        record = self.get(image_id)
+        if record is None:
+            return set()
+        matched: set[int] = set()
+        for box in boxes:
+            if len(box) != 4:
+                continue
+            for index, indexed_box in record.object_boxes_by_index.items():
+                if all(abs(a - b) <= tolerance for a, b in zip(box, indexed_box)):
+                    matched.add(index)
+                    break
+        return matched

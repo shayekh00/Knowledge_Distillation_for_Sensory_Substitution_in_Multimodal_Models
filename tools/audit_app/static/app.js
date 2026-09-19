@@ -7,6 +7,15 @@ const state = {
   filtered: [],        // items after type/unanswered filters
   responses: {},        // question_id -> saved response, for the current annotator
   currentIndex: 0,
+  modalities: ["rgb"],  // from /api/status; >1 only for M3FD (thermal + rgb)
+  modality: "rgb",      // which one is on screen right now
+};
+
+// Why a reviewer would want each frame, shown next to the switch so the
+// thermal/RGB distinction stays in front of them while they judge.
+const MODALITY_HINTS = {
+  thermal: "the only image the student ever sees — gold must be true of this",
+  rgb: "registration cross-check only — not the student's input",
 };
 
 const el = (id) => document.getElementById(id);
@@ -31,6 +40,7 @@ async function init() {
   el("annotator-input").value = state.annotatorId;
 
   const status = await fetchJSON("api/status");
+  applySourceToChrome(status);
   if (!status.items_loaded) {
     el("status-banner").textContent = status.load_error;
     el("status-banner").classList.remove("hidden");
@@ -72,6 +82,51 @@ async function init() {
   } else {
     applyFilters();
   }
+}
+
+// ── Source / modality ────────────────────────────────────────────────────
+
+// Names the dataset in the page chrome and builds the modality switch, both
+// from /api/status — the server, not the page, knows which source it was
+// started for (AUDIT_SOURCE).
+function applySourceToChrome(status) {
+  const title = status.source_title || "audit";
+  el("source-title").textContent = `${title} audit`;
+  document.title = `${title} — Test Set Audit`;
+
+  state.modalities = status.modalities && status.modalities.length ? status.modalities : ["rgb"];
+  state.modality = status.default_modality || state.modalities[0];
+  if (state.modalities.length < 2) return;
+
+  const buttons = el("modality-buttons");
+  buttons.innerHTML = "";
+  state.modalities.forEach((modality, index) => {
+    const button = document.createElement("button");
+    button.className = "secondary modality-btn";
+    button.dataset.modality = modality;
+    // 5/6/... continues the existing 1-4 verdict keys rather than colliding.
+    button.textContent = `${modality} (${index + 5})`;
+    button.addEventListener("click", () => setModality(modality));
+    buttons.appendChild(button);
+  });
+  el("modality-switch").classList.remove("hidden");
+  renderModalitySwitch();
+}
+
+function renderModalitySwitch() {
+  document.querySelectorAll("button.modality-btn").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.modality === state.modality);
+  });
+  el("modality-hint").textContent = MODALITY_HINTS[state.modality] || "";
+}
+
+// Re-renders the current item only: the reviewer's place in the queue, their
+// verdict and any typed correction all survive flipping the frame.
+function setModality(modality) {
+  if (!state.modalities.includes(modality) || modality === state.modality) return;
+  state.modality = modality;
+  renderModalitySwitch();
+  if (state.filtered.length > 0) renderCurrentItem();
 }
 
 function populateTypeFilter(items) {
@@ -225,7 +280,11 @@ async function renderCurrentItem() {
   el("item-position").textContent =
     `item ${state.currentIndex + 1} of ${state.filtered.length} (${item.question_type})`;
   el("meta-type").textContent = `type: ${item.question_type}`;
-  el("meta-sensor").textContent = `sensor: ${item.sensor ?? "?"}`;
+  // M3FD rows carry a capture group and no sensor; SUN-RGB-D/ARKit the
+  // reverse. Show whichever provenance the row actually has.
+  el("meta-sensor").textContent = item.sensor
+    ? `sensor: ${item.sensor}`
+    : (item.sequence_id ? `capture: ${item.sequence_id}` : "sensor: ?");
   el("meta-scene").textContent = `scene: ${item.scene_type ?? "?"}`;
   el("meta-qid").textContent = `id: ${item.question_id}`;
   el("question-text").innerHTML = questionHtmlWithHighlights(item.question, item.highlight_words);
@@ -233,7 +292,8 @@ async function renderCurrentItem() {
   renderModelHint(item);
 
   el("image-loading").classList.remove("hidden");
-  el("rgb-image").src = `api/image/${item.image_id}`;
+  el("rgb-image").src = `api/image/${item.image_id}?modality=${encodeURIComponent(state.modality)}`;
+  el("rgb-image").alt = `scene ${state.modality}`;
   loadOverlay(item);
 
   const existing = state.responses[item.question_id];
@@ -290,12 +350,16 @@ function loadOverlay(item) {
   // actually happened instead.
   el("rgb-image").onerror = () => {
     el("image-loading").textContent =
-      `image unavailable — ${item.image_id} is not in the current scene index ` +
+      `${state.modality} image unavailable — ${item.image_id} is not in the current scene index ` +
       `(stale audit sample: re-draw it from the current release)`;
     el("image-loading").classList.remove("hidden");
     clearOverlay();
   };
-  fetchJSON(`api/polygons/${item.image_id}?objects=${objectsParam}`)
+  // The modality matters here too, not just for the picture: M3FD geometry is
+  // indexed in the thermal frame, so the server rescales it when the RGB
+  // partner is a different size (main.py's _geometry_scale).
+  fetchJSON(`api/polygons/${item.image_id}?objects=${objectsParam}` +
+            `&modality=${encodeURIComponent(state.modality)}`)
     .then((data) => {
       el("rgb-image").onload = () => {
         el("image-loading").textContent = "loading…";
@@ -429,6 +493,12 @@ function onGlobalKeydown(event) {
   if (event.key === "2") onVerdictClicked("incorrect");
   if (event.key === "3") onVerdictClicked("ambiguous");
   if (event.key === "4") saveModelAnswerAsCorrection();
+  // 5/6/... flip modality on a multi-modality source, so checking a box
+  // against the other frame costs one keystroke in the middle of a pass.
+  const modalityIndex = Number(event.key) - 5;
+  if (modalityIndex >= 0 && modalityIndex < state.modalities.length) {
+    setModality(state.modalities[modalityIndex]);
+  }
 }
 
 // ── Progress ─────────────────────────────────────────────────────────────

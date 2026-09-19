@@ -39,11 +39,13 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 from tools.audit_app.agreement import answers_agree
+from tools.audit_app.sources import active_source
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = PROJECT_ROOT / "data"
 DATASET_DIR = PROJECT_ROOT / "dataset"
-AUDIT_DIR = Path(os.environ.get("AUDIT_DIR", PROJECT_ROOT / "audit"))
+SOURCE = active_source()
+AUDIT_DIR = Path(os.environ.get("AUDIT_DIR", SOURCE.audit_dir_path))
 AUDIT_ITEMS_CSV = AUDIT_DIR / "audit_items.csv"
 MODEL_ANSWERS_CSV = AUDIT_DIR / "model_answers.csv"
 
@@ -188,7 +190,11 @@ def main() -> None:
     completed = {"n": 0, "agree": 0, "failed": 0}
 
     def process(row: dict) -> None:
-        image_path = DATASET_DIR / row["image_path"]
+        # Column name varies by source: M³FD rows have `thermal_path` and
+        # `rgb_path` and no `image_path`, and the frame to reason over is the
+        # thermal one, since that is the only image the student ever sees.
+        image_column = SOURCE.image_column if SOURCE.image_column in row else "image_path"
+        image_path = DATASET_DIR / row[image_column]
         answer, reasoning, error = ask_model(client, args.model, row["question"], image_path)
         agrees = bool(answer) and answers_agree(
             answer, row["answer"], row["question_type"], synonym_map, canonical_vocab

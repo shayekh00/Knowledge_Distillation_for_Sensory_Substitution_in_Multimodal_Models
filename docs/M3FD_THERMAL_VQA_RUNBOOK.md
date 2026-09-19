@@ -25,6 +25,25 @@ Review its 100 overlays. Complete `registration_review.jsonl` with a boolean
 `registration_valid` on every sampled row. Construction is blocked unless at
 least 95% are valid and capture grouping is defensible.
 
+**Review coverage vs `--require-registration-review`.** These two are not the
+same gate, and the build command below will silently enforce the stricter one.
+`build_index_m3fd.py --require-registration-review` admits *only* frames whose
+`image_id` is present in the review file with `registration_valid: true`;
+everything else is dropped as `REGISTRATION_UNREVIEWED`. The probe samples 100
+frames, so running the two commands exactly as written yields a 100-frame
+index and 4,100 dropped pairs, and the release then fails its
+200-rows-per-type floor. Pick one deliberately:
+
+* keep `--require-registration-review` and extend the review file to cover
+  every frame you intend to index, or
+* treat the 100-frame review as the sampled 95% gate it is described as, omit
+  `--require-registration-review`, and pass `--registration-review` alone so a
+  frame reviewed and *rejected* is still excluded while unreviewed frames are
+  indexed.
+
+Check `build_log/m3fd/index_drops.csv` for `REGISTRATION_UNREVIEWED` after the
+build either way.
+
 ## Build commands
 
 ```bash
@@ -64,6 +83,37 @@ python evaluate.py --dataset m3fd \
 
 Before adding `DATASHEET.md` and freezing, audit 150 stratified test examples
 per retained type against both source modalities and the annotation overlay.
+The audit app serves that review directly — `m3fd` is one of its named sources
+(`tools/audit_app/sources.py`), so no path juggling is needed:
+
+```bash
+# 150 per retained type, from the M3FD release. Unstratified within type:
+# M3FD release rows carry sequence_id, not the `sensor` column the SUN-RGB-D
+# sampler stratifies on, and every frame is the same thermal sensor anyway.
+python -m tools.audit_app.sampling --source m3fd
+
+AUDIT_SOURCE=m3fd python -m uvicorn tools.audit_app.main:app --port 8002
+```
+
+The reviewer sees the **thermal** frame by default, with the question's
+evidence boxes outlined; `r` (or the modality buttons) flips to the registered
+**RGB** frame with the same boxes rescaled into it, which is the
+both-modalities check this step calls for. Thermal is the frame gold has to be
+true of — it is the only image the student ever receives — and RGB is the
+cross-check, not the subject. Overlays come from the evidence each generator
+recorded: every box for `existence`, every box of the counted class for
+`count`, both compared boxes for `left_right`, and winner *and* runner-up for
+`identify_superlative`, so its 1.20x area margin is actually checkable. A
+question whose gold is a negative `existence` "no" has no evidence box, and
+the overlay falls back to showing every annotated object so the absence can be
+confirmed.
+
+Then render the report and read the per-type acceptance rule off it:
+
+```bash
+AUDIT_SOURCE=m3fd python -m tools.audit_app.report
+```
+
 Remove any type that does not meet the approved audit threshold; then write the
 datasheet and run:
 
